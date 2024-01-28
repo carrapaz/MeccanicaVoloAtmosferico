@@ -18,7 +18,7 @@ end
 begin
 	using Plots
 	using PlutoUI
-	using BasicInterpolators
+	using LaTeXStrings
 	import PlutoUI:combine
 	print("Dependencies")
 end
@@ -146,14 +146,12 @@ md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
 # ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
 let
 	# Define the range and parametric functions
-
+	
 	t = range(0, S1, length=100)
-	x(t) = t^2/10
+	x(t) = t
 	y(t) = sin(t)
-	dx(t) = t/5
+	dx(t) = 1
 	dy(t) = cos(t)
-	d2x(t) = 1/5
-	d2y(t) = -sin(t)
 	
 	# Generate coordinates for the curve
 	x_coords = x.(t)
@@ -164,12 +162,9 @@ let
 	x0, y0 = x(t0), y(t0)
 	dx0, dy0 = dx(t0), dy(t0)
 	
-	# Compute tangent 
+	# Compute tangent and normal vectors
 	magnitude_tangent = sqrt(dx0^2 + dy0^2)
 	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
-
-	# Compute normal 
-	magnitude_normal = sqrt(dx0^2 + dy0^2)
 	nx, ny = -ty, tx
 	
 	# Plot the trajectory and vectors
@@ -195,10 +190,76 @@ md"""
 
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
-## Fixed earth frame $F_E$
+## Fixed Earth frame $F_E$
 chiamato anche navigational frame
 
 """
+
+# ╔═╡ 7df38388-286b-4767-8bc6-e56cfdb1f656
+md"latitudine: $(@bind latitude Slider(-pi/2:0.1:pi/2, default=0))"
+
+# ╔═╡ bb575fbf-c996-4557-8b08-cc28db9c0db4
+md"longitudine: $(@bind longitude Slider(-pi/2:0.1:pi/2, default=0))"
+
+# ╔═╡ 61785755-104d-432e-84c0-4c79a3a1dbad
+let
+
+	# Function to generate sphere coordinates
+	function sphere_coords(radius, n_points)
+	    θ = LinRange(0, π, n_points)
+	    φ = LinRange(0, 2π, n_points)
+	    x = [radius * sin(t) * cos(p) for t in θ, p in φ]
+	    y = [radius * sin(t) * sin(p) for t in θ, p in φ]
+	    z = [radius * cos(t) for t in θ, p in φ]
+	    return x, y, z
+	end
+	
+	# Sphere settings (approximate radius of the Earth in kilometers)
+	radius = 6371
+	n_points = 100
+	
+	# Generate sphere
+	x, y, z = sphere_coords(radius, n_points)
+	
+	# Plotting the sphere
+	p = surface(x, y, z, color=:blue, legend=false)
+	
+	# Define latitude and longitude for the lines
+	#latitude = 0 # Equator
+	#longitude = 0 # Prime Meridian
+	
+	# Adding a parallel (latitude) and a meridian (longitude)
+	# Parallel (constant latitude)
+	parallel_x = radius * cos.(LinRange(0, 2π, n_points)) * cos(latitude)
+	parallel_y = radius * sin.(LinRange(0, 2π, n_points)) * cos(latitude)
+	parallel_z = ones(n_points) * radius * sin(latitude)
+	
+	# Meridian (constant longitude)
+	meridian_x = radius * sin.(LinRange(0, π, n_points)) * cos(longitude)
+	meridian_y = radius * sin.(LinRange(0, π, n_points)) * sin(longitude)
+	meridian_z = radius * cos.(LinRange(0, π, n_points))
+	
+	# Plotting the parallel and meridian
+	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, label="Parallel")
+	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green, label="Meridian")
+	
+	# Coordinates of the intersection point (at the equator and prime meridian)
+	intersection_x = radius * cos(latitude) * cos(longitude)
+	intersection_y = radius * cos(latitude) * sin(longitude)
+	intersection_z = radius * sin(latitude)
+	
+	# Plotting the intersection point
+	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=5, label="Intersection Point")
+
+	title!(L"Fixed Earth frame $F_E$")
+	scatter!([0 0 0 0], [-1 NaN -1 NaN -1], lims=(0,1),
+    inset=(1,bbox(0.05,0.1,0.15,0.15)), subplot=2, msw=0, marker=:square,
+    legendfontsize=8, framestyle=:none, fg_color_legend=nothing, legend=:left,
+    color=[:red :white :blue :white :black], label=" "^4 .* ["latitudine" "" "longitudine" "" "posizione"]
+)
+	
+
+end
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -211,12 +272,12 @@ PlutoUI.TableOfContents()
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-BasicInterpolators = "26cce99e-4866-4b6d-ab74-862489e035e0"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-BasicInterpolators = "~0.7.1"
+LaTeXStrings = "~1.3.1"
 Plots = "~1.39.0"
 PlutoUI = "~0.7.55"
 """
@@ -227,7 +288,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "ae55e518e071fd3cd4ce70fbef00e1039bf9cd1b"
+project_hash = "4cb0b843f754fb4d86e8d8f03dbf3bd2ff3791a0"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -244,12 +305,6 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[deps.BasicInterpolators]]
-deps = ["LinearAlgebra", "Memoize", "Random"]
-git-tree-sha1 = "3f7be532673fc4a22825e7884e9e0e876236b12a"
-uuid = "26cce99e-4866-4b6d-ab74-862489e035e0"
-version = "0.7.1"
 
 [[deps.BitFlags]]
 git-tree-sha1 = "2dc09997850d68179b69dafb58ae806167a32b1b"
@@ -706,12 +761,6 @@ version = "2.28.2+1"
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
 uuid = "442fdcdd-2543-5da2-b0f3-8c86c306513e"
 version = "0.3.2"
-
-[[deps.Memoize]]
-deps = ["MacroTools"]
-git-tree-sha1 = "2b1dfcba103de714d31c033b5dacc2e4a12c7caa"
-uuid = "c03570c3-d221-55d1-a50c-7939bbd78826"
-version = "0.4.4"
 
 [[deps.Missings]]
 deps = ["DataAPI"]
@@ -1340,11 +1389,14 @@ version = "1.4.1+1"
 # ╟─b79ae4e0-96fb-478e-8fc8-3316c6e394ce
 # ╟─c339e1dd-5889-46c7-874b-e6cc048a39bc
 # ╟─69e84cbe-b7e4-48c5-a819-3f471f4d091c
-# ╠═52942653-05c3-4eaa-bf3e-f594a089bd1c
+# ╟─52942653-05c3-4eaa-bf3e-f594a089bd1c
 # ╟─bc13b7b3-7fc4-4007-9025-2597005fa63a
 # ╟─5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
+# ╟─61785755-104d-432e-84c0-4c79a3a1dbad
+# ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
+# ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
