@@ -30,7 +30,7 @@ md"""
 
 ## Davide Viganò
 
-### 19/1/24
+### 28/1/24
 
 """
 
@@ -139,6 +139,46 @@ $R=\dfrac{1}{|\bar r''(S)|}$
 $\hat e_b = \hat e_t \wedge \hat e_n$
 
 """
+
+# ╔═╡ bc13b7b3-7fc4-4007-9025-2597005fa63a
+md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
+
+# ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
+let
+	# Define the range and parametric functions
+
+	t = range(0, S1, length=100)
+	x(t) = t^2/10
+	y(t) = sin(t)
+	dx(t) = t/5
+	dy(t) = cos(t)
+	d2x(t) = 1/5
+	d2y(t) = -sin(t)
+	
+	# Generate coordinates for the curve
+	x_coords = x.(t)
+	y_coords = y.(t)
+	
+	# Choose the point t0 at the end of the range
+	t0 = S1
+	x0, y0 = x(t0), y(t0)
+	dx0, dy0 = dx(t0), dy(t0)
+	
+	# Compute tangent 
+	magnitude_tangent = sqrt(dx0^2 + dy0^2)
+	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
+
+	# Compute normal 
+	magnitude_normal = sqrt(dx0^2 + dy0^2)
+	nx, ny = -ty, tx
+	
+	# Plot the trajectory and vectors
+	p = plot(x_coords, y_coords, label="S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal)
+	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label="Vettore posizione")
+	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label="e_t")
+	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label="Normal Vector")
+
+end
 
 # ╔═╡ 5890b370-d1b9-4372-b429-e2d902a98085
 md"""
@@ -1300,6 +1340,8 @@ version = "1.4.1+1"
 # ╟─b79ae4e0-96fb-478e-8fc8-3316c6e394ce
 # ╟─c339e1dd-5889-46c7-874b-e6cc048a39bc
 # ╟─69e84cbe-b7e4-48c5-a819-3f471f4d091c
+# ╠═52942653-05c3-4eaa-bf3e-f594a089bd1c
+# ╟─bc13b7b3-7fc4-4007-9025-2597005fa63a
 # ╟─5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
