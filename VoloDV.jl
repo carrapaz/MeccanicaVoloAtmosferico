@@ -19,7 +19,6 @@ begin
 	using Plots
 	using PlutoUI
 	using LaTeXStrings
-	import PlutoUI:combine
 	print("Dependencies")
 end
 
@@ -1501,6 +1500,6 @@ version = "1.4.1+1"
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
-# ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
+# ╠═43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
