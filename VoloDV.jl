@@ -191,15 +191,32 @@ md"""
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
 ## Fixed Earth frame $F_E$
-chiamato anche navigational frame
+chiamato anche navigational frame.
 
+Caratteristiche:
+
+-solidale alla Terra
+
+-Inerziale
+
+
+Buonaapprossimazione per Maggioeparallelochecompetono
+Basse vedo l
+i Bassequote e Meridiano 1 diGreenwich
+Nopervolidilungoraggio
+Cattivaapprossimazione per Definizionesistemadi riferimento
+Missili
+Aerei performanti Definizione ORIGINE puntogenerico
+Definizione TERNA
+Le PianotangenteallaTerra
+Eenormalediscordeallagravità
 """
 
 # ╔═╡ 7df38388-286b-4767-8bc6-e56cfdb1f656
 md"latitudine: $(@bind latitude Slider(-pi/2:0.1:pi/2, default=0))"
 
 # ╔═╡ bb575fbf-c996-4557-8b08-cc28db9c0db4
-md"longitudine: $(@bind longitude Slider(-pi/2:0.1:pi/2, default=0))"
+md"longitudine: $(@bind longitude Slider(-pi/2:0.1:2*pi-pi/2, default=-pi/4))"
 
 # ╔═╡ 61785755-104d-432e-84c0-4c79a3a1dbad
 let
@@ -259,6 +276,89 @@ let
 )
 	
 
+end
+
+# ╔═╡ 8934ba0d-dbf5-4ef7-9733-530dcd42ef05
+md"""
+### Velocità all'aria in $F_E$
+"""
+
+# ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
+let
+	
+	# Define a detailed top-down airplane shape as a list of vertices
+	function airplane_shape()
+	    # Coordinates for a more realistic top-down airplane shape
+	    fuselage = [
+	        (0, -0.02), (0.12, -0.02), (0.18, 0), (0.12, 0.02), (0, 0.02), # Fuselage and nose (a pentagon shape)
+	        (-0.12, 0.003), (-0.12, -0.003), (0, -0.02) # Back to start to close the shape
+	    ]
+	
+	    wings = [
+	        (0.02, 0.02), (-0.03, 0.2), (-0.02, 0.2), (0.08, 0.02), # Right wing (a diamond shape)
+	        (0.02, -0.02), (-0.03, -0.2), (-0.02, -0.2), (0.08, -0.02), # Left wing (a diamond shape)
+	    ]
+	    
+	    tail = [
+	        (-0.12, 0.01), (-0.16, 0.05), (-0.14, 0.05), (-0.08, 0.01), # Top tail (a small triangle)
+	        (-0.12, -0.01), (-0.16, -0.05), (-0.14, -0.05), (-0.08, -0.01) # Bottom tail (a small triangle)
+	    ]
+	
+	    # Combine all parts of the airplane
+	    return [fuselage, wings, tail]
+	end
+	
+	# Function to create a filled polygon from shape coordinates
+	function create_polygon(shape)
+	    x_coords = [coord[1] for coord in shape]
+	    y_coords = [coord[2] for coord in shape]
+	    return Shape(x_coords, y_coords)
+	end
+	
+	# Plotting function for the airplane parts
+	function plot_airplane_parts(parts)
+	    p = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.3, 0.3), legend=false)
+	    for part in parts
+	        polygon = create_polygon(part)
+	        plot!(p, polygon, linecolor=:black, fill=(0, :black), legend=false)
+	    end
+	    return p
+	end
+	
+	# Initial airplane parts
+	airplane_parts = airplane_shape()
+	
+	# Define the rotation function
+	function rotate_shape(shape, theta)
+	    cosθ = cos(theta)
+	    sinθ = sin(theta)
+	    return [(x * cosθ - y * sinθ, x * sinθ + y * cosθ) for (x, y) in shape]
+	end
+	
+	# Define the translation function
+	function translate_shape(shape, dx, dy)
+	    return [(x + dx, y + dy) for (x, y) in shape]
+	end
+	
+	# Function to apply transformations to all parts of the airplane and return new parts
+	function transform_airplane_parts(parts, theta, dx, dy)
+	    rotated_parts = [rotate_shape(part, theta) for part in parts]
+	    moved_parts = [translate_shape(part, dx, dy) for part in rotated_parts]
+	    return moved_parts
+	end
+	
+	# Add the functions to rotate and move the shape here
+	# Define a rotation angle in radians (e.g., π/6 for 30 degrees)
+	theta = 0
+	# Define a translation vector (dx, dy)
+	dx, dy = 0, 0
+	
+	# Apply transformations to the airplane parts
+	transformed_airplane_parts = transform_airplane_parts(airplane_parts, theta, dx, dy)
+	
+	# Plotting with transformed parts
+	p = plot_airplane_parts(transformed_airplane_parts)
+	
 end
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -1397,6 +1497,8 @@ version = "1.4.1+1"
 # ╟─61785755-104d-432e-84c0-4c79a3a1dbad
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
+# ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
+# ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
