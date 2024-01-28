@@ -271,7 +271,7 @@ let
 	scatter!([0 0 0 0], [-1 NaN -1 NaN -1], lims=(0,1),
     inset=(1,bbox(0.05,0.1,0.15,0.15)), subplot=2, msw=0, marker=:square,
     legendfontsize=8, framestyle=:none, fg_color_legend=nothing, legend=:left,
-    color=[:red :white :blue :white :black], label=" "^4 .* ["latitudine" "" "longitudine" "" "posizione"]
+    color=[:red :white :green :white :black], label=" "^4 .* ["latitudine" "" "longitudine" "" "posizione"]
 )
 	
 
@@ -281,6 +281,9 @@ end
 md"""
 ### Velocità all'aria in $F_E$
 """
+
+# ╔═╡ 90e78e30-90f6-48cd-b699-3493cd662713
+md"rotazione: $(@bind rotazione1 Slider(0:0.05:2*pi, default=pi/2))"
 
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
 let
@@ -348,7 +351,7 @@ let
 	
 	# Add the functions to rotate and move the shape here
 	# Define a rotation angle in radians (e.g., π/6 for 30 degrees)
-	theta = 0
+	theta = rotazione1
 	# Define a translation vector (dx, dy)
 	dx, dy = 0, 0
 	
@@ -1498,8 +1501,9 @@ version = "1.4.1+1"
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
+# ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
-# ╠═43b35f35-5d9c-4fc2-b778-e356cad72978
+# ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
