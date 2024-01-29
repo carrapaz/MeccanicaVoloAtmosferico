@@ -460,18 +460,18 @@ begin
 	function airplane_shape()
 	    # Coordinates for a more realistic top-down airplane shape
 	    fuselage = [
-	        (0, -0.02), (0.12, -0.02), (0.18, 0), (0.12, 0.02), (0, 0.02), # Fuselage and nose (a pentagon shape)
-	        (-0.12, 0.003), (-0.12, -0.003), (0, -0.02) # Back to start to close the shape
+	        (-0.04, -0.02), (0.08, -0.02), (0.14, 0), (0.08, 0.02), (-0.04, 0.02), # Fuselage and nose (a pentagon shape)
+	        (-0.16, 0.003), (-0.16, -0.003), (-0.04, -0.02) # Back to start to close the shape
 	    ]
 	
 	    wings = [
-	        (0.02, 0.02), (-0.03, 0.2), (-0.02, 0.2), (0.08, 0.02), # Right wing (a diamond shape)
-	        (0.02, -0.02), (-0.03, -0.2), (-0.02, -0.2), (0.08, -0.02), # Left wing (a diamond shape)
+	        (-0.02, 0.02), (-0.07, 0.2), (-0.06, 0.2), (0.04, 0.02), # Right wing (a diamond shape)
+	        (-0.02, -0.02), (-0.07, -0.2), (-0.06, -0.2), (0.04, -0.02), # Left wing (a diamond shape)
 	    ]
 	    
 	    tail = [
-	        (-0.12, 0.01), (-0.16, 0.05), (-0.14, 0.05), (-0.08, 0.01), # Top tail (a small triangle)
-	        (-0.12, -0.01), (-0.16, -0.05), (-0.14, -0.05), (-0.08, -0.01) # Bottom tail (a small triangle)
+	        (-0.16, 0.01), (-0.2, 0.05), (-0.18, 0.05), (-0.12, 0.01), # Top tail (a small triangle)
+	        (-0.16, -0.01), (-0.2, -0.05), (-0.18, -0.05), (-0.12, -0.01) # Bottom tail (a small triangle)
 	    ]
 	
 	    # Combine all parts of the airplane
