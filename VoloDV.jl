@@ -262,7 +262,8 @@ la terna sarà così definita:
 $$F_E=
 \begin{cases}
 \hat x_E, \hat y_E = versori \ piano\\
-\hat z_E = normale \ al \ piano \ e \ entrante
+\hat z_E = normale \ al \ piano \ e \ discorde \ rispetto\ \bar g\\
+origine = p(latitudine,longitudine)
 \end{cases}$$
 
 
@@ -274,7 +275,7 @@ md"latitudine: $(@bind latitude Slider(-pi/2:0.1:pi/2, default=0))"
 # ╔═╡ bb575fbf-c996-4557-8b08-cc28db9c0db4
 md"longitudine: $(@bind longitude Slider(-pi/2:0.1:2*pi-pi/2, default=-pi/4))"
 
-# ╔═╡ 61785755-104d-432e-84c0-4c79a3a1dbad
+# ╔═╡ 02e5170e-6696-46ed-8c26-3c3ba60e475e
 let
 
 	# Function to generate sphere coordinates
@@ -343,8 +344,7 @@ md"""
 md"rotazione: $(@bind rotazione1 Slider(0:0.05:2*pi, default=pi/2))"
 
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
-let
-	
+let	
 	# Define a detailed top-down airplane shape as a list of vertices
 	function airplane_shape()
 	    # Coordinates for a more realistic top-down airplane shape
@@ -1554,7 +1554,7 @@ version = "1.4.1+1"
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╟─61785755-104d-432e-84c0-4c79a3a1dbad
+# ╟─02e5170e-6696-46ed-8c26-3c3ba60e475e
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
