@@ -34,9 +34,15 @@ md"""
 
 """
 
+# ╔═╡ 51934362-4b1f-4aea-bcf3-a3a892de83a1
+md"""
+# Intro
+Questo notebook interattivo vuole fornire una base per lo studio della meccanica del volo atmosferico. Fatto per coloro che intendono apprendere di più sul funzionamento del volo atmosferico e sulle conseguenze che il design dell'aeromobile ha sulle performance in volo
+"""
+
 # ╔═╡ 3ea80b56-a7c7-4dd1-aae3-e240e0042145
 md"""
-# Richiami cinematica
+# Richiami di cinematica
 """
 
 # ╔═╡ 8e429280-d45f-4aaa-8db6-bb865822def4
@@ -58,7 +64,7 @@ $$
 
 # ╔═╡ e4f7b60f-7c55-462c-9ced-da14638b66ae
 md"""
-anzichè usare il tempo possiamo usare l' ascissa curvilinea, $S$, ossia lo spostamento del punto $P$ lungo la sua traiettoria
+anzichè usare il tempo come variabile possiamo usare l' ascissa curvilinea, $S$, ossia lo spostamento del punto $P$ lungo la sua traiettoria
 """
 
 # ╔═╡ c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
@@ -298,6 +304,11 @@ md"rotazione aereo: $(@bind rotazione1 Slider(0:0.01:2*pi, default=pi/2))"
 # ╔═╡ 4ed72bd1-6fea-4a90-ae20-b23300f63085
 md"velocità al suolo: $(@bind Vgs Slider(0:0.01:0.5, default=0.25))"
 
+# ╔═╡ d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
+md"""
+## Horizon frame $F_H$
+"""
+
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
 # Codice del notebook
@@ -447,10 +458,10 @@ begin
 	
 	# Plotting function for the airplane parts
 	function plot_airplane_parts(parts)
-	    p = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),lable="")
+	    p = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),lable="airframe")
 	    for part in parts
 	        polygon = create_polygon(part)
-	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="")
+	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="airframe")
 	    end
 	    return p
 	end
@@ -1613,6 +1624,7 @@ version = "1.4.1+1"
 
 # ╔═╡ Cell order:
 # ╟─38b8bf30-b673-11ee-0868-8df22983dbe9
+# ╟─51934362-4b1f-4aea-bcf3-a3a892de83a1
 # ╟─3ea80b56-a7c7-4dd1-aae3-e240e0042145
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
@@ -1638,6 +1650,7 @@ version = "1.4.1+1"
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
+# ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
