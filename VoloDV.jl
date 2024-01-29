@@ -259,6 +259,19 @@ la quota $h$ è misurata tramite differenziale di pressione rispetto a questi ri
 
 """
 
+# ╔═╡ 45661987-c61e-4864-97a6-ac0ac6010d39
+md"""
+## Quota di volo
+Distanza verticale tra velivolo e la superficie terrestre, può essere indicata come: 
+
+Quota assoluta, **absolute altitude:** $AA$ misurata rispetto alla topografia del terreno è utile per voli a bassa quota
+
+Quota vera, **true altitude** $TA$ misurata rispetto al livello medio del mare è utile per confrontare la distanza verticale tra velivoli in volo
+"""
+
+# ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
+md"S: $(@bind S2 Slider(0:0.01:10, default=5,show_value=true))"
+
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
 ## Fixed Earth frame $F_E$
@@ -267,7 +280,7 @@ fornisce una buona approssimazione per voli a bassa quota e di breve raggio.
 Si può usare come origine la posizione definita da latitudine e longitudine.
 Il piano di volo è tangente alla terra nella posizione.
 
-la terna sarà così definita:
+la terna è così definita:
 $$F_E=
 \begin{cases}
 \hat x_E, \hat y_E = versori \ piano\\
@@ -307,6 +320,22 @@ md"velocità al suolo: $(@bind Vgs Slider(0:0.01:0.5, default=0.25))"
 # ╔═╡ d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 md"""
 ## Horizon frame $F_H$
+"""
+
+# ╔═╡ f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
+md"""
+Anche chiamato NED (North,East,Down) o "terrestre mobile". Questo sistema di riferimento ha come origine un punto materiale sul velivolo per esempio il suo baricentro (center of gravity) $CG$.
+
+la terna è così definita:
+$$F_H=
+\begin{cases}
+\hat x_H = Nord\\
+\hat y_E = East\\
+\hat z_E = normale \ al \ piano \ e \ concorde \ a\ \bar g\\
+origine = GC \ velivolo
+\end{cases}$$
+
+da notare che la terna è indipendente rispetto l'asetto di volo
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -458,7 +487,7 @@ begin
 	
 	# Plotting function for the airplane parts
 	function plot_airplane_parts(parts)
-	    p = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),lable="airframe")
+	    p = plot()
 	    for part in parts
 	        polygon = create_polygon(part)
 	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="airframe")
@@ -483,7 +512,7 @@ begin
 	    moved_parts = [translate_shape(part, dx, dy) for part in rotated_parts]
 	    return moved_parts
 	end
-	print("funzioni Disegna e muovi aereo")
+	print("funzioni Disegna e muovi aereo top down")
 end
 
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
@@ -504,6 +533,7 @@ let
 
 	# Plotting the speeds
 	# Ground speed
+	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),lable="airframe")
 	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"Vgs",linewidth=2)
 	# Wind speed
 	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"Vw*",linewidth=2)
@@ -513,6 +543,53 @@ let
 	plot!([0.1, 0.1+Vgs*cos(rotazione1)], [0.1, 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1,line=:dash)
 	plot!([dx+Vgs*cos(rotazione1), 0.1+Vgs*cos(rotazione1)], [dy+Vgs*sin(rotazione1), 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1, line=:dash)
 	
+end
+
+# ╔═╡ 1e397967-4c2c-4b84-b121-0e605b329226
+begin
+# Define a detailed top-down airplane shape as a list of vertices
+	function airplane_shape_side()
+	    # Coordinates for a more realistic top-down airplane shape
+	    fuselage = [
+	        (-0.03, -0.02), (0.09, -0.02), (0.15, 0), (0.09, 0.02), (-0.03, 0.02), # Fuselage and nose (a pentagon shape)
+	        (-0.15, 0.003), (-0.15, -0.003), (-0.03, -0.02) # Back to start to close the shape
+	    ]
+	    
+	    tail = [
+	        (-0.12, 0.01), (-0.16, 0.05), (-0.14, 0.05), (-0.08, 0.01), # Top tail (a small triangle)
+	        (-0.12, -0.01), (-0.14, -0.02), (-0.14, -0.02), (-0.03, -0.01) # Bottom tail (a small triangle)
+	    ]
+	
+	    # Combine all parts of the airplane
+	    return [fuselage, tail]
+	end
+	
+	print("Disegna aereo side")
+end
+
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+let
+	# Initial airplane parts
+	airplane_parts = airplane_shape_side()
+
+	# Define a translation vector (dx, dy)
+	dx, dy = S2, 1.5
+	
+	# Apply transformations to the airplane parts
+	transformed_airplane_parts = transform_airplane_parts(airplane_parts, 0, dx, dy)
+
+	#Vgs=0.3
+	
+	# Plotting with transformed parts
+	plot_airplane_parts(transformed_airplane_parts)
+	x = range(0, 10, length=50)
+	terrain(x) =  sin(x)/(x+1)
+	sea(x) = 0*x
+	plot!(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2))
+	plot!(sea,color=:blue, label="mare")
+ 	plot!(terrain,color=:green, label="terreno")
+	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
+	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1641,6 +1718,9 @@ version = "1.4.1+1"
 # ╟─5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─258dcb67-de1f-48b6-978f-86ba4603b244
+# ╟─45661987-c61e-4864-97a6-ac0ac6010d39
+# ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
+# ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 # ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
@@ -1651,10 +1731,12 @@ version = "1.4.1+1"
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
+# ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
+# ╟─1e397967-4c2c-4b84-b121-0e605b329226
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
