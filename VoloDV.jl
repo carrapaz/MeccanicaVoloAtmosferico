@@ -335,7 +335,7 @@ $$F_H=
 origine = GC \ velivolo
 \end{cases}$$
 
-da notare che la terna è indipendente rispetto l'asetto di volo
+da notare che la terna è indipendente rispetto l'asetto di volo in quanto definita rispetto alla terra
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -490,7 +490,7 @@ begin
 	    p = plot()
 	    for part in parts
 	        polygon = create_polygon(part)
-	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="airframe")
+	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="",primary=false)
 	    end
 	    return p
 	end
@@ -533,7 +533,7 @@ let
 
 	# Plotting the speeds
 	# Ground speed
-	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),lable="airframe")
+	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
 	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"Vgs",linewidth=2)
 	# Wind speed
 	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"Vw*",linewidth=2)
@@ -543,6 +543,38 @@ let
 	plot!([0.1, 0.1+Vgs*cos(rotazione1)], [0.1, 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1,line=:dash)
 	plot!([dx+Vgs*cos(rotazione1), 0.1+Vgs*cos(rotazione1)], [dy+Vgs*sin(rotazione1), 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1, line=:dash)
 	
+end
+
+# ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
+let
+	let	
+	# Initial airplane parts
+	airplane_parts = airplane_shape()
+
+	# Define a translation vector (dx, dy)
+	dx, dy = 0, 0
+	
+	# Apply transformations to the airplane parts
+	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione1, dx, dy)
+
+	#Vgs=0.3
+	
+	# Plotting with transformed parts
+	plot_airplane_parts(transformed_airplane_parts)
+
+	# Plotting the speeds
+	# Ground speed
+	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
+	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"Vgs",linewidth=2)
+	# Wind speed
+	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"Vw*",linewidth=2)
+	# Air speed
+	plot!([dx, 0.1+Vgs*cos(rotazione1)], [dy, 0.1+Vgs*sin(rotazione1)], arrow=true, color=:red, label=L"Vas",linewidth=2)
+	# Connectors
+	plot!([0.1, 0.1+Vgs*cos(rotazione1)], [0.1, 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1,line=:dash)
+	plot!([dx+Vgs*cos(rotazione1), 0.1+Vgs*cos(rotazione1)], [dy+Vgs*sin(rotazione1), 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1, line=:dash)
+	
+end
 end
 
 # ╔═╡ 1e397967-4c2c-4b84-b121-0e605b329226
@@ -1732,6 +1764,7 @@ version = "1.4.1+1"
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
+# ╠═337267df-a02d-4163-8bac-98ddd734ea18
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
