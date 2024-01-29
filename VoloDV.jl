@@ -269,71 +269,11 @@ origine = p(latitudine,longitudine)
 
 """
 
-# ╔═╡ 7df38388-286b-4767-8bc6-e56cfdb1f656
-md"latitudine: $(@bind latitude Slider(-pi/2:0.1:pi/2, default=0))"
-
 # ╔═╡ bb575fbf-c996-4557-8b08-cc28db9c0db4
 md"longitudine: $(@bind longitude Slider(-pi/2:0.1:2*pi-pi/2, default=-pi/4))"
 
-# ╔═╡ 02e5170e-6696-46ed-8c26-3c3ba60e475e
-let
-
-	# Function to generate sphere coordinates
-	function sphere_coords(radius, n_points)
-	    θ = LinRange(0, π, n_points)
-	    φ = LinRange(0, 2π, n_points)
-	    x = [radius * sin(t) * cos(p) for t in θ, p in φ]
-	    y = [radius * sin(t) * sin(p) for t in θ, p in φ]
-	    z = [radius * cos(t) for t in θ, p in φ]
-	    return x, y, z
-	end
-	
-	# Sphere settings (approximate radius of the Earth in kilometers)
-	radius = 6371
-	n_points = 100
-	
-	# Generate sphere
-	x, y, z = sphere_coords(radius, n_points)
-	
-	# Plotting the sphere
-	p = surface(x, y, z, color=:blue, legend=false)
-	
-	# Define latitude and longitude for the lines
-	#latitude = 0 # Equator
-	#longitude = 0 # Prime Meridian
-	
-	# Adding a parallel (latitude) and a meridian (longitude)
-	# Parallel (constant latitude)
-	parallel_x = radius * cos.(LinRange(0, 2π, n_points)) * cos(latitude)
-	parallel_y = radius * sin.(LinRange(0, 2π, n_points)) * cos(latitude)
-	parallel_z = ones(n_points) * radius * sin(latitude)
-	
-	# Meridian (constant longitude)
-	meridian_x = radius * sin.(LinRange(0, π, n_points)) * cos(longitude)
-	meridian_y = radius * sin.(LinRange(0, π, n_points)) * sin(longitude)
-	meridian_z = radius * cos.(LinRange(0, π, n_points))
-	
-	# Plotting the parallel and meridian
-	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, label="Parallel")
-	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green, label="Meridian")
-	
-	# Coordinates of the intersection point (at the equator and prime meridian)
-	intersection_x = radius * cos(latitude) * cos(longitude)
-	intersection_y = radius * cos(latitude) * sin(longitude)
-	intersection_z = radius * sin(latitude)
-	
-	# Plotting the intersection point
-	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=5, label="Intersection Point")
-
-	title!(L"Fixed Earth frame $F_E$")
-	scatter!([0 0 0 0], [-1 NaN -1 NaN -1], lims=(0,1),
-    inset=(1,bbox(0.05,0.1,0.15,0.15)), subplot=2, msw=0, marker=:square,
-    legendfontsize=8, framestyle=:none, fg_color_legend=nothing, legend=:left,
-    color=[:red :white :green :white :black], label=" "^4 .* ["latitudine" "" "longitudine" "" "posizione"]
-)
-	
-
-end
+# ╔═╡ 7df38388-286b-4767-8bc6-e56cfdb1f656
+md"latitudine: $(@bind latitude Slider(-pi/2:0.1:pi/2, default=0))"
 
 # ╔═╡ 8934ba0d-dbf5-4ef7-9733-530dcd42ef05
 md"""
@@ -343,9 +283,124 @@ md"""
 # ╔═╡ 90e78e30-90f6-48cd-b699-3493cd662713
 md"rotazione: $(@bind rotazione1 Slider(0:0.05:2*pi, default=pi/2))"
 
-# ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
-let	
-	# Define a detailed top-down airplane shape as a list of vertices
+# ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
+md"""
+# Codice del notebook
+"""
+
+# ╔═╡ f6717f17-30c4-49bd-abf2-623dd7f78d9d
+PlutoUI.TableOfContents()
+
+# ╔═╡ a9935d19-6ab2-4044-bc3e-07089e8801d5
+begin
+# Function to generate sphere coordinates
+	function sphere_coords(radius, n_points)
+	    θ = LinRange(0, π, n_points)
+	    φ = LinRange(0, 2π, n_points)
+	    x = [radius * sin(t) * cos(p) for t in θ, p in φ]
+	    y = [radius * sin(t) * sin(p) for t in θ, p in φ]
+	    z = [radius * cos(t) for t in θ, p in φ]
+	    return x, y, z
+	end
+
+	function plane_coords(latitude,longitude,radius,plane_size)
+		# Calculate the normal vector at the intersection point
+		normal_x = cos(latitude) * cos(longitude)
+		normal_y = cos(latitude) * sin(longitude)
+		normal_z = sin(latitude)
+		
+		# Tangent vectors at the intersection point
+		tangent_vector_θ = [-sin(latitude) * cos(longitude), -sin(latitude) * sin(longitude), cos(latitude)]
+		tangent_vector_φ = [-sin(longitude), cos(longitude), 0]
+		
+		# Define the range for the plane coordinates
+		u_range = LinRange(-plane_size, plane_size, 2)
+		v_range = LinRange(-plane_size, plane_size, 2)
+	
+		# Create the grid for the plane using the tangent vectors
+		x_plane = [normal_x * radius + u * tangent_vector_θ[1] + v * tangent_vector_φ[1] for u in u_range, v in v_range]
+		y_plane = [normal_y * radius + u * tangent_vector_θ[2] + v * tangent_vector_φ[2] for u in u_range, v in v_range]
+		z_plane = [normal_z * radius + u * tangent_vector_θ[3] + v * tangent_vector_φ[3] for u in u_range, v in v_range]
+
+		return x_plane,y_plane,z_plane
+	end
+
+	function parallel_coords(radius,n_points,latitude)
+		# Parallel (constant latitude)
+		parallel_range = LinRange(0, 2π, n_points)
+		parallel_x = radius * cos.(parallel_range) * cos(latitude)
+		parallel_y = radius * sin.(parallel_range) * cos(latitude)
+		parallel_z = ones(n_points) * radius * sin(latitude)
+		return parallel_x,parallel_y,parallel_z
+	end
+	function meridian_coords(radius,n_points,longitude)
+		# Meridian (constant longitude)
+		meridian_range = LinRange(0, π, n_points)
+		meridian_x = radius * sin.(meridian_range) * cos(longitude)
+		meridian_y = radius * sin.(meridian_range) * sin(longitude)
+		meridian_z = radius * cos.(meridian_range)
+		return meridian_x,meridian_y,meridian_z
+	end
+	print("Funzioni per FE")
+end
+
+# ╔═╡ 4c58ff04-6f48-4247-8bbb-7a9593432368
+let
+	
+	# Generate the sphere coordinates
+	radius = 10
+	n_points = 40
+	x_sphere, y_sphere, z_sphere = sphere_coords(radius, n_points)
+
+	# Generate coordinates of plane tangent to the sphere
+	
+	plane_size = radius * 0.2 # This is an arbitrary size for visualization
+	x_plane,y_plane,z_plane = plane_coords(latitude,longitude,radius,plane_size)
+	
+	# Generate parallel (latitude) and meridian (longitude)
+	
+	parallel_x,parallel_y,parallel_z = parallel_coords(radius,n_points,latitude)
+	
+	meridian_x,meridian_y,meridian_z = meridian_coords(radius,n_points,longitude)
+	
+	# Coordinates of the intersection point (at the equator and prime meridian)
+	intersection_x = radius * cos(latitude) * cos(longitude)
+	intersection_y = radius * cos(latitude) * sin(longitude)
+	intersection_z = radius * sin(latitude)
+
+	
+	# Plotting
+	
+	# Plot the sphere
+	#surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false)
+
+	# Plotting the parallel and meridian
+	plot(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, label=false)
+	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green,lable=false)
+
+	# Plotting the tangent plane
+	plot!(x_plane, y_plane, z_plane, color=:yellow, alpha=0.5,label=false)
+	
+	# Plotting the intersection point
+	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=3, label=false)
+
+	xlimFE=[-radius-plane_size,+radius+plane_size]
+	ylimFE=[-radius-plane_size,+radius+plane_size]
+	xaxis!(xlim=xlimFE)
+	yaxis!(ylim=ylimFE)
+	title!(L"Fixed Earth frame $F_E$",showaxis=false)
+	
+	scatter!([0 0], [-1 NaN -1 NaN -1 NaN -1], lims=(0,1),
+    inset=(1,bbox(0.05,0.1,0.15,0.15)), subplot=2, msw=0, marker=:square,
+    legendfontsize=8, framestyle=:none, fg_color_legend=nothing, legend=:left,
+    color=[:red :white :green :white :black :white :yellow], label=" "^2 .* ["latitudine" "" "longitudine" "" "posizione" "" "piano"]
+)
+		
+end
+
+# ╔═╡ 68b98a8b-da00-4678-9de2-26f329e7226a
+begin
+# Define a detailed top-down airplane shape as a list of vertices
 	function airplane_shape()
 	    # Coordinates for a more realistic top-down airplane shape
 	    fuselage = [
@@ -383,10 +438,6 @@ let
 	    end
 	    return p
 	end
-	
-	# Initial airplane parts
-	airplane_parts = airplane_shape()
-	
 	# Define the rotation function
 	function rotate_shape(shape, theta)
 	    cosθ = cos(theta)
@@ -405,28 +456,24 @@ let
 	    moved_parts = [translate_shape(part, dx, dy) for part in rotated_parts]
 	    return moved_parts
 	end
-	
-	# Add the functions to rotate and move the shape here
-	# Define a rotation angle in radians (e.g., π/6 for 30 degrees)
-	theta = rotazione1
+	print("funzioni Disegna e muovi aereo")
+end
+
+# ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
+let	
+	# Initial airplane parts
+	airplane_parts = airplane_shape()
+
 	# Define a translation vector (dx, dy)
 	dx, dy = 0, 0
 	
 	# Apply transformations to the airplane parts
-	transformed_airplane_parts = transform_airplane_parts(airplane_parts, theta, dx, dy)
+	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione1, dx, dy)
 	
 	# Plotting with transformed parts
-	p = plot_airplane_parts(transformed_airplane_parts)
+	plot_airplane_parts(transformed_airplane_parts)
 	
 end
-
-# ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
-md"""
-# Codice del notebook
-"""
-
-# ╔═╡ f6717f17-30c4-49bd-abf2-623dd7f78d9d
-PlutoUI.TableOfContents()
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1554,14 +1601,16 @@ version = "1.4.1+1"
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╟─02e5170e-6696-46ed-8c26-3c3ba60e475e
-# ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
+# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
+# ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
+# ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
+# ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
