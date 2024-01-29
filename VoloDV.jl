@@ -177,7 +177,19 @@ end
 # ╔═╡ 5890b370-d1b9-4372-b429-e2d902a98085
 md"""
 ### Velocità e accellerazione
-da fare ma non ho voglia
+\
+**Velocità:** $\dot{\bar r} =\dot S*\hat e_t$
+
+$\dot{\bar r} = \dfrac{d \bar r}{dt} = \dfrac{d \bar r(S)}{dS} * \dfrac{dS}{dt} = \bar r'(S)* \dot S(t)=\dot S * \bar r' = \dot S*\hat e_t$
+
+la veocità è sempre tangente alla traiettoria 
+\
+\
+\
+**Accellerazione:** $\ddot{\bar r} =\ddot S*\hat e_t+\dfrac{\dot S^2}{R}*\hat e_n$
+
+dove $\ddot S*\hat e_t$ è la componente tangenziale e $\dfrac{\dot S^2}{R}*\hat e_n$ la componente normale dell'accellerazione.
+$\omega = \dfrac{\dot S}{R}$ è la velocità angolare
 """
 
 # ╔═╡ cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
@@ -187,28 +199,73 @@ md"""
 
 """
 
+# ╔═╡ 258dcb67-de1f-48b6-978f-86ba4603b244
+md"""
+## Ipotesi con cui lavoriamo
+**Terra piatta:**
+
+consideriamo l'accelerazione gravitazionale uniforme e costante e la variazione di quota ininfluente sulla forza da essa causata. non consideriamo la rotazione terrestre e il sistema di riferimento è inerziale
+
+**Atmosfera standard:**
+
+| Simbolo     | Grandezza | unità | aria standard |
+| ----------- | ----------- | ----- | ---- |
+| $h$      | quota       | $m$ | $11km$ |
+| $\rho$      | densità       | $kg/m^3$| $1.215 kg/m^3$ |
+| $T$      | temperatura     | $K$| $288.15K$ |
+| $P$      | pressione    | $Pa$| $101.3kPa$ |
+| $R$      | cost. gas     | $KJ/kgK$| $287.1KJ/kgK$|
+| $g$      | cost. grav    | $m/s^2$| $9.81 m/s^2$ |
+| $\lambda$      | coeff T/h    | $K/km$| $-6.5K/km$|
+
+
+*ipotesi di gas perfetto:* $P=\rho*R*T$
+
+*ipotesi di gas in quiete:* $\dfrac{dP}{dh}=-\rho*g$
+
+usando queste ipotesi si possono ricavare $T$,$P$,$\rho$ in funzione di $h$
+
+$$T(h)=
+\begin{cases}
+T(h) = T_0 + \lambda*h \ | \ h<h_s\\
+T(h) = T_s \ | \ h>h_s
+\end{cases}$$
+
+con $T_s=216.5K$
+
+$$P(h)=
+\begin{cases}
+P(h) = P_0 (1+\dfrac{\lambda h}{T_0})^\dfrac{-g}{R\lambda} \ | \ h<h_s\\
+P(h) = P_s*e^{\dfrac{-g}{RT_s}(h-h_s)} \ | \ h>h_s
+\end{cases}$$
+\
+la quota $h$ è misurata tramite differenziale di pressione rispetto a questi riferimenti
+
+| Acronimo     | Riferimento | Utilizzo |
+| ----------- | ----------- | ----- | 
+| $QNH$      | pressione al livello del mare locale | volo a bassa quota o manovre terminali |
+| $QNE$      | pressione standard $P_0$       | separazione tra varie rotte | 
+| $QFE$      | lettura pressione aeroporto     | atterraggio| 
+
+
+"""
+
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
 ## Fixed Earth frame $F_E$
-chiamato anche navigational frame.
+chiamato anche navigational frame. è solidale alla Terra e inerziale.
+fornisce una buona approssimazione per voli a bassa quota e di breve raggio.
+Si può usare come origine la posizione definita da latitudine e longitudine.
+Il piano di volo è tangente alla terra nella posizione.
 
-Caratteristiche:
+la terna sarà così definita:
+$$F_E=
+\begin{cases}
+\hat x_E, \hat y_E = versori \ piano\\
+\hat z_E = normale \ al \ piano \ e \ entrante
+\end{cases}$$
 
--solidale alla Terra
 
--Inerziale
-
-
-Buonaapprossimazione per Maggioeparallelochecompetono
-Basse vedo l
-i Bassequote e Meridiano 1 diGreenwich
-Nopervolidilungoraggio
-Cattivaapprossimazione per Definizionesistemadi riferimento
-Missili
-Aerei performanti Definizione ORIGINE puntogenerico
-Definizione TERNA
-Le PianotangenteallaTerra
-Eenormalediscordeallagravità
 """
 
 # ╔═╡ 7df38388-286b-4767-8bc6-e56cfdb1f656
@@ -1495,6 +1552,7 @@ version = "1.4.1+1"
 # ╟─bc13b7b3-7fc4-4007-9025-2597005fa63a
 # ╟─5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
+# ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 # ╟─61785755-104d-432e-84c0-4c79a3a1dbad
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
