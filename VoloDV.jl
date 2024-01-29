@@ -288,6 +288,9 @@ md"""
 # Codice del notebook
 """
 
+# ╔═╡ f1fda11e-3cef-4e6f-ae23-2d9a8a379dc4
+
+
 # ╔═╡ f6717f17-30c4-49bd-abf2-623dd7f78d9d
 PlutoUI.TableOfContents()
 
@@ -341,6 +344,7 @@ begin
 		meridian_z = radius * cos.(meridian_range)
 		return meridian_x,meridian_y,meridian_z
 	end
+	
 	print("Funzioni per FE")
 end
 
@@ -372,14 +376,14 @@ let
 	# Plotting
 	
 	# Plot the sphere
-	#surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false)
+	surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=false)
 
 	# Plotting the parallel and meridian
-	plot(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, label=false)
+	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, legend=false,label=false)
 	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green,lable=false)
 
 	# Plotting the tangent plane
-	plot!(x_plane, y_plane, z_plane, color=:yellow, alpha=0.5,label=false)
+	plot!(x_plane, y_plane, z_plane, st=:surface, color=:yellow, alpha=0.5,label=false)
 	
 	# Plotting the intersection point
 	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=3, label=false)
@@ -1601,13 +1605,14 @@ version = "1.4.1+1"
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
+# ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
+# ╠═f1fda11e-3cef-4e6f-ae23-2d9a8a379dc4
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
