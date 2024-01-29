@@ -19,6 +19,7 @@ begin
 	using Plots
 	using PlutoUI
 	using LaTeXStrings
+	gr()
 	print("Dependencies")
 end
 
@@ -97,8 +98,10 @@ let
 	y_coords = y.(t);
 	z_coords = z.(t);
 	
-	plot(x_coords, y_coords, z_coords, label="S", xlabel="x(t)", ylabel="y(t)", zlabel="z(t)",title="Traiettoria Parametrica",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
-	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label="Vettore posizione")
+	
+	p = plot(x_coords, y_coords, z_coords, label="S")
+	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label="Vettore posizione",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
+	
 end
 
 # ╔═╡ c339e1dd-5889-46c7-874b-e6cc048a39bc
@@ -277,7 +280,7 @@ md"latitudine: $(@bind latitude Slider(-pi/2:0.1:pi/2, default=0))"
 
 # ╔═╡ 8934ba0d-dbf5-4ef7-9733-530dcd42ef05
 md"""
-### Velocità all'aria in $F_E$
+### Velocità al suolo in $F_E$
 """
 
 # ╔═╡ 90e78e30-90f6-48cd-b699-3493cd662713
@@ -287,9 +290,6 @@ md"rotazione: $(@bind rotazione1 Slider(0:0.05:2*pi, default=pi/2))"
 md"""
 # Codice del notebook
 """
-
-# ╔═╡ f1fda11e-3cef-4e6f-ae23-2d9a8a379dc4
-
 
 # ╔═╡ f6717f17-30c4-49bd-abf2-623dd7f78d9d
 PlutoUI.TableOfContents()
@@ -353,7 +353,7 @@ let
 	
 	# Generate the sphere coordinates
 	radius = 10
-	n_points = 40
+	n_points = 30
 	x_sphere, y_sphere, z_sphere = sphere_coords(radius, n_points)
 
 	# Generate coordinates of plane tangent to the sphere
@@ -376,7 +376,7 @@ let
 	# Plotting
 	
 	# Plot the sphere
-	surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=false)
+	surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=true)
 
 	# Plotting the parallel and meridian
 	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, legend=false,label=false)
@@ -386,7 +386,7 @@ let
 	plot!(x_plane, y_plane, z_plane, st=:surface, color=:yellow, alpha=0.5,label=false)
 	
 	# Plotting the intersection point
-	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=3, label=false)
+	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=3, label="P")
 
 	xlimFE=[-radius-plane_size,+radius+plane_size]
 	ylimFE=[-radius-plane_size,+radius+plane_size]
@@ -488,7 +488,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 LaTeXStrings = "~1.3.1"
-Plots = "~1.39.0"
+Plots = "~1.40.0"
 PlutoUI = "~0.7.55"
 """
 
@@ -498,7 +498,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "4cb0b843f754fb4d86e8d8f03dbf3bd2ff3791a0"
+project_hash = "adf95005e693e51b6c64d3136cdd3a5edf0cceba"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -596,9 +596,9 @@ uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
 [[deps.DataAPI]]
-git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
+git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
-version = "1.15.0"
+version = "1.16.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -698,15 +698,15 @@ version = "3.3.9+0"
 
 [[deps.GR]]
 deps = ["Artifacts", "Base64", "DelimitedFiles", "Downloads", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Pkg", "Preferences", "Printf", "Random", "Serialization", "Sockets", "TOML", "Tar", "Test", "UUIDs", "p7zip_jll"]
-git-tree-sha1 = "27442171f28c952804dede8ff72828a96f2bfc1f"
+git-tree-sha1 = "a8c834cdae6a8347c72eea19930ebdaabb6015e6"
 uuid = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-version = "0.72.10"
+version = "0.73.1"
 
 [[deps.GR_jll]]
 deps = ["Artifacts", "Bzip2_jll", "Cairo_jll", "FFMPEG_jll", "Fontconfig_jll", "FreeType2_jll", "GLFW_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pixman_jll", "Qt6Base_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "025d171a2847f616becc0f84c8dc62fe18f0f6dd"
+git-tree-sha1 = "2abcce0c099dfb0863efc261be904fc2b85eccdd"
 uuid = "d2c73de3-f751-5644-a686-071e5b155ba9"
-version = "0.72.10+0"
+version = "0.73.1+0"
 
 [[deps.Gettext_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "XML2_jll"]
@@ -1074,10 +1074,10 @@ uuid = "995b91a9-d308-5afd-9ec6-746e21dbc043"
 version = "1.4.0"
 
 [[deps.Plots]]
-deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Preferences", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "ccee59c6e48e6f2edf8a5b64dc817b6729f99eb5"
+deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
+git-tree-sha1 = "38a748946dca52a622e79eea6ed35c6737499109"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.39.0"
+version = "1.40.0"
 
     [deps.Plots.extensions]
     FileIOExt = "FileIO"
@@ -1612,7 +1612,6 @@ version = "1.4.1+1"
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
-# ╠═f1fda11e-3cef-4e6f-ae23-2d9a8a379dc4
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
