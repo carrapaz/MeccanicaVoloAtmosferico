@@ -283,8 +283,20 @@ md"""
 ### Velocità al suolo in $F_E$
 """
 
+# ╔═╡ 9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
+md"""
+Spesso durante il volo la velocità rispetto al suolo **ground speed:** $\bar V_{GS}$ non coincide con la velocità con cui l'aereo viaggia nell'aria. questo perchè può esserci vento e l'aria stessa avere una velocità **wind speed:** $\bar V_w$. ciò comporta che l'aereo ha anche una velocità rispetto al vento $\bar V_{w^*}=- \bar V_{w}$ e la velocita di volo sarà la somma di queste due componenti **air speed:** $\bar V_{AS}=\bar V_{w^*}+\bar V_{GS}$
+
+quindi per trovare la $\bar V_{GS}$ che in $F_E$ corrisponde a $\dot{\bar r}_E$ ossia la derivata nel tempo del vettore posizione nel sistema $F_E$ basta fare $\bar V_{GS}=\bar V_{AS}-\bar V_{w^*}$
+
+la velocità in contesto areonautico è spesso misurata in nodi $Kn$ che sono definiti come miglia nautiche all'ora $\dfrac{mn}{h}$ con $1mn=1852m$
+"""
+
 # ╔═╡ 90e78e30-90f6-48cd-b699-3493cd662713
-md"rotazione: $(@bind rotazione1 Slider(0:0.05:2*pi, default=pi/2))"
+md"rotazione aereo: $(@bind rotazione1 Slider(0:0.01:2*pi, default=pi/2))"
+
+# ╔═╡ 4ed72bd1-6fea-4a90-ae20-b23300f63085
+md"velocità al suolo: $(@bind Vgs Slider(0:0.01:0.5, default=0.25))"
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -435,10 +447,10 @@ begin
 	
 	# Plotting function for the airplane parts
 	function plot_airplane_parts(parts)
-	    p = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.3, 0.3), legend=false)
+	    p = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),lable="")
 	    for part in parts
 	        polygon = create_polygon(part)
-	        plot!(p, polygon, linecolor=:black, fill=(0, :black), legend=false)
+	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="")
 	    end
 	    return p
 	end
@@ -473,9 +485,22 @@ let
 	
 	# Apply transformations to the airplane parts
 	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione1, dx, dy)
+
+	#Vgs=0.3
 	
 	# Plotting with transformed parts
 	plot_airplane_parts(transformed_airplane_parts)
+
+	# Plotting the speeds
+	# Ground speed
+	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"Vgs",linewidth=2)
+	# Wind speed
+	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"Vw*",linewidth=2)
+	# Air speed
+	plot!([dx, 0.1+Vgs*cos(rotazione1)], [dy, 0.1+Vgs*sin(rotazione1)], arrow=true, color=:red, label=L"Vas",linewidth=2)
+	# Connectors
+	plot!([0.1, 0.1+Vgs*cos(rotazione1)], [0.1, 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1,line=:dash)
+	plot!([dx+Vgs*cos(rotazione1), 0.1+Vgs*cos(rotazione1)], [dy+Vgs*sin(rotazione1), 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1, line=:dash)
 	
 end
 
@@ -1609,8 +1634,10 @@ version = "1.4.1+1"
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
+# ╟─9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
+# ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
