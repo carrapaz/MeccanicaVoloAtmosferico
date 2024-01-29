@@ -547,34 +547,28 @@ end
 
 # ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
 let
-	let	
 	# Initial airplane parts
 	airplane_parts = airplane_shape()
 
-	# Define a translation vector (dx, dy)
-	dx, dy = 0, 0
+	rotazione2=pi/3
 	
 	# Apply transformations to the airplane parts
-	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione1, dx, dy)
+	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione2, 0, 0)
 
 	#Vgs=0.3
 	
 	# Plotting with transformed parts
 	plot_airplane_parts(transformed_airplane_parts)
 
-	# Plotting the speeds
-	# Ground speed
-	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
-	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"Vgs",linewidth=2)
-	# Wind speed
-	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"Vw*",linewidth=2)
-	# Air speed
-	plot!([dx, 0.1+Vgs*cos(rotazione1)], [dy, 0.1+Vgs*sin(rotazione1)], arrow=true, color=:red, label=L"Vas",linewidth=2)
-	# Connectors
-	plot!([0.1, 0.1+Vgs*cos(rotazione1)], [0.1, 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1,line=:dash)
-	plot!([dx+Vgs*cos(rotazione1), 0.1+Vgs*cos(rotazione1)], [dy+Vgs*sin(rotazione1), 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1, line=:dash)
+	# Plotting
+	plot!(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1))
+
 	
-end
+	# N
+	plot!([0, 0], [0, 1], arrow=true, color=:blue, label=L"\hat e_N",linewidth=2)
+	# E
+	plot!([1, 0], [0, 0], color=:green, label=L"\hat e_E",linewidth=2)
+	
 end
 
 # ╔═╡ 1e397967-4c2c-4b84-b121-0e605b329226
