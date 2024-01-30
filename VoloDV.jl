@@ -349,13 +349,13 @@ PlutoUI.TableOfContents()
 # ╔═╡ a9935d19-6ab2-4044-bc3e-07089e8801d5
 begin
 # Function to generate sphere coordinates
-	function sphere_coords(radius, n_points)
-	    θ = LinRange(0, π, n_points)
-	    φ = LinRange(0, 2π, n_points)
-	    x = [radius * sin(t) * cos(p) for t in θ, p in φ]
-	    y = [radius * sin(t) * sin(p) for t in θ, p in φ]
-	    z = [radius * cos(t) for t in θ, p in φ]
-	    return x, y, z
+	function sphere(r, C, n)   # r: radius; C: center [cx,cy,cz]
+	    u = range(-π, π; length = n)
+	    v = range(0, π; length = n)
+	    x = C[1] .+ r*cos.(u) * sin.(v)'
+	    y = C[2] .+ r*sin.(u) * sin.(v)'
+	    z = C[3] .+ r*ones(n) * cos.(v)'
+    	return x, y, z
 	end
 
 	function plane_coords(latitude,longitude,radius,plane_size)
@@ -406,7 +406,7 @@ let
 	# Generate the sphere coordinates
 	radius = 10
 	n_points = 30
-	x_sphere, y_sphere, z_sphere = sphere_coords(radius, n_points)
+	
 
 	# Generate coordinates of plane tangent to the sphere
 	
@@ -426,16 +426,18 @@ let
 
 	
 	# Plotting
-	
+
+	plot()
 	# Plot the sphere
-	surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=true)
+	#surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=true)
+	plot!(sphere(radius, [0,0,0],n_points),c=:blue,colorbar=false)
 
 	# Plotting the parallel and meridian
-	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red, legend=false,label=false)
-	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green,lable=false)
+	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red)
+	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green)
 
 	# Plotting the tangent plane
-	plot!(x_plane, y_plane, z_plane, st=:surface, color=:yellow, alpha=0.5,label=false)
+	plot!(x_plane, y_plane, z_plane, st=:surface, c=:yellow, alpha=1,legend=false)
 	
 	# Plotting the intersection point
 	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=3, label="P")
@@ -542,7 +544,7 @@ end
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
 let	
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false)
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],rotazione1)
 	plot!(airplane,c=:black,label="")
 
@@ -566,7 +568,7 @@ end
 # ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
 let
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false)
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/3)
 	plot!(airplane,c=:black,label="")
 	# N
@@ -1702,10 +1704,10 @@ version = "1.4.1+1"
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─45661987-c61e-4864-97a6-ac0ac6010d39
-# ╠═a679ab80-4fbb-4e10-845a-bb9ca338bc69
+# ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
+# ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
@@ -1715,7 +1717,7 @@ version = "1.4.1+1"
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
-# ╠═337267df-a02d-4163-8bac-98ddd734ea18
+# ╟─337267df-a02d-4163-8bac-98ddd734ea18
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
