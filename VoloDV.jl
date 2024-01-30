@@ -80,8 +80,8 @@ let
 	x_coords = x.(t);
 	y_coords = y.(t);
 
-	plot(x_coords, y_coords, label="S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1])
-	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label="Vettore posizione")
+	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14))
+	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
 end
 
 # ╔═╡ 659b9467-0144-4aa5-ba2e-ff76182ee87b
@@ -105,8 +105,8 @@ let
 	z_coords = z.(t);
 	
 	
-	p = plot(x_coords, y_coords, z_coords, label="S")
-	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label="Vettore posizione",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
+	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14))
+	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
 	
 end
 
@@ -176,10 +176,10 @@ let
 	nx, ny = -ty, tx
 	
 	# Plot the trajectory and vectors
-	p = plot(x_coords, y_coords, label="S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal)
-	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label="Vettore posizione")
-	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label="e_t")
-	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label="Normal Vector")
+	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14))
+	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
+	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label=L"\hat e_t")
+	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label=L"\hat e_n")
 
 end
 
@@ -338,6 +338,12 @@ origine = GC \ velivolo
 da notare che la terna è indipendente rispetto l'asetto di volo in quanto definita rispetto alla terra
 """
 
+# ╔═╡ ed65d686-ebaf-4cf4-a779-0283fd36583c
+md"""
+### Angoli di traiettoria
+
+"""
+
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
 # Codice del notebook
@@ -450,7 +456,7 @@ let
 	
 	scatter!([0 0], [-1 NaN -1 NaN -1 NaN -1], lims=(0,1),
     inset=(1,bbox(0.05,0.1,0.15,0.15)), subplot=2, msw=0, marker=:square,
-    legendfontsize=8, framestyle=:none, fg_color_legend=nothing, legend=:left,
+    legendfontsize=12, framestyle=:none, fg_color_legend=nothing, legend=:left,
     color=[:red :white :green :white :black :white :yellow], label=" "^2 .* ["latitudine" "" "longitudine" "" "posizione" "" "piano"]
 )
 		
@@ -526,7 +532,7 @@ end
 # ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
 let
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2))
+	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(14))
 	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
 	plot!(airplane,c=:black,label="")
 
@@ -544,7 +550,7 @@ end
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
 let	
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false)
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12))
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],rotazione1)
 	plot!(airplane,c=:black,label="")
 
@@ -568,13 +574,16 @@ end
 # ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
 let
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false)
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12))
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/3)
 	plot!(airplane,c=:black,label="")
 	# N
-	plot!([0, 0], [0, 0.4], arrow=true, color=:red, label=L"\hat e_N",linewidth=2)
+	plot!([0, 0], [0, 0.4], arrow=true, color=:red, label=L"\hat x_H",linewidth=2)
 	# E
-	plot!([0, 0.4], [0, 0], arrow=true, color=:green, label=L"\hat e_E",linewidth=2)
+	plot!([0, 0.4], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=2)
+	# D
+	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=3)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1718,6 +1727,7 @@ version = "1.4.1+1"
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
 # ╟─337267df-a02d-4163-8bac-98ddd734ea18
+# ╠═ed65d686-ebaf-4cf4-a779-0283fd36583c
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
