@@ -278,44 +278,20 @@ da notare che la terna è indipendente rispetto l'asetto di volo in quanto defin
 md"""
 ### Angoli di traiettoria
 Definiscono il moto del velivolo rispetto alla Terra 
-- **Angolo di rampa:** $\gamma$
-- **Angolo di rotta:** $\chi$
+- **Angolo di rampa:** 
+$\gamma=-sin^{-1}(\hat e_t*\hat z_H)$
+- **Angolo di rotta:**
+$\chi$
 """
 
 # ╔═╡ 9350c9d1-f4cd-4633-8513-50ac1a9311ef
-md"angolo di rampa $\gamma$: $(@bind gamma1 Slider(-360:1:360, default=15, show_value=true)) °"
+md"angolo di rampa $\gamma$: $(@bind gamma1 Slider(-360:1:360, default=20, show_value=true)) °"
 
 # ╔═╡ 31437c3c-a21a-4301-9efd-de00c86a0e2e
 md"angolo di rotta $\chi$: $(@bind chi1 Slider(-360:1:360, default=55,show_value=true)) °"
 
 # ╔═╡ f1b15f3f-60a4-4605-953b-f4393a2de8a2
-md" modulo della velocità $v_h$: $(@bind vh1 Slider(0:0.01:1.2, default=1,show_value=true))"
-
-# ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
-let
-	# frame of reference
-	plot(title="Angoli di traiettoria",showaxis=false,legendfont=font(12),xlim=[-1,1],ylim=[-1,1],zlim=[-1,1])
-	plot!([0,1],[0,0],[0,0],c=:green, label=L"\hat y_H",linewidth=2)
-	plot!([0,0],[0,1],[0,0],c=:red, label=L"\hat x_H",linewidth=2)
-	plot!([0,0],[0,0],[0,-1],c=:blue, label=L"\hat z_H",linewidth=2)
-	
-	# define velocity as function of gamma and chi
-	v = vh1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
-	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label=L"\bar v",linewidth=2)
-
-	# plane projections
-	# z_h
-	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, label=L"sin(\gamma)*|\hat v|",linewidth=2)
-	# y_h
-	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
-	# x_h
-	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
-	# piano x_h,y_h
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
-
-	# angles
-	plot!(Plots.partialcircle(pi/3,pi/3-deg2rad(chi1),40,0.1),label=L"\chi")
-end
+md" modulo della velocità $v_h$: $(@bind vh1 Slider(0:0.01:1, default=1,show_value=true))"
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -409,7 +385,7 @@ let
 	ptr = plot()
 	# Plot the sphere
 	#surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=true)
-	plot!(sphere(radius, [0,0,0],n_points),c=:blue,colorbar=false)
+	surface(sphere(radius, [0,0,0],n_points),c=:blue,colorbar=false)
 
 	# Plotting the parallel and meridian
 	plot!(parallel_x, parallel_y, parallel_z, linewidth=4, color=:red)
@@ -546,7 +522,7 @@ end
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
 function Quota_di_volo(S2)
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(14))
+	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(12))
 	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
 	plot!(airplane,c=:black,label="")
 
@@ -635,6 +611,60 @@ let
 	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14))
 	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
 	
+end
+
+# ╔═╡ 6123f526-a9f1-41d7-8499-09e56465f9e0
+function harc3d(radius,ini,fin,n_points,latitude)
+		# Parallel (constant latitude)
+		range = LinRange(ini, fin, n_points)
+		x = radius * cos.(range) * cos(latitude)
+		y = radius * sin.(range) * cos(latitude)
+		z = ones(n_points) * radius * sin(latitude)
+		return x,y,z
+	end
+
+# ╔═╡ 6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+function varc3d(radius,ini,fin,n_points,longitude)
+		# Meridian (constant longitude)
+		range = LinRange(ini, fin, n_points)
+		x = radius * sin.(range) * cos(longitude)
+		y = radius * sin.(range) * sin(longitude)
+		z = radius * cos.(range)
+		return x,y,z
+	end
+
+# ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
+let
+	# frame of reference
+	plot(title="Angoli di traiettoria",showaxis=false,legendfont=font(12),xlim=[-1,1],ylim=[-1,1],zlim=[-1,1])
+	plot!([0,1],[0,0],[0,0],c=:green, label=L"\hat y_H",linewidth=2)
+	plot!([0,0],[0,1],[0,0],c=:red, label=L"\hat x_H",linewidth=2)
+	plot!([0,0],[0,0],[0,-1],c=:blue, label=L"\hat z_H",linewidth=2)
+	
+	# define velocity as function of gamma and chi
+	v = vh1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
+	
+
+	# plane projections
+	# z_h
+	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, label="",linewidth=1,line=:dash)
+	# y_h
+	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	# x_h
+	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	# piano x_h,y_h
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+
+	# angles
+	# chi
+	chi_x,chi_y,chi_z = harc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(chi1),40,0)
+	plot!(chi_x, chi_y, chi_z, linewidth=3, color=:cyan,label=L"\chi")
+	# gamma
+	gamma_x,gamma_y,gamma_z = varc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(gamma1),40,pi/2-deg2rad(chi1))
+	plot!(gamma_x, gamma_y, gamma_z, linewidth=3, color=:orange,label=L"\gamma")
+	
+	# velocity vector
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label=L"\bar v",linewidth=2)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1791,5 +1821,7 @@ version = "1.4.1+1"
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
+# ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
+# ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
