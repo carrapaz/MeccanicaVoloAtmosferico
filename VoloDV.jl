@@ -154,7 +154,6 @@ md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
 # ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
 let
 	# Define the range and parametric functions
-	
 	t = range(0, S1, length=100)
 	x(t) = t
 	y(t) = sin(t)
@@ -341,8 +340,35 @@ da notare che la terna è indipendente rispetto l'asetto di volo in quanto defin
 # ╔═╡ ed65d686-ebaf-4cf4-a779-0283fd36583c
 md"""
 ### Angoli di traiettoria
-
+Definiscono il moto del velivolo rispetto alla Terra 
+- **Angolo di rampa:** $\gamma$
+- **Angolo di rotta:** $\chi$
 """
+
+# ╔═╡ 9350c9d1-f4cd-4633-8513-50ac1a9311ef
+md"angolo di rampa $\gamma$: $(@bind gamma1 Slider(-360:1:360, default=15, show_value=true)) °"
+
+# ╔═╡ 31437c3c-a21a-4301-9efd-de00c86a0e2e
+md"angolo di rotta $\chi$: $(@bind chi1 Slider(-360:1:360, default=15,show_value=true)) °"
+
+# ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
+let
+	# frame of reference
+	plot(title="Angoli di traiettoria",showaxis=false,legendfont=font(12),xlim=[-1,1],ylim=[-1,1],zlim=[-1,1])
+	plot!([0,1],[0,0],[0,0],c=:green, label=L"\hat y_H",linewidth=2)
+	plot!([0,0],[0,1],[0,0],c=:red, label=L"\hat x_H",linewidth=2)
+	plot!([0,0],[0,0],[0,-1],c=:blue, label=L"\hat z_H",linewidth=2)
+
+	# define velocity as function of gamma and chi
+	v = 1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label="",linewidth=2)
+
+	# plane projections
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=2,line=:dash)
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=2,line=:dash)
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=2,line=:dash)
+	
+end
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -411,7 +437,7 @@ let
 	
 	# Generate the sphere coordinates
 	radius = 10
-	n_points = 30
+	n_points = 100
 	
 
 	# Generate coordinates of plane tangent to the sphere
@@ -433,25 +459,27 @@ let
 	
 	# Plotting
 
-	plot()
+	ptr = plot()
 	# Plot the sphere
 	#surface(x_sphere, y_sphere, z_sphere, color=:blue, alpha=0.5, legend=false,label=true)
 	plot!(sphere(radius, [0,0,0],n_points),c=:blue,colorbar=false)
 
 	# Plotting the parallel and meridian
-	plot!(parallel_x, parallel_y, parallel_z, linewidth=2, color=:red)
-	plot!(meridian_x, meridian_y, meridian_z, linewidth=2, color=:green)
+	plot!(parallel_x, parallel_y, parallel_z, linewidth=4, color=:red)
+	plot!(meridian_x, meridian_y, meridian_z, linewidth=4, color=:green)
 
 	# Plotting the tangent plane
-	plot!(x_plane, y_plane, z_plane, st=:surface, c=:yellow, alpha=1,legend=false)
+	plot!(x_plane, y_plane, z_plane,st=:surface, c=:yellow, alpha=1,legend=false)
 	
 	# Plotting the intersection point
 	scatter!([intersection_x], [intersection_y], [intersection_z], color=:black, markersize=3, label="P")
 
 	xlimFE=[-radius-plane_size,+radius+plane_size]
 	ylimFE=[-radius-plane_size,+radius+plane_size]
+	zlimFE=[-radius-plane_size,+radius+plane_size]
 	xaxis!(xlim=xlimFE)
 	yaxis!(ylim=ylimFE)
+	zaxis!(ylim=ylimFE)
 	title!(L"Fixed Earth frame $F_E$",showaxis=false)
 	
 	scatter!([0 0], [-1 NaN -1 NaN -1 NaN -1], lims=(0,1),
@@ -529,24 +557,6 @@ begin
 	print("funzioni Disegna e muovi aereo 2D")
 end
 
-# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-let
-	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(14))
-	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
-	plot!(airplane,c=:black,label="")
-
-	# Plotting with transformed parts
-	#plot_airplane_parts(transformed_airplane_parts)
-	x = range(0, 10, length=100)
-	terrain(x) =  sin(x)/(x+1)
-	sea(x) = 0*x
-	plot!(sea,color=:blue, label="mare")
- 	plot!(terrain,color=:green, label="terreno")
-	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
-	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
-end
-
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
 let	
 	# Plotting
@@ -575,7 +585,7 @@ end
 let
 	# Plotting
 	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12))
-	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/3)
+	airplane = transform_all(airplane_shape(),[0,0],[1,1],2/3*pi)
 	plot!(airplane,c=:black,label="")
 	# N
 	plot!([0, 0], [0, 0.4], arrow=true, color=:red, label=L"\hat x_H",linewidth=2)
@@ -584,6 +594,30 @@ let
 	# D
 	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=3)
 	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+end
+
+# ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
+function Quota_di_volo(S2)
+	# Plotting
+	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(14))
+	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
+	plot!(airplane,c=:black,label="")
+
+	# Plotting with transformed parts
+	#plot_airplane_parts(transformed_airplane_parts)
+	x = range(0, 10, length=100)
+	terrain(x) =  sin(x)/(x+1)
+	sea(x) = 0*x
+	plot!(sea,color=:blue, label="mare")
+ 	plot!(terrain,color=:green, label="terreno")
+	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
+	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
+	return plt
+end
+
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+let
+	Quota_di_volo(S2)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1727,11 +1761,15 @@ version = "1.4.1+1"
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
 # ╟─337267df-a02d-4163-8bac-98ddd734ea18
-# ╠═ed65d686-ebaf-4cf4-a779-0283fd36583c
+# ╟─ed65d686-ebaf-4cf4-a779-0283fd36583c
+# ╠═d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
+# ╟─9350c9d1-f4cd-4633-8513-50ac1a9311ef
+# ╟─31437c3c-a21a-4301-9efd-de00c86a0e2e
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
+# ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
