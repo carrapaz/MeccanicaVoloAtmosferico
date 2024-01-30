@@ -456,14 +456,34 @@ end
 
 # ╔═╡ 68b98a8b-da00-4678-9de2-26f329e7226a
 begin
-# Define a detailed top-down airplane shape as a list of vertices
+
+	# Define a side view airplane shape as a list of vertices
+	function airplane_shape_side()
+	    # Coordinates for a more realistic top-down airplane shape
+	    fuselage = [
+	        (-0.03, -0.02), (0.09, -0.02), (0.15, 0), (0.09, 0.02), (-0.03, 0.02), # Fuselage and nose (a pentagon shape)
+	        (-0.15, 0.003), (-0.15, -0.003), (-0.03, -0.02) # Back to start to close the shape
+	    ]
+	    
+	    tail = [
+	        (-0.12, 0.01), (-0.16, 0.05), (-0.14, 0.05), (-0.08, 0.01), # Top tail (a small triangle)
+	        (-0.12, -0.01), (-0.14, -0.02), (-0.14, -0.02), (-0.03, -0.01) # Bottom tail (a small triangle)
+	    ]
+	
+	    # Combine all parts of the airplane
+	    return [Shape(fuselage), Shape(tail)]
+	end
+	
+	print("Disegna aereo side")
+	
+	# Define a top-down airplane shape as a list of vertices
 	function airplane_shape()
 	    # Coordinates for a more realistic top-down airplane shape
 	    fuselage = [
 	        (-0.04, -0.02), (0.08, -0.02), (0.14, 0), (0.08, 0.02), (-0.04, 0.02), # Fuselage and nose (a pentagon shape)
 	        (-0.16, 0.003), (-0.16, -0.003), (-0.04, -0.02) # Back to start to close the shape
 	    ]
-	
+
 	    wings = [
 	        (-0.02, 0.02), (-0.07, 0.2), (-0.06, 0.2), (0.04, 0.02), # Right wing (a diamond shape)
 	        (-0.02, -0.02), (-0.07, -0.2), (-0.06, -0.2), (0.04, -0.02), # Left wing (a diamond shape)
@@ -475,63 +495,62 @@ begin
 	    ]
 	
 	    # Combine all parts of the airplane
-	    return [fuselage, wings, tail]
+	    return [Shape(fuselage), Shape(wings), Shape(tail)]
 	end
 	
-	# Function to create a filled polygon from shape coordinates
-	function create_polygon(shape)
-	    x_coords = [coord[1] for coord in shape]
-	    y_coords = [coord[2] for coord in shape]
-	    return Shape(x_coords, y_coords)
+	function rotate_all(parts,angle)	
+		rotated_parts = [Plots.rotate(part,angle,(0,0)) for part in parts]
+		return rotated_parts
 	end
 	
-	# Plotting function for the airplane parts
-	function plot_airplane_parts(parts)
-	    p = plot()
-	    for part in parts
-	        polygon = create_polygon(part)
-	        plot!(p, polygon, linecolor=:black, fill=(0, :black),lablel="",primary=false)
-	    end
-	    return p
+	function scale_all(parts,scale)	
+		rotated_parts = [Plots.scale(part,scale[1],scale[2],(0,0)) for part in parts]
+		return rotated_parts
 	end
-	# Define the rotation function
-	function rotate_shape(shape, theta)
-	    cosθ = cos(theta)
-	    sinθ = sin(theta)
-	    return [(x * cosθ - y * sinθ, x * sinθ + y * cosθ) for (x, y) in shape]
+
+	function translate_all(parts,dxdy)	
+		translated_parts = [translate(part,dxdy[1],dxdy[2]) for part in parts]
+		return translated_parts
 	end
-	
-	# Define the translation function
-	function translate_shape(shape, dx, dy)
-	    return [(x + dx, y + dy) for (x, y) in shape]
+
+	function transform_all(parts,dxdy,scale,angle)
+		transformed = rotate_all(parts,angle)
+		transformed = scale_all(transformed,scale)
+		transformed = translate_all(transformed,dxdy)
+		return transformed
 	end
-	
-	# Function to apply transformations to all parts of the airplane and return new parts
-	function transform_airplane_parts(parts, theta, dx, dy)
-	    rotated_parts = [rotate_shape(part, theta) for part in parts]
-	    moved_parts = [translate_shape(part, dx, dy) for part in rotated_parts]
-	    return moved_parts
-	end
+
 	print("funzioni Disegna e muovi aereo top down")
+end
+
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+let
+	# Plotting
+	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2))
+	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
+	plot!(airplane,c=:black,label="")
+
+	# Plotting with transformed parts
+	#plot_airplane_parts(transformed_airplane_parts)
+	x = range(0, 10, length=100)
+	terrain(x) =  sin(x)/(x+1)
+	sea(x) = 0*x
+	plot!(sea,color=:blue, label="mare")
+ 	plot!(terrain,color=:green, label="terreno")
+	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
+	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
 end
 
 # ╔═╡ d44fb526-84b6-4c13-aace-7ffa36a861b1
 let	
-	# Initial airplane parts
-	airplane_parts = airplane_shape()
+	# Plotting
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
+	airplane = transform_all(airplane_shape(),[0,0],[1,1],rotazione1)
+	plot!(airplane,c=:black,label="")
 
 	# Define a translation vector (dx, dy)
 	dx, dy = 0, 0
 	
-	# Apply transformations to the airplane parts
-	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione1, dx, dy)
-
-	#Vgs=0.3
-	
-	# Plotting with transformed parts
-	plot_airplane_parts(transformed_airplane_parts)
-
-
 	# Plotting the speeds
 	# Ground speed
 	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
@@ -550,75 +569,12 @@ end
 let
 	# Plotting
 	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
-	a,b,c = airplane_shape()
-	
-	fuselage = Shape(a)
-	wings = Shape(b)
-	tail = Shape(c)
-
-	wings = Plots.scale(wings,1,1,(0,0))
-	fuselage = Plots.scale(fuselage,1,1,(0,0))
-	tail = Plots.scale(tail,1,1,(0,0))
-
-	wings = Plots.rotate(wings,pi/3,(0,0))
-	fuselage = Plots.rotate(fuselage,pi/3,(0,0))
-	tail = Plots.rotate(tail,pi/3,(0,0))
-	#wings = translate(wings,-0.03,0)
-	plot!(wings,c=:black,label="")
-	plot!(fuselage, c=:black,label="")
-	plot!(tail,c=:black,label="")
-
-
-end
-
-# ╔═╡ 1e397967-4c2c-4b84-b121-0e605b329226
-begin
-# Define a detailed top-down airplane shape as a list of vertices
-	function airplane_shape_side()
-	    # Coordinates for a more realistic top-down airplane shape
-	    fuselage = [
-	        (-0.03, -0.02), (0.09, -0.02), (0.15, 0), (0.09, 0.02), (-0.03, 0.02), # Fuselage and nose (a pentagon shape)
-	        (-0.15, 0.003), (-0.15, -0.003), (-0.03, -0.02) # Back to start to close the shape
-	    ]
-	    
-	    tail = [
-	        (-0.12, 0.01), (-0.16, 0.05), (-0.14, 0.05), (-0.08, 0.01), # Top tail (a small triangle)
-	        (-0.12, -0.01), (-0.14, -0.02), (-0.14, -0.02), (-0.03, -0.01) # Bottom tail (a small triangle)
-	    ]
-	
-	    # Combine all parts of the airplane
-	    return [fuselage, tail]
-	end
-	
-	print("Disegna aereo side")
-end
-
-# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-let
-	a,b = airplane_shape_side()
-
-	fuselage = Shape(a)
-	tail = Shape(b)
-	
-	fuselage = Plots.scale(fuselage,3,3,(0,0))
-	tail = Plots.scale(tail,3,3,(0,0))
-
-	fuselage = translate(fuselage,S2,1.5)
-	tail = translate(tail,S2,1.5)
-	
-	plot(fuselage, c=:black,label="")
-	plot!(tail,c=:black,label="")
-	
-	# Plotting with transformed parts
-	#plot_airplane_parts(transformed_airplane_parts)
-	x = range(0, 10, length=50)
-	terrain(x) =  sin(x)/(x+1)
-	sea(x) = 0*x
-	plot!(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2))
-	plot!(sea,color=:blue, label="mare")
- 	plot!(terrain,color=:green, label="terreno")
-	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
-	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
+	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/3)
+	plot!(airplane,c=:black,label="")
+	# N
+	plot!([0, 0], [0, 0.4], arrow=true, color=:red, label=L"\hat e_N",linewidth=2)
+	# E
+	plot!([0, 0.4], [0, 0], arrow=true, color=:green, label=L"\hat e_E",linewidth=2)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1748,7 +1704,7 @@ version = "1.4.1+1"
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─45661987-c61e-4864-97a6-ac0ac6010d39
-# ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
+# ╠═a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 # ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
@@ -1767,6 +1723,5 @@ version = "1.4.1+1"
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
-# ╟─1e397967-4c2c-4b84-b121-0e605b329226
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
