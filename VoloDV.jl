@@ -70,20 +70,6 @@ anzichè usare il tempo come variabile possiamo usare l' ascissa curvilinea, $S$
 # ╔═╡ c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 md"tempo: $(@bind time1 Slider(0:0.01:10, default=5,show_value=true))  s"
 
-# ╔═╡ f66827da-440b-4b91-a085-063a9bcfad57
-let
-	t = range(0, time1, length=100);
-	
-	x(t) = t;
-    y(t) = sin(t);
-	
-	x_coords = x.(t);
-	y_coords = y.(t);
-
-	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14))
-	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
-end
-
 # ╔═╡ 659b9467-0144-4aa5-ba2e-ff76182ee87b
 md"""
 per un aeromobile questa è in 3d dimensioni per esempio:
@@ -91,24 +77,6 @@ per un aeromobile questa è in 3d dimensioni per esempio:
 
 # ╔═╡ b79ae4e0-96fb-478e-8fc8-3316c6e394ce
 md"tempo: $(@bind time2 Slider(0:0.01:10, default=5,show_value=true))  s"
-
-# ╔═╡ c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
-let
-	t = range(0, time2, length=100);
-
-	x(t) = cos(t);
-    y(t) = sin(t);
-	z(t) = t;
-	
-	x_coords = x.(t);
-	y_coords = y.(t);
-	z_coords = z.(t);
-	
-	
-	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14))
-	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
-	
-end
 
 # ╔═╡ c339e1dd-5889-46c7-874b-e6cc048a39bc
 md"""
@@ -150,37 +118,6 @@ $\hat e_b = \hat e_t \wedge \hat e_n$
 
 # ╔═╡ bc13b7b3-7fc4-4007-9025-2597005fa63a
 md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
-
-# ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
-let
-	# Define the range and parametric functions
-	t = range(0, S1, length=100)
-	x(t) = t
-	y(t) = sin(t)
-	dx(t) = 1
-	dy(t) = cos(t)
-	
-	# Generate coordinates for the curve
-	x_coords = x.(t)
-	y_coords = y.(t)
-	
-	# Choose the point t0 at the end of the range
-	t0 = S1
-	x0, y0 = x(t0), y(t0)
-	dx0, dy0 = dx(t0), dy(t0)
-	
-	# Compute tangent and normal vectors
-	magnitude_tangent = sqrt(dx0^2 + dy0^2)
-	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
-	nx, ny = -ty, tx
-	
-	# Plot the trajectory and vectors
-	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14))
-	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
-	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label=L"\hat e_t")
-	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label=L"\hat e_n")
-
-end
 
 # ╔═╡ 5890b370-d1b9-4372-b429-e2d902a98085
 md"""
@@ -349,7 +286,10 @@ Definiscono il moto del velivolo rispetto alla Terra
 md"angolo di rampa $\gamma$: $(@bind gamma1 Slider(-360:1:360, default=15, show_value=true)) °"
 
 # ╔═╡ 31437c3c-a21a-4301-9efd-de00c86a0e2e
-md"angolo di rotta $\chi$: $(@bind chi1 Slider(-360:1:360, default=15,show_value=true)) °"
+md"angolo di rotta $\chi$: $(@bind chi1 Slider(-360:1:360, default=55,show_value=true)) °"
+
+# ╔═╡ f1b15f3f-60a4-4605-953b-f4393a2de8a2
+md" modulo della velocità $v_h$: $(@bind vh1 Slider(0:0.01:1.2, default=1,show_value=true))"
 
 # ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
 let
@@ -358,16 +298,23 @@ let
 	plot!([0,1],[0,0],[0,0],c=:green, label=L"\hat y_H",linewidth=2)
 	plot!([0,0],[0,1],[0,0],c=:red, label=L"\hat x_H",linewidth=2)
 	plot!([0,0],[0,0],[0,-1],c=:blue, label=L"\hat z_H",linewidth=2)
-
+	
 	# define velocity as function of gamma and chi
-	v = 1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
-	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label="",linewidth=2)
+	v = vh1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label=L"\bar v",linewidth=2)
 
 	# plane projections
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=2,line=:dash)
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=2,line=:dash)
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=2,line=:dash)
-	
+	# z_h
+	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:grey, label="",linewidth=1,line=:dash)
+	# y_h
+	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	# x_h
+	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	# piano x_h,y_h
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+
+	# angles
+	plot!(Plots.partialcircle(pi/3,pi/3-deg2rad(chi1),40,0.1),label=L"\chi")
 end
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -618,6 +565,78 @@ end
 # ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
 let
 	Quota_di_volo(S2)
+end
+
+# ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
+function traiettoria_parametrica_2d(S1)
+	# Define the range and parametric functions
+	t = range(0, S1, length=100)
+	x(t) = t
+	y(t) = sin(t)
+	dx(t) = 1
+	dy(t) = cos(t)
+	
+	# Generate coordinates for the curve
+	x_coords = x.(t)
+	y_coords = y.(t)
+	
+	# Choose the point t0 at the end of the range
+	t0 = S1
+	x0, y0 = x(t0), y(t0)
+	dx0, dy0 = dx(t0), dy(t0)
+	
+	# Compute tangent and normal vectors
+	magnitude_tangent = sqrt(dx0^2 + dy0^2)
+	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
+	nx, ny = -ty, tx
+	return x_coords,y_coords,x0,y0,tx,ty,nx,ny
+end
+
+# ╔═╡ f66827da-440b-4b91-a085-063a9bcfad57
+let
+	x_coords,y_coords=traiettoria_parametrica_2d(time1)
+	
+	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14))
+	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
+end
+
+# ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
+let
+	
+	x_coords,y_coords,x0,y0,tx,ty,nx,ny=traiettoria_parametrica_2d(S1)
+	
+	# Plot the trajectory and vectors
+	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14))
+	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
+	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label=L"\hat e_t")
+	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label=L"\hat e_n")
+
+end
+
+# ╔═╡ 14e7a4a4-b209-401c-845a-bc199851195a
+function traiettoria_parametrica_3d(S1)
+	# Define the range and parametric functions
+	t = range(0, S1, length=100);
+
+	x(t) = cos(t);
+    y(t) = sin(t);
+	z(t) = t;
+	
+	x_coords = x.(t);
+	y_coords = y.(t);
+	z_coords = z.(t);
+	
+	return x_coords,y_coords,z_coords
+end
+
+
+# ╔═╡ c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
+let
+	x_coords,y_coords,z_coords=traiettoria_parametrica_3d(time2)
+	
+	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14))
+	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
+	
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1762,14 +1781,17 @@ version = "1.4.1+1"
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
 # ╟─337267df-a02d-4163-8bac-98ddd734ea18
 # ╟─ed65d686-ebaf-4cf4-a779-0283fd36583c
-# ╠═d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
+# ╟─d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
 # ╟─9350c9d1-f4cd-4633-8513-50ac1a9311ef
 # ╟─31437c3c-a21a-4301-9efd-de00c86a0e2e
+# ╟─f1b15f3f-60a4-4605-953b-f4393a2de8a2
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
+# ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
+# ╟─14e7a4a4-b209-401c-845a-bc199851195a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
