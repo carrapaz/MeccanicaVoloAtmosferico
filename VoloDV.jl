@@ -474,8 +474,6 @@ begin
 	    return [Shape(fuselage), Shape(tail)]
 	end
 	
-	print("Disegna aereo side")
-	
 	# Define a top-down airplane shape as a list of vertices
 	function airplane_shape()
 	    # Coordinates for a more realistic top-down airplane shape
@@ -520,7 +518,7 @@ begin
 		return transformed
 	end
 
-	print("funzioni Disegna e muovi aereo top down")
+	print("funzioni Disegna e muovi aereo 2D")
 end
 
 # ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
@@ -1707,7 +1705,7 @@ version = "1.4.1+1"
 # ╠═a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
+# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
