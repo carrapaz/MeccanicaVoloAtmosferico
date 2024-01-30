@@ -305,7 +305,7 @@ let
 
 	# plane projections
 	# z_h
-	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:grey, label="",linewidth=1,line=:dash)
+	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, label=L"sin(\gamma)*|\hat v|",linewidth=2)
 	# y_h
 	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
 	# x_h
@@ -563,9 +563,7 @@ function Quota_di_volo(S2)
 end
 
 # ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-let
-	Quota_di_volo(S2)
-end
+Quota_di_volo(S2)
 
 # ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
 function traiettoria_parametrica_2d(S1)
