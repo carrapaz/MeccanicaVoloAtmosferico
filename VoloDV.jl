@@ -531,6 +531,7 @@ let
 	# Plotting with transformed parts
 	plot_airplane_parts(transformed_airplane_parts)
 
+
 	# Plotting the speeds
 	# Ground speed
 	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
@@ -547,28 +548,27 @@ end
 
 # ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
 let
-	# Initial airplane parts
-	airplane_parts = airplane_shape()
-
-	rotazione2=pi/3
-	
-	# Apply transformations to the airplane parts
-	transformed_airplane_parts = transform_airplane_parts(airplane_parts, rotazione2, 0, 0)
-
-	#Vgs=0.3
-	
-	# Plotting with transformed parts
-	plot_airplane_parts(transformed_airplane_parts)
-
 	# Plotting
-	plot!(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1))
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
+	a,b,c = airplane_shape()
+	
+	fuselage = Shape(a)
+	wings = Shape(b)
+	tail = Shape(c)
 
-	
-	# N
-	plot!([0, 0], [0, 1], arrow=true, color=:blue, label=L"\hat e_N",linewidth=2)
-	# E
-	plot!([1, 0], [0, 0], color=:green, label=L"\hat e_E",linewidth=2)
-	
+	wings = Plots.scale(wings,1,1,(0,0))
+	fuselage = Plots.scale(fuselage,1,1,(0,0))
+	tail = Plots.scale(tail,1,1,(0,0))
+
+	wings = Plots.rotate(wings,pi/3,(0,0))
+	fuselage = Plots.rotate(fuselage,pi/3,(0,0))
+	tail = Plots.rotate(tail,pi/3,(0,0))
+	#wings = translate(wings,-0.03,0)
+	plot!(wings,c=:black,label="")
+	plot!(fuselage, c=:black,label="")
+	plot!(tail,c=:black,label="")
+
+
 end
 
 # ╔═╡ 1e397967-4c2c-4b84-b121-0e605b329226
@@ -595,19 +595,22 @@ end
 
 # ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
 let
-	# Initial airplane parts
-	airplane_parts = airplane_shape_side()
+	a,b = airplane_shape_side()
 
-	# Define a translation vector (dx, dy)
-	dx, dy = S2, 1.5
+	fuselage = Shape(a)
+	tail = Shape(b)
 	
-	# Apply transformations to the airplane parts
-	transformed_airplane_parts = transform_airplane_parts(airplane_parts, 0, dx, dy)
+	fuselage = Plots.scale(fuselage,3,3,(0,0))
+	tail = Plots.scale(tail,3,3,(0,0))
 
-	#Vgs=0.3
+	fuselage = translate(fuselage,S2,1.5)
+	tail = translate(tail,S2,1.5)
+	
+	plot(fuselage, c=:black,label="")
+	plot!(tail,c=:black,label="")
 	
 	# Plotting with transformed parts
-	plot_airplane_parts(transformed_airplane_parts)
+	#plot_airplane_parts(transformed_airplane_parts)
 	x = range(0, 10, length=50)
 	terrain(x) =  sin(x)/(x+1)
 	sea(x) = 0*x
