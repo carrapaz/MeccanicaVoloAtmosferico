@@ -416,7 +416,7 @@ viene definito piano simmetrico materiale il piano generato da $\hat x_B\hat z_B
 # ╔═╡ e8bbcc41-02b6-43d7-b842-21ddfa92b49b
 md"""
 ### Angoli di assetto
-Definiscono l'orientamento del velivolo rispetto al vento
+Definiscono l'orientamento del velivolo rispetto a $F_H$
 
 - **Angolo di imbardata (Heading) :**
 $\psi=tan^{-1}(\dfrac{\hat x_B*\hat y_H}{\hat x_B*\hat x_H})$
@@ -432,6 +432,23 @@ Attenzione $\gamma \neq \ \theta$ perchè $\theta$ a diffrenza di $\gamma$ non d
 
 # ╔═╡ 4f1f40e4-0d53-41dd-a8bc-93c69a3e0c1b
 md"angolo di imbardata $\psi$: $(@bind psi1 Slider(-360:1:360, default=35, show_value=true)) °"
+
+# ╔═╡ 140eb5fe-d3c7-4c0e-bc2d-b7e377a953d5
+md"angolo di beccheggio $\theta$: $(@bind theta1 Slider(-360:1:360, default=35, show_value=true)) °\
+definito positivo a cabrare"
+
+# ╔═╡ 0a9510c2-7b71-44d5-8223-9d398890a53b
+md"angolo di rollio $\phi$: $(@bind phi1 Slider(-360:1:360, default=15, show_value=true)) °"
+
+# ╔═╡ c53bc007-1f1e-41e7-a9c3-c71a0d6c63c1
+md"""
+### Angoli aereodinamici
+Definiscono l'orientamento del velivolo rispetto al vento
+
+- **Angolo di deriva (Side slip):**
+$\beta$ 
+
+"""
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -554,7 +571,7 @@ end
 
 # ╔═╡ 68b98a8b-da00-4678-9de2-26f329e7226a
 begin
-
+	
 	# Define a side view airplane shape as a list of vertices
 	function airplane_shape_side()
 	    # Coordinates for a more realistic top-down airplane shape
@@ -593,6 +610,37 @@ begin
 	    # Combine all parts of the airplane
 	    return [Shape(fuselage), Shape(wings), Shape(tail)]
 	end
+
+	# Define a behind view airplane shape as parametric functions
+	function airplane_shape_back()
+	    # we use only circles bcs we lazy af
+		t=range(-pi,pi,40)
+		
+		# body
+		xb(t) = cos(t)
+		yb(t) = sin(t)
+	    fuselage = Shape(xb.(t),yb.(t))
+
+	    # wings
+		xw(t) = 6*cos(t)
+		yw(t) = 0.1*sin(t)-0.7
+	    wings = Shape(xw.(t),yw.(t))
+
+		# tail
+		xt(t) = 0.1cos(t)
+		yt(t) = 1.5*sin(t)+1
+	    tail = Shape(xt.(t),yt.(t))
+
+		# elevron
+		xe(t) = 3*cos(t)
+		ye(t) = 0.1*sin(t)+0.5
+	    elevron = Shape(xe.(t),ye.(t))
+		
+	
+	    # Combine all parts of the airplane
+	    return [fuselage, wings, tail, elevron]
+	end
+
 	
 	function rotate_all(parts,angle)	
 		rotated_parts = [Plots.rotate(part,angle,(0,0)) for part in parts]
@@ -686,22 +734,11 @@ let
 	plot(pt, ps, layout = (1, 2))
 end
 
-# ╔═╡ 869263e2-05a8-46e2-9617-23d3d3503775
-let
-	# Side view
-	ps = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
-	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],0)
-	ps = plot!(airplane,c=:black,label="")
-	# xB
-	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
-	# zB
-	ps = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_B",linewidth=2)
-	# yB
-	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
-
-end
-
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
+"""
+Crea grafico comparazioni differenze quote \\
+S: parametro funzioni
+"""
 function Quota_di_volo(S2)
 	# Plotting
 	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(12),legend=:bottomright)
@@ -724,6 +761,10 @@ end
 Quota_di_volo(S2)
 
 # ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
+"""
+Crea una predefinita traiettoria parametrica in 2d e i vettori tangenti e normali alla fine di essa
+S: parametro funzione
+"""
 function traiettoria_parametrica_2d(S1)
 	# Define the range and parametric functions
 	t = range(0, S1, length=100)
@@ -770,6 +811,10 @@ let
 end
 
 # ╔═╡ 14e7a4a4-b209-401c-845a-bc199851195a
+"""
+Crea una predefinita traiettoria parametrica in 3d  \\
+S: parametro funzione
+"""
 function traiettoria_parametrica_3d(S1)
 	# Define the range and parametric functions
 	t = range(0, S1, length=100);
@@ -796,6 +841,14 @@ let
 end
 
 # ╔═╡ 6123f526-a9f1-41d7-8499-09e56465f9e0
+"""
+Crea cordinate per un arco orizzontale in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+latitude: altezza dell'arco rispetto piano orizzontale origine
+"""
 function harc3d(radius,ini,fin,n_points,latitude)
 		# Parallel (constant latitude)
 		range = LinRange(ini, fin, n_points)
@@ -806,6 +859,14 @@ function harc3d(radius,ini,fin,n_points,latitude)
 	end
 
 # ╔═╡ 6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+"""
+Crea cordinate per un arco verticale in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+longitude: rotazione dell'arco rispetto asse verticale
+"""
 function varc3d(radius,ini,fin,n_points,longitude)
 		# Meridian (constant longitude)
 		range = LinRange(ini, fin, n_points)
@@ -850,6 +911,13 @@ let
 end
 
 # ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
+"""
+Crea cordinate per un cerchio in 2d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco
+"""
 function par2dcircle(r,n_points,ini,fin)
 	t = LinRange(ini,fin,n_points)
 	x(t) = r*sin(t)
@@ -864,39 +932,126 @@ end
 # ╔═╡ 43e6a216-fbc3-4b91-ac5e-144f60152e35
 let
 	psi = deg2rad(psi1)
+	
 	# Top view
-	pt = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft,title=L"Angolo \ di \ imbardata \ \psi")
+	plot(aspect_ratio=:equal,
+		xlims=(-1,1),
+		ylims=(-1,1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft,
+		title=L"Angolo \ di \ imbardata \ \psi"
+	)
 	airplane = transform_all(airplane_shape(),[0,0],[4,4],-psi+pi/2)
-	pt = plot!(airplane,c=:black,label="")
+	plot!(airplane,c=:black,label="")
 
 	# N
-	pc = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_H",linewidth=1,line=:dash)
+	plot!([0, 0], [0, 1], arrow=true, c=:red, lab=L"\hat x_H",lw=1,l=:dot)
 	# E
-	pc = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=1,line=:dash)
+	plot!([0, 1], [0, 0], arrow=true, c=:green, lab=L"\hat y_H",lw=1,l=:dot)
 	# D
-	pc=plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=2,line=:dash)
-	pc=plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=2, line =:dash)
-	
+	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,lab=L"\hat z_H",lw=2,l=:dot)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,lab="",lw=2, l =:dot)
 	
 	# xB
-	pt = plot!([0, sin(psi)], [0, cos(psi)], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	plot!([0, sin(psi)], [0, cos(psi)], arrow=true, c=:red, lab=L"\hat x_B",lw=2)
 	# yB
-	pt = plot!([0, cos(psi)], [0, -sin(psi)], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
+	plot!([0, cos(psi)], [0, -sin(psi)], arrow=true, c=:green, lab=L"\hat y_B",lw=2)
 	# zB
-	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
-	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,lab=L"\hat z_B",lw=3)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,lab="",lw=3)
 
 	# psi
 	xpsi,ypsi=par2dcircle(1,40,0,psi)
-	plot!(xpsi,ypsi,label=L"\psi",linewidth=3, c=:fuchsia)
+	plot!(xpsi,ypsi,label=L"\psi",lw=3, c=:fuchsia)
+	
 	# v
-	pc = plot!([0, sin(psi+0.2)], [0, cos(psi+0.2)], arrow=true, color=:brown, label=L"\bar v_H",linewidth=1,line=:dash)
+	plot!([0, sin(psi+0.2)], [0, cos(psi+0.2)], arrow=true, c=:brown, lab=L"\bar v_H",lw=1,l=:dot)
 
 	# chi
 	xchi,ychi=par2dcircle(0.8,40,0,psi+0.2)
-	pc = plot!(xchi, ychi, arrow=true, color=:cyan, label=L"\chi",linewidth=1,line=:dash)
+	plot!(xchi, ychi, arrow=true, c=:cyan, lab=L"\chi",lw=1,l=:dot)
 
 	
+end
+
+# ╔═╡ 869263e2-05a8-46e2-9617-23d3d3503775
+let
+	theta = -deg2rad(theta1)
+	# back view
+	plot(
+		aspect_ratio=:equal,
+		xlims=(-1,1),
+		ylims=(-1,1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft,
+		title=L"angolo \ di \ beccheggio \ \theta \ (vista \ destra)"
+	)
+	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],-theta)
+	
+	plot!(airplane,c=:black,label="")
+
+	# xB
+	plot!([0, cos(theta)], [0, -sin(theta)], arrow=true, c=:red, lab=L"\hat x_B",lw=2)
+	# yB
+	scatter!([0,0],[0,0], c=:green,label=L"\hat y_B",markersize=10)
+	# zB
+	plot!([0, -sin(theta)], [0, -cos(theta)], arrow=true, c=:blue, lab=L"\hat z_B",lw=2)
+
+	# N
+	plot!([0, 1], [0, 0], arrow=true, c=:red, lab=L"\hat x_H",lw=1,l=:dot)
+	# E
+	
+	# D
+	plot!([0, 0], [0, -1], arrow=true, c=:blue, lab=L"\hat z_H",lw=1,l=:dot)
+	
+	
+	# theta
+	xtheta,ytheta=par2dcircle(1,40,pi/2,pi/2+theta)
+	plot!(xtheta,ytheta,label=L"\theta",lw=3, c=:orange)
+end
+
+
+
+
+# ╔═╡ f5391f45-0e3c-421d-90b1-071510c1628c
+let
+	phi = deg2rad(phi1)
+	# back view
+	plot(
+		aspect_ratio=:equal,
+		xlims=(-1,1),
+		ylims=(-1,1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft,
+		title=L"angolo \ di \ rollio \ \phi \ (vista \ posteriore)"
+	)
+	airplane = transform_all(airplane_shape_back(),[0,0],[0.1,0.1],-phi)
+	
+	plot!(airplane,c=:black,label="")
+
+	# xB
+	plot!([-0.05,0.05],[-0.05,0.05], c=:red,lab=L"\hat x_B",lw=3)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:red,lab="",lw=3)
+	# yB
+	plot!([0, cos(phi)], [0, -sin(phi)], arrow=true, c=:green, lab=L"\hat y_B",lw=2)
+	# zB
+	plot!([0, -sin(phi)], [0, -cos(phi)], arrow=true, c=:blue, lab=L"\hat z_B",lw=2)
+
+	# N
+	plot!([-0.05,0.05],[-0.05,0.05], c=:red,lab=L"\hat x_H",lw=1,l=:dot)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:red,lab="",lw=1,l=:dot)
+	# E
+	plot!([0, 1], [0, 0], arrow=true, c=:green, lab=L"\hat y_H",lw=1,l=:dot)
+	# D
+	plot!([0, 0], [0, -1], arrow=true, c=:blue, lab=L"\hat z_H",lw=1,l=:dot)
+	
+	
+	# phi
+	xphi,yphi=par2dcircle(1,40,pi/2,pi/2+phi)
+	plot!(xphi,yphi,label=L"\phi",lw=3, c=:darkblue)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2058,7 +2213,11 @@ version = "1.4.1+1"
 # ╟─e8bbcc41-02b6-43d7-b842-21ddfa92b49b
 # ╟─43e6a216-fbc3-4b91-ac5e-144f60152e35
 # ╟─4f1f40e4-0d53-41dd-a8bc-93c69a3e0c1b
-# ╠═869263e2-05a8-46e2-9617-23d3d3503775
+# ╟─869263e2-05a8-46e2-9617-23d3d3503775
+# ╟─140eb5fe-d3c7-4c0e-bc2d-b7e377a953d5
+# ╟─f5391f45-0e3c-421d-90b1-071510c1628c
+# ╟─0a9510c2-7b71-44d5-8223-9d398890a53b
+# ╠═c53bc007-1f1e-41e7-a9c3-c71a0d6c63c1
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
@@ -2069,6 +2228,6 @@ version = "1.4.1+1"
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
-# ╠═36737977-5a27-45f3-a0ce-84c1badd4dce
+# ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
