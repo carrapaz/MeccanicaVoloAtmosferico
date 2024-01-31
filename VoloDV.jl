@@ -37,7 +37,7 @@ md"""
 # ╔═╡ 51934362-4b1f-4aea-bcf3-a3a892de83a1
 md"""
 # Intro
-Questo notebook interattivo vuole fornire una base per lo studio della meccanica del volo atmosferico. Fatto per coloro che intendono apprendere di più sul funzionamento del volo atmosferico e sulle conseguenze che il design dell'aeromobile ha sulle performance in volo
+Questo notebook interattivo è progettato per essere una risorsa nello studio della meccanica del volo atmosferico. È destinato a coloro che desiderano approfondire la comprensione del funzionamento del volo atmosferico e analizzare come specifici elementi di design dell'aeromobile influenzino le sue prestazioni in volo.
 """
 
 # ╔═╡ 3ea80b56-a7c7-4dd1-aae3-e240e0042145
@@ -266,9 +266,9 @@ la terna è così definita:
 $$F_H=
 \begin{cases}
 \hat x_H = Nord\\
-\hat y_E = East\\
-\hat z_E = normale \ a \ H \ e \ concorde \ a\ \bar g\\
-origine = GC \ velivolo
+\hat y_H = East\\
+\hat z_H = normale \ a \ H \ e \ concorde \ a\ \bar g\\
+origine = CG \ velivolo
 \end{cases}$$
 
 da notare che la terna è indipendente rispetto l'asetto di volo in quanto definita rispetto alla terra
@@ -383,7 +383,7 @@ $\bar v_{F_H}=|\bar v|*\begin{bmatrix}  cos(\gamma)*cos(\chi)\\\ cos(\gamma)*sin
 
 # ╔═╡ 0635e8b7-1ebc-4a28-94fc-da0796146b4e
 md"""
-possiamo definire la velocità angolare $\omega_{F_H}$:
+Da cui possiamo definire la velocità angolare $\omega_{F_H}$:
 
 $\omega_{F_H}=\sqrt{\dot \gamma^2+\dot \chi^2*cos^2(\gamma)}$
 """
@@ -394,7 +394,18 @@ md"""
 """
 
 # ╔═╡ 1c754b21-6a19-4752-9ec4-8e4bd37b73a0
+md"""
+Il sistema $F_B$ è solidale al velivolo, l'orgine si trova su un punto materiale, spesso conviene usare $CG$
 
+la terna è così definita:
+$$F_B=
+\begin{cases}
+\hat x_B = verso \ la \ prua \ (asse \ rollio \ |Roll|)\\ 
+\hat y_B = verso \ ala \ destra \ (asse \ beccheggio \ |Pitch|)\\
+\hat z_B = verso \ il \ ventre \ (asse \ imbardata \ |Yaw|)\\
+origine = CG \ velivolo
+\end{cases}$$
+"""
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -619,6 +630,34 @@ let
 	# D
 	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=3)
 	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+end
+
+# ╔═╡ b5fe8375-2d01-44e6-9b1d-718009dba565
+let
+	# Top view
+	pt = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	airplane = transform_all(airplane_shape(),[0,0],[4,4],pi/2)
+	pt = plot!(airplane,c=:black,label="")
+	# xB
+	pt = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# yB
+	pt = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
+	# zB
+	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
+	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+
+	# Side view
+	ps = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],0)
+	ps = plot!(airplane,c=:black,label="")
+	# xB
+	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# zB
+	ps = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_B",linewidth=2)
+	# yB
+	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
+
+	plot(pt, ps, layout = (1, 2))
 end
 
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
@@ -1922,7 +1961,8 @@ version = "1.4.1+1"
 # ╟─46d626ec-d721-468e-9129-7ae9334d7c05
 # ╟─0635e8b7-1ebc-4a28-94fc-da0796146b4e
 # ╟─05ec308d-c9f9-4c17-b15d-ada5d0a64b89
-# ╠═1c754b21-6a19-4752-9ec4-8e4bd37b73a0
+# ╟─1c754b21-6a19-4752-9ec4-8e4bd37b73a0
+# ╟─b5fe8375-2d01-44e6-9b1d-718009dba565
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
