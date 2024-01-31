@@ -430,6 +430,9 @@ $\phi=sin^{-1}(\hat y_B*\hat z_H)$
 Attenzione $\gamma \neq \ \theta$ perchè $\theta$ a diffrenza di $\gamma$ non dipende da $\bar v$
 """
 
+# ╔═╡ 4f1f40e4-0d53-41dd-a8bc-93c69a3e0c1b
+md"angolo di imbardata $\psi$: $(@bind psi1 Slider(-360:1:360, default=35, show_value=true)) °"
+
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
 # Codice del notebook
@@ -683,6 +686,38 @@ let
 	plot(pt, ps, layout = (1, 2))
 end
 
+# ╔═╡ 43e6a216-fbc3-4b91-ac5e-144f60152e35
+let
+	psi = deg2rad(psi1)
+	# Top view
+	pt = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	airplane = transform_all(airplane_shape(),[0,0],[4,4],-psi+pi/2)
+	pt = plot!(airplane,c=:black,label="")
+
+	# N
+	pc = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_H",linewidth=1,line=:dash)
+	# E
+	pc = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=1,line=:dash)
+	# D
+	pc=plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=2,line=:dash)
+	pc=plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=2, line =:dash)
+	
+	
+	# xB
+	pt = plot!([0, sin(psi)], [0, cos(psi)], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# yB
+	pt = plot!([0, cos(psi)], [0, -sin(psi)], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
+	# zB
+	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
+	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+
+	# psi
+	#xₜ(t) = 0.9*sin(t)
+	#yₜ(t) = 0.9*cos(t)
+
+	#plot!(xₜ,yₜ, 0, psi,fill=false,label=L"\psi",linewidth=3)
+end
+
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
 function Quota_di_volo(S2)
 	# Plotting
@@ -829,6 +864,10 @@ let
 	
 	# velocity vector
 	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label=L"\bar v",linewidth=2)
+end
+
+# ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
+function par2dcircle()
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1988,6 +2027,8 @@ version = "1.4.1+1"
 # ╟─b5fe8375-2d01-44e6-9b1d-718009dba565
 # ╟─94c96468-411c-4e01-b2f1-88cff2b6169c
 # ╟─e8bbcc41-02b6-43d7-b842-21ddfa92b49b
+# ╟─43e6a216-fbc3-4b91-ac5e-144f60152e35
+# ╟─4f1f40e4-0d53-41dd-a8bc-93c69a3e0c1b
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
@@ -1998,5 +2039,6 @@ version = "1.4.1+1"
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+# ╠═36737977-5a27-45f3-a0ce-84c1badd4dce
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
