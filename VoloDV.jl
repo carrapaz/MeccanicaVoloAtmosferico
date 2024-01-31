@@ -427,7 +427,7 @@ $\theta=-sin^{-1}(\hat x_B*\hat z_H)$
 - **Angolo di rollio (Roll) :**
 $\phi=sin^{-1}(\hat y_B*\hat z_H)$
 
-Attenzione $\gamma \neq \ \theta$ perchè $\theta$ a diffrenza di $\gamma$ non dipende da $\bar v$
+Attenzione $\gamma \neq \ \theta$ perchè $\theta$ a diffrenza di $\gamma$ non dipende da $\bar v$ stesso vale per $\psi$ e $\chi$ come si può vedere qui sotto $\chi$ è rispetto al $\bar v_H$ metre $\psi$ rispetto a $\hat x_B$ vedremo più avanti che esiste un angolo chiamato **Angolo di deriva:** $\beta=\chi-\psi$ e solo se $\beta=0\rightarrow\chi=\psi$
 """
 
 # ╔═╡ 4f1f40e4-0d53-41dd-a8bc-93c69a3e0c1b
@@ -686,36 +686,19 @@ let
 	plot(pt, ps, layout = (1, 2))
 end
 
-# ╔═╡ 43e6a216-fbc3-4b91-ac5e-144f60152e35
+# ╔═╡ 869263e2-05a8-46e2-9617-23d3d3503775
 let
-	psi = deg2rad(psi1)
-	# Top view
-	pt = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
-	airplane = transform_all(airplane_shape(),[0,0],[4,4],-psi+pi/2)
-	pt = plot!(airplane,c=:black,label="")
-
-	# N
-	pc = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_H",linewidth=1,line=:dash)
-	# E
-	pc = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=1,line=:dash)
-	# D
-	pc=plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=2,line=:dash)
-	pc=plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=2, line =:dash)
-	
-	
+	# Side view
+	ps = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],0)
+	ps = plot!(airplane,c=:black,label="")
 	# xB
-	pt = plot!([0, sin(psi)], [0, cos(psi)], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
-	# yB
-	pt = plot!([0, cos(psi)], [0, -sin(psi)], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
+	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
 	# zB
-	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
-	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+	ps = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_B",linewidth=2)
+	# yB
+	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
 
-	# psi
-	#xₜ(t) = 0.9*sin(t)
-	#yₜ(t) = 0.9*cos(t)
-
-	#plot!(xₜ,yₜ, 0, psi,fill=false,label=L"\psi",linewidth=3)
 end
 
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
@@ -867,7 +850,53 @@ let
 end
 
 # ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
-function par2dcircle()
+function par2dcircle(r,n_points,ini,fin)
+	t = LinRange(ini,fin,n_points)
+	x(t) = r*sin(t)
+	y(t) = r*cos(t)
+
+	x_coord=x.(t)
+	y_coord=y.(t)
+
+	return x_coord,y_coord
+end
+
+# ╔═╡ 43e6a216-fbc3-4b91-ac5e-144f60152e35
+let
+	psi = deg2rad(psi1)
+	# Top view
+	pt = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft,title=L"Angolo \ di \ imbardata \ \psi")
+	airplane = transform_all(airplane_shape(),[0,0],[4,4],-psi+pi/2)
+	pt = plot!(airplane,c=:black,label="")
+
+	# N
+	pc = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_H",linewidth=1,line=:dash)
+	# E
+	pc = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=1,line=:dash)
+	# D
+	pc=plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=2,line=:dash)
+	pc=plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=2, line =:dash)
+	
+	
+	# xB
+	pt = plot!([0, sin(psi)], [0, cos(psi)], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# yB
+	pt = plot!([0, cos(psi)], [0, -sin(psi)], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
+	# zB
+	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
+	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+
+	# psi
+	xpsi,ypsi=par2dcircle(1,40,0,psi)
+	plot!(xpsi,ypsi,label=L"\psi",linewidth=3, c=:fuchsia)
+	# v
+	pc = plot!([0, sin(psi+0.2)], [0, cos(psi+0.2)], arrow=true, color=:brown, label=L"\bar v_H",linewidth=1,line=:dash)
+
+	# chi
+	xchi,ychi=par2dcircle(0.8,40,0,psi+0.2)
+	pc = plot!(xchi, ychi, arrow=true, color=:cyan, label=L"\chi",linewidth=1,line=:dash)
+
+	
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2029,6 +2058,7 @@ version = "1.4.1+1"
 # ╟─e8bbcc41-02b6-43d7-b842-21ddfa92b49b
 # ╟─43e6a216-fbc3-4b91-ac5e-144f60152e35
 # ╟─4f1f40e4-0d53-41dd-a8bc-93c69a3e0c1b
+# ╠═869263e2-05a8-46e2-9617-23d3d3503775
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
