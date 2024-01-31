@@ -416,6 +416,18 @@ viene definito piano simmetrico materiale il piano generato da $\hat x_B\hat z_B
 # ╔═╡ e8bbcc41-02b6-43d7-b842-21ddfa92b49b
 md"""
 ### Angoli di assetto
+Definiscono l'orientamento del velivolo rispetto al vento
+
+- **Angolo di imbardata (Heading) :**
+$\psi=tan^{-1}(\dfrac{\hat x_B*\hat y_H}{\hat x_B*\hat x_H})$
+
+- **Angolo di beccheggio (Pitch) :**
+$\theta=-sin^{-1}(\hat x_B*\hat z_H)$
+
+- **Angolo di rollio (Roll) :**
+$\phi=sin^{-1}(\hat y_B*\hat z_H)$
+
+Attenzione $\gamma \neq \ \theta$ perchè $\theta$ a diffrenza di $\gamma$ non dipende da $\bar v$
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -1975,7 +1987,7 @@ version = "1.4.1+1"
 # ╟─1c754b21-6a19-4752-9ec4-8e4bd37b73a0
 # ╟─b5fe8375-2d01-44e6-9b1d-718009dba565
 # ╟─94c96468-411c-4e01-b2f1-88cff2b6169c
-# ╠═e8bbcc41-02b6-43d7-b842-21ddfa92b49b
+# ╟─e8bbcc41-02b6-43d7-b842-21ddfa92b49b
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
