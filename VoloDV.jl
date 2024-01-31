@@ -206,7 +206,7 @@ Quota vera, **true altitude** $TA$ misurata rispetto al livello medio del mare �
 """
 
 # ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
-md"S: $(@bind S2 Slider(0:0.01:10, default=5,show_value=true))"
+md"S: $(@bind S2 Slider(0:0.01:7, default=5,show_value=true))"
 
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
@@ -260,14 +260,14 @@ md"""
 
 # ╔═╡ f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
 md"""
-Anche chiamato NED (North,East,Down) o "terrestre mobile". Questo sistema di riferimento ha come origine un punto materiale sul velivolo per esempio il suo baricentro (center of gravity) $CG$.
+Anche chiamato NED (North,East,Down) o "terrestre mobile". Questo sistema di riferimento ha come origine un punto materiale sul velivolo per esempio il suo baricentro (center of gravity) $CG$. con $H$ indiciamo il piano dell'orizzonte.
 
 la terna è così definita:
 $$F_H=
 \begin{cases}
 \hat x_H = Nord\\
 \hat y_E = East\\
-\hat z_E = normale \ al \ piano \ e \ concorde \ a\ \bar g\\
+\hat z_E = normale \ a \ H \ e \ concorde \ a\ \bar g\\
 origine = GC \ velivolo
 \end{cases}$$
 
@@ -281,7 +281,7 @@ Definiscono il moto del velivolo rispetto alla Terra
 - **Angolo di rampa:** 
 $\gamma=-sin^{-1}(\hat e_t*\hat z_H)$
 - **Angolo di rotta:**
-$\chi$
+$\chi=tan^{-1}(\dfrac{\bar v*\hat y_H}{\bar v* \hat x_H})$
 """
 
 # ╔═╡ 9350c9d1-f4cd-4633-8513-50ac1a9311ef
@@ -291,7 +291,82 @@ md"angolo di rampa $\gamma$: $(@bind gamma1 Slider(-360:1:360, default=20, show_
 md"angolo di rotta $\chi$: $(@bind chi1 Slider(-360:1:360, default=55,show_value=true)) °"
 
 # ╔═╡ f1b15f3f-60a4-4605-953b-f4393a2de8a2
-md" modulo della velocità $v_h$: $(@bind vh1 Slider(0:0.01:1, default=1,show_value=true))"
+md" modulo della velocità $v$: $(@bind vh1 Slider(0:0.01:1, default=1,show_value=true))"
+
+# ╔═╡ 49f7985f-e7f4-4cae-bbe3-c1821489c76c
+md"""
+### Velocità in $F_H$
+la $\bar v$ può essere scomposta nelle velocità lungo i tre versori che definiscono la base del sistema $F_H$ possono essere così definite:
+
+- velocità verticale:
+$v_v= |\bar v|*sin(\gamma)$  
+- velocità sul piano $H$:
+$v_H=|\bar v|*cos(\gamma)$
+- velocità verso Nord:
+$v_{NH}=v_H*sin(\chi)$
+- velocità verso Est:
+$v_{EH}=v_H*cos(\chi)$
+"""
+
+# ╔═╡ 42038324-7780-4b84-a0de-2f36cf30212b
+md"angolo di rampa $\gamma$: $(@bind gamma2 Slider(-360:1:360, default=20, show_value=true)) °"
+
+# ╔═╡ d6ef6fcb-ee92-4d71-a0b4-5d25befaa16f
+md"angolo di rotta $\chi$: $(@bind chi2 Slider(-360:1:360, default=55,show_value=true)) °"
+
+# ╔═╡ 8c312483-ec4d-4c1d-a88a-626f7715928a
+let
+	vh2 = 1
+	g = deg2rad(gamma2)
+	c = deg2rad(chi2)
+	
+	# speeds
+	vH=vh2*cos(g)
+	vv=vh2*sin(g)
+	vNH=vH*sin(c)
+	vEH=vH*cos(c)
+	
+	# climb rate speed
+	pg = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	# N
+	pg = plot!([-0.05,0.05],[-0.05,0.05], c=:red,label=L"\hat x_H",linewidth=3)
+	pg = plot!([0.05,-0.05],[-0.05,0.05], c=:red,label="",linewidth=3)
+	# E
+	pg = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=2)
+	# D
+	pg = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_H",linewidth=2)
+	# v
+	pg = plot!([0, vH], [0, vv], arrow=true, color=:purple, label=L"\bar v",linewidth=2)
+	# vv
+	pg = plot!([vH, vH], [0, vv], arrow=true, color=:coral, label=L"v_v",linewidth=2)
+	# vH
+	pg = plot!([0, vH], [0, 0], arrow=true, color=:brown, label=L"v_H",linewidth=2)
+
+	
+	
+	# speed on plane,N,E
+	pc = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	# N
+	pc = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_H",linewidth=2)
+	# E
+	pc = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_H",linewidth=2)
+	# D
+	pc=plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_H",linewidth=3)
+	pc=plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+	# vH
+	pc = plot!([0, vEH], [0, vNH], arrow=true, color=:brown, label=L"v_H",linewidth=2)
+	# vN
+	pc = plot!([0, 0], [0, vNH], arrow=true, color=:yellow, label=L"v_N",linewidth=3)
+	# vH
+	pc = plot!([0, vEH], [0, 0], arrow=true, color=:lime, label=L"v_E",linewidth=2)
+	plot(pg, pc, layout = (1, 2))
+end
+
+# ╔═╡ 46d626ec-d721-468e-9129-7ae9334d7c05
+md"""
+possiamo riscrivere la velocità $\bar v$ sulla nuova base $F_H$:
+
+"""
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -408,8 +483,7 @@ let
 	scatter!([0 0], [-1 NaN -1 NaN -1 NaN -1], lims=(0,1),
     inset=(1,bbox(0.05,0.1,0.15,0.15)), subplot=2, msw=0, marker=:square,
     legendfontsize=12, framestyle=:none, fg_color_legend=nothing, legend=:left,
-    color=[:red :white :green :white :black :white :yellow], label=" "^2 .* ["latitudine" "" "longitudine" "" "posizione" "" "piano"]
-)
+    color=[:red :white :green :white :black :white :yellow], label=" "^2 .* ["latitudine" "" "longitudine" "" "posizione" "" "piano"])
 		
 end
 
@@ -507,7 +581,7 @@ end
 # ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
 let
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12))
+	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12),legend=:topleft)
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],2/3*pi)
 	plot!(airplane,c=:black,label="")
 	# N
@@ -522,7 +596,7 @@ end
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
 function Quota_di_volo(S2)
 	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(12))
+	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(12),legend=:bottomright)
 	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
 	plot!(airplane,c=:black,label="")
 
@@ -570,7 +644,7 @@ end
 let
 	x_coords,y_coords=traiettoria_parametrica_2d(time1)
 	
-	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14))
+	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14),legend=:topright)
 	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
 end
 
@@ -580,7 +654,7 @@ let
 	x_coords,y_coords,x0,y0,tx,ty,nx,ny=traiettoria_parametrica_2d(S1)
 	
 	# Plot the trajectory and vectors
-	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14))
+	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14),legend=:topright)
 	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
 	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label=L"\hat e_t")
 	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label=L"\hat e_n")
@@ -608,7 +682,7 @@ end
 let
 	x_coords,y_coords,z_coords=traiettoria_parametrica_3d(time2)
 	
-	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14))
+	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14),legend=:topright)
 	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
 	
 end
@@ -636,7 +710,7 @@ function varc3d(radius,ini,fin,n_points,longitude)
 # ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
 let
 	# frame of reference
-	plot(title="Angoli di traiettoria",showaxis=false,legendfont=font(12),xlim=[-1,1],ylim=[-1,1],zlim=[-1,1])
+	plot(title="Angoli di traiettoria",showaxis=false,legendfont=font(12),xlim=[-1,1],ylim=[-1,1],zlim=[-1,1],legend=:topleft)
 	plot!([0,1],[0,0],[0,0],c=:green, label=L"\hat y_H",linewidth=2)
 	plot!([0,0],[0,1],[0,0],c=:red, label=L"\hat x_H",linewidth=2)
 	plot!([0,0],[0,0],[0,-1],c=:blue, label=L"\hat z_H",linewidth=2)
@@ -1813,6 +1887,11 @@ version = "1.4.1+1"
 # ╟─9350c9d1-f4cd-4633-8513-50ac1a9311ef
 # ╟─31437c3c-a21a-4301-9efd-de00c86a0e2e
 # ╟─f1b15f3f-60a4-4605-953b-f4393a2de8a2
+# ╟─49f7985f-e7f4-4cae-bbe3-c1821489c76c
+# ╟─8c312483-ec4d-4c1d-a88a-626f7715928a
+# ╟─42038324-7780-4b84-a0de-2f36cf30212b
+# ╟─d6ef6fcb-ee92-4d71-a0b4-5d25befaa16f
+# ╠═46d626ec-d721-468e-9129-7ae9334d7c05
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
