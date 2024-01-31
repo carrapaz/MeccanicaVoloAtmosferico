@@ -26,7 +26,7 @@ end
 # ╔═╡ 38b8bf30-b673-11ee-0868-8df22983dbe9
 md"""
 
-# Volo atmosferico
+# Meccanica del volo atmosferico
 
 ## Davide Viganò
 
@@ -303,13 +303,13 @@ $v_v= |\bar v|*sin(\gamma)$
 - velocità sul piano $H$:
 $v_H=|\bar v|*cos(\gamma)$
 - velocità verso Nord:
-$v_{NH}=v_H*sin(\chi)$
+$v_{NH}=v_H*cos(\chi)$
 - velocità verso Est:
-$v_{EH}=v_H*cos(\chi)$
+$v_{EH}=v_H*sin(\chi)$
 """
 
 # ╔═╡ 42038324-7780-4b84-a0de-2f36cf30212b
-md"angolo di rampa $\gamma$: $(@bind gamma2 Slider(-360:1:360, default=20, show_value=true)) °"
+md"angolo di rampa $\gamma$: $(@bind gamma2 Slider(-360:1:360, default=35, show_value=true)) °"
 
 # ╔═╡ d6ef6fcb-ee92-4d71-a0b4-5d25befaa16f
 md"angolo di rotta $\chi$: $(@bind chi2 Slider(-360:1:360, default=55,show_value=true)) °"
@@ -364,9 +364,37 @@ end
 
 # ╔═╡ 46d626ec-d721-468e-9129-7ae9334d7c05
 md"""
-possiamo riscrivere la velocità $\bar v$ sulla nuova base $F_H$:
+possiamo riscrivere la velocità $\bar v$ sulla nuova base $F_H$ partendo dai vettori velocità:
 
+$\bar v_v= |\bar v|*sin(\gamma)*\hat z_H$  
+
+$v_H=|\bar v|*cos(\gamma)$
+
+$\bar v_{NH}=v_H*cos(\chi)*\hat x_H=|\bar v|*cos(\gamma)*cos(\chi)*\hat x_H$
+
+$\bar v_{EH}=v_H*cos(\chi)*\hat y_H=|\bar v|*cos(\gamma)*sin(\chi)*\hat y_H$
+
+$\bar v_{F_H}=\bar v_{NH}+\bar v_{EH}+\bar v_v$
+$\downarrow$
+$\bar v_{F_H}=|\bar v|*(cos(\gamma)*sin(\chi)*\hat x_H+cos(\gamma)*cos(\chi)*\hat y_H+sin(\gamma)*\hat z_H)$
+$\downarrow$
+$\bar v_{F_H}=|\bar v|*\begin{bmatrix}  cos(\gamma)*cos(\chi)\\\ cos(\gamma)*sin(\chi) \\\ sin(\gamma) \end{bmatrix}$
 """
+
+# ╔═╡ 0635e8b7-1ebc-4a28-94fc-da0796146b4e
+md"""
+possiamo definire la velocità angolare $\omega_{F_H}$:
+
+$\omega_{F_H}=\sqrt{\dot \gamma^2+\dot \chi^2*cos^2(\gamma)}$
+"""
+
+# ╔═╡ 05ec308d-c9f9-4c17-b15d-ada5d0a64b89
+md"""
+## Body frame $F_B$
+"""
+
+# ╔═╡ 1c754b21-6a19-4752-9ec4-8e4bd37b73a0
+
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -1891,7 +1919,10 @@ version = "1.4.1+1"
 # ╟─8c312483-ec4d-4c1d-a88a-626f7715928a
 # ╟─42038324-7780-4b84-a0de-2f36cf30212b
 # ╟─d6ef6fcb-ee92-4d71-a0b4-5d25befaa16f
-# ╠═46d626ec-d721-468e-9129-7ae9334d7c05
+# ╟─46d626ec-d721-468e-9129-7ae9334d7c05
+# ╟─0635e8b7-1ebc-4a28-94fc-da0796146b4e
+# ╟─05ec308d-c9f9-4c17-b15d-ada5d0a64b89
+# ╠═1c754b21-6a19-4752-9ec4-8e4bd37b73a0
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
