@@ -149,7 +149,8 @@ md"""
 ## Ipotesi con cui lavoriamo
 **Terra piatta:**
 
-consideriamo l'accelerazione gravitazionale uniforme e costante e la variazione di quota ininfluente sulla forza da essa causata. non consideriamo la rotazione terrestre e il sistema di riferimento è inerziale
+consideriamo l'accelerazione gravitazionale uniforme e costante e la variazione di quota ininfluente sulla forza da essa causata. 
+$br Inoltre non consideriamo la rotazione terrestre e il sistema di riferimento è inerziale
 
 **Atmosfera standard:**
 
@@ -200,9 +201,9 @@ md"""
 ## Quota di volo
 Distanza verticale tra velivolo e la superficie terrestre, può essere indicata come: 
 
-Quota assoluta, **absolute altitude:** $AA$ misurata rispetto alla topografia del terreno è utile per voli a bassa quota
+- Quota assoluta, **absolute altitude:** $AA$ misurata rispetto alla topografia del terreno è utile per voli a bassa quota
 
-Quota vera, **true altitude** $TA$ misurata rispetto al livello medio del mare è utile per confrontare la distanza verticale tra velivoli in volo
+- Quota vera, **true altitude** $TA$ misurata rispetto al livello medio del mare è utile per confrontare la distanza verticale tra velivoli in volo
 """
 
 # ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
@@ -405,6 +406,16 @@ $$F_B=
 \hat z_B = verso \ il \ ventre \ (asse \ imbardata \ |Yaw|)\\
 origine = CG \ velivolo
 \end{cases}$$
+"""
+
+# ╔═╡ 94c96468-411c-4e01-b2f1-88cff2b6169c
+md"""
+viene definito piano simmetrico materiale il piano generato da $\hat x_B\hat z_B$ lo indichiamo con $PSM$
+"""
+
+# ╔═╡ e8bbcc41-02b6-43d7-b842-21ddfa92b49b
+md"""
+### Angoli di assetto
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -1963,6 +1974,8 @@ version = "1.4.1+1"
 # ╟─05ec308d-c9f9-4c17-b15d-ada5d0a64b89
 # ╟─1c754b21-6a19-4752-9ec4-8e4bd37b73a0
 # ╟─b5fe8375-2d01-44e6-9b1d-718009dba565
+# ╟─94c96468-411c-4e01-b2f1-88cff2b6169c
+# ╠═e8bbcc41-02b6-43d7-b842-21ddfa92b49b
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
