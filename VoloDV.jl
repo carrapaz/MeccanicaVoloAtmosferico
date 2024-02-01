@@ -298,7 +298,7 @@ md" modulo della velocità $v$: $(@bind vh1 Slider(0:0.01:1, default=1,show_valu
 # ╔═╡ 49f7985f-e7f4-4cae-bbe3-c1821489c76c
 md"""
 ### Velocità in $F_H$
-la $\bar v$ può essere scomposta nelle velocità lungo i tre versori che definiscono la base del sistema $F_H$ possono essere così definite:
+La $\bar v$ può essere scomposta nelle velocità lungo i tre versori che definiscono la base del sistema $F_H$ possono essere così definite:
 
 - velocità verticale:
 $v_v= |\bar v|*sin(\gamma)$  
@@ -468,6 +468,36 @@ md"angolo di deriva $\alpha$: $(@bind alpha2 Slider(-45:1:45, default=20, show_v
 # ╔═╡ 65b12662-2f8f-4bea-aadf-d7791eb24ecd
 md"""
 ### Velocità all'aria
+La $\bar v_{AS}$ può essere scomposta nelle velocità lungo i tre versori chedefiniscono la base del sistema $F_B$ usando gli angoli aerodinamici:
+
+$$\bar v_{F_B}=
+\begin{cases}
+\bar v_{AS}*\hat y_B = | \bar v_{AS}|*sin(\beta)\\
+\bar v_{PSM} = | \bar v_{AS}|*cos(\beta)
+\end{cases}$$
+
+$\downarrow$
+
+$$\bar v_{F_B}=
+\begin{cases}
+\bar v_{\hat x_B} = | \bar v_{AS}|*sin(\beta)*cos(\alpha) \\
+\bar v_{\hat y_B} = | \bar v_{AS}|*sin(\beta) \\
+\bar v_{\hat z_B} = | \bar v_{AS}|*cos(\beta)*sin(\alpha)
+\end{cases}$$
+
+\
+
+Possiamo ora fare un paio di ipotesi nel caso degli aerei:
+
+$$\begin{cases}
+v_{\hat z_B}>>v_{\hat y_B} \ altrimenti \ moto \ laterale \\
+v_{\hat x_B}>>v_{\hat z_B} \ altrimenti \ stallo
+\end{cases}$$
+$\downarrow$
+$\bar v_{F_B} \approx \hat x_B \rightarrow \beta\approx\dfrac{v_{\hat y_B}}{|\bar v_{AS}|},\alpha\approx\dfrac{v_{\hat z_B}}{|\bar v_{AS}|}$
+
+queste approssimazioni sono valide per $\alpha, \beta$ piccoli
+
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
