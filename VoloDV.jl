@@ -579,6 +579,12 @@ $\dot\chi<0$
 
 """
 
+# ╔═╡ ba58fd28-983b-4688-bd7c-14512fe63402
+md" $\dot\gamma$: $(@bind dgamma1 Slider(-4:0.1:4, default=5, show_value=true)) °/s"
+
+# ╔═╡ ebcb05ec-541e-40c5-9438-e5db68747541
+md" $\dot\chi$: $(@bind dchi1 Slider(-4:0.1:4, default=2, show_value=true)) °/s"
+
 # ╔═╡ a765006c-29fb-47cc-801e-d9cf62952091
 md"""
 # Elementi di Aereodinamica
@@ -993,6 +999,85 @@ let
 	
 end
 
+# ╔═╡ f00df351-e2da-4886-947c-95a0f684c13e
+"""
+Crea una predefinita traiettoria parametrica in 3d  \\
+R: raggio manovra
+"""
+function manovre_curvilinee(R)
+	# Define the range and parametric functions
+	if R==0
+		R=0.00001
+	end
+	t = range(0, 10, length=100000)
+	x(t) = (1/R)*cos(t)
+	y(t) = (1/R)*sin(t)
+	dx(t) = 1/R
+	dy(t) = (1/R)*cos(t)
+	
+	# Generate coordinates for the curve
+	x_coords = x.(t)
+	y_coords = y.(t)
+	
+	# Choose the point t0 at the end of the range
+	t0 = S1
+	x0, y0 = x(t0), y(t0)
+	dx0, dy0 = dx(t0), dy(t0)
+	
+	# Compute tangent and normal vectors
+	magnitude_tangent = sqrt(dx0^2 + dy0^2)
+	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
+	nx, ny = -ty, tx
+	return x_coords,y_coords,x0,y0,tx,ty,nx,ny
+end
+
+
+# ╔═╡ 5777b4ce-2eac-44ec-ab14-cf06d6577065
+let
+	# Top view
+	pt = plot(
+		aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
+	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/2)
+	pt = plot!(airplane,c=:black,label="")
+
+	xdc,ydc=manovre_curvilinee(dchi1)
+
+	if dchi1==0
+		dchi1=0.00001
+	end
+	xdc=xdc .- 1/dchi1
+	pt = plot!(-xdc,ydc,lab="")
+	
+	# Side view
+	ps = plot(
+		aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
+	
+	airplane = transform_all(airplane_shape_side(),[0,0],[1,1],0)
+	ps = plot!(airplane,c=:black,label="")
+
+	xdg,ydg=manovre_curvilinee(1/dgamma1)
+	
+	if dgamma1==0
+		dgamma1=0.00001
+	end
+	ydg=ydg .+ dgamma1
+	ps= plot!(-xdg,ydg,lab="")
+
+	plot(pt, ps, layout = (1, 2))
+end
+
 # ╔═╡ 6123f526-a9f1-41d7-8499-09e56465f9e0
 """
 Crea cordinate per un arco orizzontale in 3d \\
@@ -1010,25 +1095,6 @@ function harc3d(radius,ini,fin,n_points,latitude)
 		z = radius * ones(n_points) * sin(latitude)
 		return x,y,z
 	end
-
-# ╔═╡ 5aeef1e9-f16b-43f3-b7be-d083e15c70c7
-"""
-Crea cordinate per un arco in 3d \\
-radius: raggio arco \\
-ini: punto inizio in radianti \\
-fin: punto fine in radianti \\
-n_points: numero di punti sull'arco \\
-longitude: rotazione dell'arco rispetto asse verticale
-"""
-function arc3d(α,β,γ,r,ain,afin)
-	M(u) = [r*cos(u), r*sin(u), 0]    # arc in X-Y plane
-	RM(u) = RotXYZ(α,β,γ) * M(u) .+ C     # rotated + shifted arc in 3D
-	
-	C = [0, 0, 0]               # center of arc
-	u = LinRange(ain, afin, 72)
-	xs, ys, zs = [[p[i] for p in RM.(u)] for i in 1:3]
-	return xs,ys,zs
-end
 
 # ╔═╡ 6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 """
@@ -1087,6 +1153,25 @@ let
 	
 	# velocity vector
 	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v",lw=2)
+end
+
+# ╔═╡ 5aeef1e9-f16b-43f3-b7be-d083e15c70c7
+"""
+Crea cordinate per un arco in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+longitude: rotazione dell'arco rispetto asse verticale
+"""
+function arc3d(α,β,γ,r,ain,afin)
+	M(u) = [r*cos(u), r*sin(u), 0]    # arc in X-Y plane
+	RM(u) = RotXYZ(α,β,γ) * M(u) .+ C     # rotated + shifted arc in 3D
+	
+	C = [0, 0, 0]               # center of arc
+	u = LinRange(ain, afin, 72)
+	xs, ys, zs = [[p[i] for p in RM.(u)] for i in 1:3]
+	return xs,ys,zs
 end
 
 # ╔═╡ 69424d76-9aa9-4be2-8e90-514824645980
@@ -2540,6 +2625,9 @@ version = "1.4.1+1"
 # ╟─86118dd3-99f7-4470-b9c1-ab5c8be001c3
 # ╟─4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 # ╟─dc250eda-e9d9-437d-b549-2992973d9cf1
+# ╟─5777b4ce-2eac-44ec-ab14-cf06d6577065
+# ╟─ba58fd28-983b-4688-bd7c-14512fe63402
+# ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
@@ -2549,9 +2637,10 @@ version = "1.4.1+1"
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
+# ╠═f00df351-e2da-4886-947c-95a0f684c13e
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
-# ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+# ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
 # ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
