@@ -148,10 +148,12 @@ md"""
 # ╔═╡ 258dcb67-de1f-48b6-978f-86ba4603b244
 md"""
 ## Ipotesi con cui lavoriamo
-**Terra piatta:**
-
-consideriamo l'accelerazione gravitazionale uniforme e costante e la variazione di quota ininfluente sulla forza da essa causata. 
-$br Inoltre non consideriamo la rotazione terrestre e il sistema di riferimento è inerziale
+**Modello della Terra:**
+- Piatta
+- Non rotante
+- Campo gravitazionale costante e uniforme. 
+- Traiettorie a quota costante sono rettilinee
+- Terra è sistema di riferimento inerziale
 
 **Atmosfera standard:**
 
@@ -498,6 +500,107 @@ $\bar v_{F_B} \approx \hat x_B \rightarrow \beta\approx\dfrac{v_{\hat y_B}}{|\ba
 
 queste approssimazioni sono valide per $\alpha, \beta$ piccoli
 
+"""
+
+# ╔═╡ 86118dd3-99f7-4470-b9c1-ab5c8be001c3
+md"""
+## Aerodynamic frame $F_A$
+Il sistema $F_A$ è usato per calcolare le forzanti aereodinamiche, l'orgine si trova in $CG$, viene definito a partire da $F_B$ tramite 2 rotazioni consecutive. La prima rotazione è di $-\alpha$ attorno a $\hat y_B$ che ci porta allo Stability Frame $F_S$ 
+
+la terna è così definita:
+$$F_A=
+\begin{cases}
+\hat x_A = verso \ la \ \bar v_{AS}\\ 
+\hat y_A = \hat x_B \wedge \hat z_A\\
+\hat z_A = su \ PSM \ e \ normale \ a \ \hat x_A\\
+origine = CG \ velivolo
+\end{cases}$$
+
+"""
+
+# ╔═╡ 4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
+md"""
+# Classificazione dei regimi di volo
+## Tipologie di volo comuni
+
+- Uniforme: 
+$|\dot{\bar v}|=0 \rightarrow |\bar v|=cost$
+
+- Rettilineo: 
+$R=\infty\rightarrow \omega=0 \rightarrow \dot\chi,\dot\gamma=0$
+
+- Orizzontale:
+$$\begin{cases}
+\gamma=0 \\
+\gamma>0 \ salita \\
+\gamma<0 \ discesa
+\end{cases}$$
+
+- Nel piano verticale:
+$\dot\chi=0\rightarrow
+\omega = \dot\gamma$
+
+- Simmetrico: 
+$\beta=0\rightarrow\bar v_{AS}\in PSM$
+
+- Livellato: 
+$\phi=0$
+
+- Simmetrico nel piano orizzontale:
+$$\begin{cases}
+\beta=0 \\
+\gamma=0 \\
+\omega=\dot\chi
+\end{cases}$$
+
+- Orizzontale rettilineo unifrome ($VORU$):
+$$\begin{cases}
+|\dot{\bar v}|=0 \\
+R=\infty \\
+\omega=\dot\chi
+\end{cases}$$
+"""
+
+# ╔═╡ dc250eda-e9d9-437d-b549-2992973d9cf1
+md"""
+## Manovre curvilinee
+
+- Richiamata (Pull-up):
+$\dot\gamma>0$
+
+- Affondata (Dive)
+$\dot\gamma<0$
+
+- Virata positiva, verso destra (Right turn):
+$\dot\chi>0$
+
+- Virata negativa, verso sinistra (Left turn):
+$\dot\chi<0$
+
+"""
+
+# ╔═╡ a765006c-29fb-47cc-801e-d9cf62952091
+md"""
+# Elementi di Aereodinamica
+## Equazioni cardinali
+Notazione:
+- Quantità di moto e momento qdm: $\bar Q$ , $\bar H$
+- Forze e momenti aereodinamici: $\bar F$ , $\bar M$
+- Forze e momenti dovuti alla propulsione: $\bar T$ , $\bar \Gamma$
+- Forze e momenti dovuti al peso: $\bar W$ , $\bar\Sigma$
+
+$$\begin{cases}
+\dfrac{d\bar Q}{dt}=\bar F+\bar T+\bar W \\
+\dfrac{d\bar H_P}{dt}=\bar M_P+\bar\Gamma_P+\bar\Sigma_P
+\end{cases}$$
+
+Il bilancio tramite le equazioni cardinali può essere svolto su un generico punto $P$, tuttavia se si utilizza $CG\rightarrow \bar\Sigma=0$
+
+$$\begin{cases}
+\dot{\bar Q}=\bar F+\bar T+\bar W \\
+\dot{\bar H_G}=\bar M_G+\bar\Gamma_G
+\end{cases}$$
+ 
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -2434,6 +2537,10 @@ version = "1.4.1+1"
 # ╟─c55079d2-0bf7-4094-bcf8-8de86d0d001a
 # ╟─93b9b3a4-9493-4085-a73e-9b8c4be45b96
 # ╟─65b12662-2f8f-4bea-aadf-d7791eb24ecd
+# ╟─86118dd3-99f7-4470-b9c1-ab5c8be001c3
+# ╟─4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
+# ╟─dc250eda-e9d9-437d-b549-2992973d9cf1
+# ╟─a765006c-29fb-47cc-801e-d9cf62952091
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
