@@ -678,6 +678,15 @@ facciamo l'analisi dimensionale
 
 $[MLT^{-2}]=[ML^{-3}]^{e_\rho}[LT^{-1}]^{e_a}[ML^{-1}T^{-1}]^{e_\mu}[LT^{-1}]^{e_V}[L^2]^{e_S}$
 
+uguagliamo gli esponenti di $M,L,T$ per ricavare un sistema di equazioni
+
+$$\begin{cases}
+[M]\rightarrow 1 = e_\rho + e_\mu\\
+[L]\rightarrow -2 = -3 e_\rho + e_a - e_{\mu}+e_V+2e_S\\
+[T]\rightarrow -2=-e_a-e_\mu-e_V\\
+\end{cases}$$
+
+
 
 """
 
@@ -2696,7 +2705,7 @@ version = "1.4.1+1"
 # ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
 # ╟─18a37d1e-2ce2-4710-b429-788c559c31c3
-# ╟─229ffa9f-145b-4fe1-b063-0ffb598bb918
+# ╠═229ffa9f-145b-4fe1-b063-0ffb598bb918
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
