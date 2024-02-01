@@ -612,6 +612,73 @@ $$\begin{cases}
 # ╔═╡ 18a37d1e-2ce2-4710-b429-788c559c31c3
 md"""
 ## Forza aerodinamica
+
+Un corpo immerso in un fluido subisce delle forze dovute a attriti viscosi e differenze di pressioni esercitate sulla superficie dello stesso. Queste possono generare momenti. Possiamo ricavarle facendo l'integrale chiuso sulla superficie del corpo per il contributo degli sforzi.
+
+Con $\bar\tau$ indichiamo il tensore degli sforzi, con $P_0$ il punto di riduzione dei momenti, $Q$ è una posizione variabile all'interno del corpo, $\bar n$ il versore normale alla superficie e $\mu$ la viscosità del fluido
+
+- Forza aerodinamica:
+$\bar F=\oint{\bar\tau \ dS}$
+
+- Momento rispetto al punto $P_0$:
+$\bar M=\oint {\bar\tau \wedge(P-Q)*dS}$  
+
+Dalle equazioni di Navier Stokes
+
+$\bar\tau = -P\bar n -\dfrac{2}{3}\mu(\nabla\cdot\bar v)\bar n + 2\mu(\nabla\cdot\bar v)^T\bar n$
+
+Ricaviamo un legame funzionale tra $\bar \tau$ e le grandezze che lo influenzano
+
+$\bar\tau=\bar\tau(P,\bar v,\mu,\bar n)$
+
+Possiamo ora passare al' **espressione funzionale della forza aerodinamica** $\bar F$
+
+$\bar F = \bar F(P,\bar V,\mu,\bar n,S)$
+
+dove $P,\bar V$ sono i valori della pressione e velocità locale e S la superficie, tuttavia sotto le nostre ipotesi di lavoro possiamo riscriverla in funzione dei valori del flusso indisturbato riducendo il numero di variabili:
+
+Usando la legge dei gas perfetti $P=\rho*R*T$ 
+
+$\bar F = \bar F(\rho_\infty,T_\infty,\mu_\infty,\bar V_\infty,\bar n,S)$
+
+Usiamo ora la velocità del suono in un fluido $a=\sqrt{\rho RT}$
+
+$\bar F = \bar F(\rho_\infty,a_\infty,\mu_\infty,\bar V_\infty,\bar n,S)$
+
+Riscriviamo $\bar V_\infty$ con $F_A$ $\rightarrow \bar V_\infty=f(|\bar v_{AS}|,\alpha,\beta)$
+
+$\bar F = \bar F(\rho_\infty,a_\infty,\mu_\infty,|\bar v_{AS}|,\alpha,\beta,\bar n,S)$
+
+Quest'ultima è l' **Espressione funzionale della forza aerodinamica**
+
+
+"""
+
+# ╔═╡ 229ffa9f-145b-4fe1-b063-0ffb598bb918
+md"""
+## Teorema di Buckingham $(\pi)$
+
+Ogni equazione fisica dipendente da $n$ variabili fisiche $[q_i]$ esprimibili intermini di K quantità fisiche fondamentali è rappresentabile come funzione di $n-K$
+variabili adimensionali $\Pi_j$ costruite moltiplicando tra loro combinazioni delle
+variabili fisiche originali
+
+Vediamo ad esempio la forza aereodinamica:
+- 5 variabili fisiche $\rightarrow \rho,|\bar v|,\mu,a,S$
+
+- 3 grandezze fisiche fondamentali  $L, M, T$ (lunghezza,massa,tempo)
+variabili adimensionali $\Pi_j=5-3=2$ 
+
+- Raccogliamo in $K$ i restanti parametri adimensionali $K=K(\alpha,\beta,forma)$
+
+scriviamo la relazione
+
+$|\bar F|=K*\rho^{e_\rho}*a^{e_a}*\mu^{e_\mu}*V^{e_V}*S^{e_S}$
+
+facciamo l'analisi dimensionale
+
+$[MLT^{-2}]=[ML^{-3}]^{e_\rho}[LT^{-1}]^{e_a}[ML^{-1}T^{-1}]^{e_\mu}[LT^{-1}]^{e_V}[L^2]^{e_S}$
+
+
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -2629,6 +2696,7 @@ version = "1.4.1+1"
 # ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
 # ╟─18a37d1e-2ce2-4710-b429-788c559c31c3
+# ╟─229ffa9f-145b-4fe1-b063-0ffb598bb918
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
