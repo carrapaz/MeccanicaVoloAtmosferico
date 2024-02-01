@@ -580,7 +580,7 @@ $\dot\chi<0$
 """
 
 # ╔═╡ ba58fd28-983b-4688-bd7c-14512fe63402
-md" $\dot\gamma$: $(@bind dgamma1 Slider(-4:0.1:4, default=5, show_value=true)) °/s"
+md" $\dot\gamma$: $(@bind dgamma1 Slider(-4:0.1:4, default=2, show_value=true)) °/s"
 
 # ╔═╡ ebcb05ec-541e-40c5-9438-e5db68747541
 md" $\dot\chi$: $(@bind dchi1 Slider(-4:0.1:4, default=2, show_value=true)) °/s"
@@ -1009,26 +1009,15 @@ function manovre_curvilinee(R)
 	if R==0
 		R=0.00001
 	end
-	t = range(0, 10, length=100000)
+	t = range(-pi, pi, length=100000)
 	x(t) = (1/R)*cos(t)
 	y(t) = (1/R)*sin(t)
-	dx(t) = 1/R
-	dy(t) = (1/R)*cos(t)
 	
 	# Generate coordinates for the curve
 	x_coords = x.(t)
 	y_coords = y.(t)
 	
-	# Choose the point t0 at the end of the range
-	t0 = S1
-	x0, y0 = x(t0), y(t0)
-	dx0, dy0 = dx(t0), dy(t0)
-	
-	# Compute tangent and normal vectors
-	magnitude_tangent = sqrt(dx0^2 + dy0^2)
-	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
-	nx, ny = -ty, tx
-	return x_coords,y_coords,x0,y0,tx,ty,nx,ny
+	return x_coords,y_coords
 end
 
 
@@ -1052,7 +1041,7 @@ let
 		dchi1=0.00001
 	end
 	xdc=xdc .- 1/dchi1
-	pt = plot!(-xdc,ydc,lab="")
+	pt = plot!(-xdc*4,ydc*4,lab="")
 	
 	# Side view
 	ps = plot(
@@ -1067,13 +1056,13 @@ let
 	airplane = transform_all(airplane_shape_side(),[0,0],[1,1],0)
 	ps = plot!(airplane,c=:black,label="")
 
-	xdg,ydg=manovre_curvilinee(1/dgamma1)
+	xdg,ydg=manovre_curvilinee(dgamma1)
 	
 	if dgamma1==0
 		dgamma1=0.00001
 	end
-	ydg=ydg .+ dgamma1
-	ps= plot!(-xdg,ydg,lab="")
+	ydg=ydg .- 1/dgamma1
+	ps= plot!(xdg*4,-ydg*4,lab="")
 
 	plot(pt, ps, layout = (1, 2))
 end
