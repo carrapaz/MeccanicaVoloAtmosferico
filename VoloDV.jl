@@ -609,6 +609,11 @@ $$\begin{cases}
  
 """
 
+# ╔═╡ 18a37d1e-2ce2-4710-b429-788c559c31c3
+md"""
+## Forza aerodinamica
+"""
+
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
 # Codice del notebook
@@ -1006,10 +1011,7 @@ R: raggio manovra
 """
 function manovre_curvilinee(R)
 	# Define the range and parametric functions
-	if R==0
-		R=0.00001
-	end
-	t = range(-pi, pi, length=100000)
+	t = range(-pi, pi, length=360)
 	x(t) = (1/R)*cos(t)
 	y(t) = (1/R)*sin(t)
 	
@@ -1032,15 +1034,18 @@ let
 		legendfont=font(12),
 		legend=:topleft
 	)
+	
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/2)
 	pt = plot!(airplane,c=:black,label="")
 
-	xdc,ydc=manovre_curvilinee(dchi1)
-
 	if dchi1==0
-		dchi1=0.00001
+		ydc= (-10:0.1:10)
+		xdc= zeros(201)
+	else
+		xdc,ydc=manovre_curvilinee(dchi1)
+		xdc=xdc .- 1/dchi1
 	end
-	xdc=xdc .- 1/dchi1
+	
 	pt = plot!(-xdc*4,ydc*4,lab="")
 	
 	# Side view
@@ -1056,12 +1061,17 @@ let
 	airplane = transform_all(airplane_shape_side(),[0,0],[1,1],0)
 	ps = plot!(airplane,c=:black,label="")
 
-	xdg,ydg=manovre_curvilinee(dgamma1)
+	
 	
 	if dgamma1==0
-		dgamma1=0.00001
+		xdg= (-10:0.1:10)
+		ydg= zeros(201)
+	else
+		xdg,ydg=manovre_curvilinee(dgamma1)
+		ydg=ydg .- 1/dgamma1
 	end
-	ydg=ydg .- 1/dgamma1
+	
+	
 	ps= plot!(xdg*4,-ydg*4,lab="")
 
 	plot(pt, ps, layout = (1, 2))
@@ -2618,6 +2628,7 @@ version = "1.4.1+1"
 # ╟─ba58fd28-983b-4688-bd7c-14512fe63402
 # ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
+# ╟─18a37d1e-2ce2-4710-b429-788c559c31c3
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
@@ -2626,7 +2637,7 @@ version = "1.4.1+1"
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
-# ╠═f00df351-e2da-4886-947c-95a0f684c13e
+# ╟─f00df351-e2da-4886-947c-95a0f684c13e
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 # ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
