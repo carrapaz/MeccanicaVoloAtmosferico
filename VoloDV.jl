@@ -18,6 +18,7 @@ end
 begin
 	using Plots
 	using PlutoUI
+	using Rotations
 	using LaTeXStrings
 	gr()
 	print("Dependencies")
@@ -241,9 +242,9 @@ md"""
 
 # ╔═╡ 9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
 md"""
-Spesso durante il volo la velocità rispetto al suolo **ground speed:** $\bar V_{GS}$ non coincide con la velocità con cui l'aereo viaggia nell'aria. questo perchè può esserci vento e l'aria stessa avere una velocità **wind speed:** $\bar V_w$. ciò comporta che l'aereo ha anche una velocità rispetto al vento $\bar V_{w^*}=- \bar V_{w}$ e la velocita di volo sarà la somma di queste due componenti **air speed:** $\bar V_{AS}=\bar V_{w^*}+\bar V_{GS}$
+Spesso durante il volo la velocità rispetto al suolo **ground speed:** $\bar v_{GS}$ non coincide con la velocità con cui l'aereo viaggia nell'aria. questo perchè può esserci vento e l'aria stessa avere una velocità **wind speed:** $\bar v_W$. ciò comporta che l'aereo ha anche una velocità rispetto al vento $\bar v_{W^*}=- \bar v_{W}$ e la velocita di volo sarà la somma di queste due componenti **air speed:** $\bar v_{AS}=\bar v_{W^*}+\bar v_{GS}$
 
-quindi per trovare la $\bar V_{GS}$ che in $F_E$ corrisponde a $\dot{\bar r}_E$ ossia la derivata nel tempo del vettore posizione nel sistema $F_E$ basta fare $\bar V_{GS}=\bar V_{AS}-\bar V_{w^*}$
+quindi per trovare la $\bar v_{GS}$ che in $F_E$ corrisponde a $\dot{\bar r}_E$ ossia la derivata nel tempo del vettore posizione nel sistema $F_E$ basta fare $\bar v_{GS}=\bar v_{AS}-\bar v_{W^*}$
 
 la velocità in contesto areonautico è spesso misurata in nodi $Kn$ che sono definiti come miglia nautiche all'ora $\dfrac{mn}{h}$ con $1mn=1852m$
 """
@@ -446,8 +447,27 @@ md"""
 Definiscono l'orientamento del velivolo rispetto al vento
 
 - **Angolo di deriva (Side slip):**
-$\beta$ 
+$\beta=sin^{-1}(\dfrac{\bar v * \hat y_B}{|\bar v|})$ 
 
+- **Angolo di incidenza (Attack angle):**
+$\alpha=tan^{-1}(\dfrac{\bar v * \hat z_B}{\bar v*\hat x_B})$ 
+
+Quindi $\beta$ è l'angolo tra $\bar v_{AS}$ e il $PSM$ mentre $\alpha$ è l'angolo tra la proiezione di $\bar v_{AS}$ su $PSM$ e $\hat x_B$
+
+"""
+
+# ╔═╡ afe62312-eff7-4c8d-8f9b-03b4a94eac40
+md"angolo di deriva $\beta$: $(@bind beta1 Slider(-360:1:360, default=15, show_value=true)) °"
+
+# ╔═╡ c55079d2-0bf7-4094-bcf8-8de86d0d001a
+md"angolo di deriva $\beta$: $(@bind beta2 Slider(-45:1:45, default=35, show_value=true)) °"
+
+# ╔═╡ 93b9b3a4-9493-4085-a73e-9b8c4be45b96
+md"angolo di deriva $\alpha$: $(@bind alpha2 Slider(-45:1:45, default=20, show_value=true)) °"
+
+# ╔═╡ 65b12662-2f8f-4bea-aadf-d7791eb24ecd
+md"""
+### Velocità all'aria
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -680,11 +700,11 @@ let
 	# Plotting the speeds
 	# Ground speed
 	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
-	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"Vgs",linewidth=2)
+	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"v_{GS}",linewidth=2)
 	# Wind speed
-	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"Vw*",linewidth=2)
+	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"v_{W^*}",linewidth=2)
 	# Air speed
-	plot!([dx, 0.1+Vgs*cos(rotazione1)], [dy, 0.1+Vgs*sin(rotazione1)], arrow=true, color=:red, label=L"Vas",linewidth=2)
+	plot!([dx, 0.1+Vgs*cos(rotazione1)], [dy, 0.1+Vgs*sin(rotazione1)], arrow=true, color=:red, label=L"v_{AS}",linewidth=2)
 	# Connectors
 	plot!([0.1, 0.1+Vgs*cos(rotazione1)], [0.1, 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1,line=:dash)
 	plot!([dx+Vgs*cos(rotazione1), 0.1+Vgs*cos(rotazione1)], [dy+Vgs*sin(rotazione1), 0.1+Vgs*sin(rotazione1)], color=:gray, label="",linewidth=1, line=:dash)
@@ -854,9 +874,28 @@ function harc3d(radius,ini,fin,n_points,latitude)
 		range = LinRange(ini, fin, n_points)
 		x = radius * cos.(range) * cos(latitude)
 		y = radius * sin.(range) * cos(latitude)
-		z = ones(n_points) * radius * sin(latitude)
+		z = radius * ones(n_points) * sin(latitude)
 		return x,y,z
 	end
+
+# ╔═╡ 5aeef1e9-f16b-43f3-b7be-d083e15c70c7
+"""
+Crea cordinate per un arco in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+longitude: rotazione dell'arco rispetto asse verticale
+"""
+function arc3d(α,β,γ,r,ain,afin)
+	M(u) = [r*cos(u), r*sin(u), 0]    # arc in X-Y plane
+	RM(u) = RotXYZ(α,β,γ) * M(u) .+ C     # rotated + shifted arc in 3D
+	
+	C = [0, 0, 0]               # center of arc
+	u = LinRange(ain, afin, 72)
+	xs, ys, zs = [[p[i] for p in RM.(u)] for i in 1:3]
+	return xs,ys,zs
+end
 
 # ╔═╡ 6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 """
@@ -879,10 +918,17 @@ function varc3d(radius,ini,fin,n_points,longitude)
 # ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
 let
 	# frame of reference
-	plot(title="Angoli di traiettoria",showaxis=false,legendfont=font(12),xlim=[-1,1],ylim=[-1,1],zlim=[-1,1],legend=:topleft)
-	plot!([0,1],[0,0],[0,0],c=:green, label=L"\hat y_H",linewidth=2)
-	plot!([0,0],[0,1],[0,0],c=:red, label=L"\hat x_H",linewidth=2)
-	plot!([0,0],[0,0],[0,-1],c=:blue, label=L"\hat z_H",linewidth=2)
+	plot(
+		title="Angoli di traiettoria",
+		showaxis=false,
+		legendfont=font(12),
+		xlim=[-1,1],
+		ylim=[-1,1],
+		zlim=[-1,1],
+		legend=:topleft)
+	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_H",lw=2)
+	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_H",lw=2)
+	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_H",lw=2)
 	
 	# define velocity as function of gamma and chi
 	v = vh1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
@@ -890,24 +936,70 @@ let
 
 	# plane projections
 	# z_h
-	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, label="",linewidth=1,line=:dash)
+	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, lab="",lw=1,l=:dash)
 	# y_h
-	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
 	# x_h
-	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
 	# piano x_h,y_h
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, label="",linewidth=1,line=:dash)
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
 
 	# angles
 	# chi
 	chi_x,chi_y,chi_z = harc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(chi1),40,0)
-	plot!(chi_x, chi_y, chi_z, linewidth=3, color=:cyan,label=L"\chi")
+	plot!(chi_x, chi_y, chi_z, lw=3, c=:cyan,lab=L"\chi")
 	# gamma
 	gamma_x,gamma_y,gamma_z = varc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(gamma1),40,pi/2-deg2rad(chi1))
-	plot!(gamma_x, gamma_y, gamma_z, linewidth=3, color=:orange,label=L"\gamma")
+	plot!(gamma_x, gamma_y, gamma_z, lw=3, c=:orange,lab=L"\gamma")
 	
 	# velocity vector
-	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, label=L"\bar v",linewidth=2)
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v",lw=2)
+end
+
+# ╔═╡ 69424d76-9aa9-4be2-8e90-514824645980
+let
+	a = deg2rad(alpha2)
+	b = deg2rad(beta2)
+	vh1  = 1
+	# frame of reference
+	plot(
+		title="Angoli di traiettoria",
+		showaxis=false,
+		legendfont=font(12),
+		xlim=[-1,1],
+		ylim=[-1,1],
+		zlim=[-1,1],
+		legend=:topleft)
+	# body axis
+	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_B",lw=2)
+	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_B",lw=2)
+	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_B",lw=2)
+	
+	# define velocity as function of beta and alpha
+	v = vh1*[cos(a)*cos(b),sin(b),cos(b)*sin(a)]
+	
+	# plane projections
+	# z_B
+	plot!([v[2],v[2]],[v[1],v[1]],[0,v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# x_By_B
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+	# x_B,z_B
+	plot!([0,v[2]],[v[1],v[1]],[v[3],v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# piano x_B,z_B
+	plot!([0,0],[0,cos(a)],[0,sin(a)],c=:grey, lab="",lw=1,l=:dash)
+	# v su piano x_B,z_B
+	plot!([0,0],[0,v[1]],[0,v[3]],c=:brown, lab=L"\bar v_{PSM}",lw=2)
+
+	# angles
+	# beta
+	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
+	plot!(b_x, b_y, b_z, lw=3, c=:purple2,lab=L"\beta")
+	# alpha
+	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
+	plot!(a_x, a_y, a_z, lw=3, c=:orange3,lab=L"\alpha")
+	
+	# velocity vector
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=2)
 end
 
 # ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
@@ -963,7 +1055,7 @@ let
 
 	# psi
 	xpsi,ypsi=par2dcircle(1,40,0,psi)
-	plot!(xpsi,ypsi,label=L"\psi",lw=3, c=:fuchsia)
+	plot!(xpsi,ypsi,arrow=true,label=L"\psi",lw=3, c=:fuchsia)
 	
 	# v
 	plot!([0, sin(psi+0.2)], [0, cos(psi+0.2)], arrow=true, c=:brown, lab=L"\bar v_H",lw=1,l=:dot)
@@ -1009,7 +1101,7 @@ let
 	
 	# theta
 	xtheta,ytheta=par2dcircle(1,40,pi/2,pi/2+theta)
-	plot!(xtheta,ytheta,label=L"\theta",lw=3, c=:orange)
+	plot!(xtheta,ytheta, arrow=true,label=L"\theta",lw=3, c=:coral3)
 end
 
 
@@ -1051,7 +1143,56 @@ let
 	
 	# phi
 	xphi,yphi=par2dcircle(1,40,pi/2,pi/2+phi)
-	plot!(xphi,yphi,label=L"\phi",lw=3, c=:darkblue)
+	plot!(xphi,yphi,arrow=true,label=L"\phi",lw=3, c=:darkblue)
+end
+
+# ╔═╡ ac80306d-2c1f-4b61-a0ad-dd97f66f4a7c
+let
+	psi = deg2rad(15)
+	beta = deg2rad(beta1)
+	# Top view
+	plot(aspect_ratio=:equal,
+		xlims=(-1,1),
+		ylims=(-1,1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft,
+		title=L"Angolo \ di \ deriva \ \beta"
+	)
+	airplane = transform_all(airplane_shape(),[0,0],[4,4],-psi+pi/2)
+	plot!(airplane,c=:black,label="")
+
+	# N
+	plot!([0, 0], [0, 1], arrow=true, c=:red, lab=L"\hat x_H",lw=1,l=:dot)
+	# E
+	plot!([0, 1], [0, 0], arrow=true, c=:green, lab=L"\hat y_H",lw=1,l=:dot)
+	# D
+	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,lab=L"\hat z_H",lw=2,l=:dot)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,lab="",lw=2, l =:dot)
+	
+	# xB
+	plot!([0, sin(psi)], [0, cos(psi)], arrow=true, c=:red, lab=L"\hat x_B",lw=2)
+	# yB
+	plot!([0, cos(psi)], [0, -sin(psi)], arrow=true, c=:green, lab=L"\hat y_B",lw=2)
+	# zB
+	plot!([-0.05,0.05],[-0.05,0.05], c=:blue,lab=L"\hat z_B",lw=3)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:blue,lab="",lw=3)
+
+	# psi
+	xpsi,ypsi=par2dcircle(1,40,0,psi)
+	plot!(xpsi,ypsi,arrow=true,label=L"\psi",lw=1, c=:fuchsia,l=:dot)
+	
+	# v
+	plot!([0, sin(beta+psi+0.2)], [0, cos(beta+psi+0.2)], arrow=true, c=:brown, lab=L"\bar v_H",lw=1,l=:dot)
+
+	# chi
+	xchi,ychi=par2dcircle(0.8,40,0,beta+psi+0.2)
+	plot!(xchi, ychi, arrow=true, c=:cyan, lab=L"\chi",lw=1,l=:dot)
+
+	# beta
+	xpsi,ypsi=par2dcircle(0.6,40,psi,beta+0.2+psi)
+	plot!(xpsi,ypsi,arrow=true,label=L"\beta",lw=3, c=:purple2)
+	
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1060,11 +1201,13 @@ PLUTO_PROJECT_TOML_CONTENTS = """
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Rotations = "6038ab10-8711-5258-84ad-4b1120ba62dc"
 
 [compat]
 LaTeXStrings = "~1.3.1"
 Plots = "~1.40.0"
 PlutoUI = "~0.7.55"
+Rotations = "~1.6.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -1073,7 +1216,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "adf95005e693e51b6c64d3136cdd3a5edf0cceba"
+project_hash = "a6ba16b49b6b523ad4098639ba459cacb4006623"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1696,6 +1839,12 @@ git-tree-sha1 = "37b7bb7aabf9a085e0044307e1717436117f2b3b"
 uuid = "c0090381-4147-56d7-9ebc-da0b1113ec56"
 version = "6.5.3+1"
 
+[[deps.Quaternions]]
+deps = ["LinearAlgebra", "Random", "RealDot"]
+git-tree-sha1 = "9a46862d248ea548e340e30e2894118749dc7f51"
+uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
+version = "0.7.5"
+
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -1703,6 +1852,12 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[deps.Random]]
 deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[[deps.RealDot]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "9f0a1b71baaf7650f4fa8a1d168c7fb6ee41f0c9"
+uuid = "c1ae055f-0cd5-4b69-90a6-9a35b1a98df9"
+version = "0.1.0"
 
 [[deps.RecipesBase]]
 deps = ["PrecompileTools"]
@@ -1732,6 +1887,12 @@ deps = ["UUIDs"]
 git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
 uuid = "ae029012-a4dd-5104-9daa-d747884805df"
 version = "1.3.0"
+
+[[deps.Rotations]]
+deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
+git-tree-sha1 = "792d8fd4ad770b6d517a13ebb8dadfcac79405b8"
+uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
+version = "1.6.1"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -1770,6 +1931,25 @@ version = "1.2.1"
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 version = "1.10.0"
+
+[[deps.StaticArrays]]
+deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore"]
+git-tree-sha1 = "f68dd04d131d9a8a8eb836173ee8f105c360b0c5"
+uuid = "90137ffa-7385-5640-81b9-e52037218182"
+version = "1.9.1"
+
+    [deps.StaticArrays.extensions]
+    StaticArraysChainRulesCoreExt = "ChainRulesCore"
+    StaticArraysStatisticsExt = "Statistics"
+
+    [deps.StaticArrays.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[[deps.StaticArraysCore]]
+git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
+uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
+version = "1.4.2"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -2217,7 +2397,13 @@ version = "1.4.1+1"
 # ╟─140eb5fe-d3c7-4c0e-bc2d-b7e377a953d5
 # ╟─f5391f45-0e3c-421d-90b1-071510c1628c
 # ╟─0a9510c2-7b71-44d5-8223-9d398890a53b
-# ╠═c53bc007-1f1e-41e7-a9c3-c71a0d6c63c1
+# ╟─c53bc007-1f1e-41e7-a9c3-c71a0d6c63c1
+# ╟─ac80306d-2c1f-4b61-a0ad-dd97f66f4a7c
+# ╟─afe62312-eff7-4c8d-8f9b-03b4a94eac40
+# ╟─69424d76-9aa9-4be2-8e90-514824645980
+# ╟─c55079d2-0bf7-4094-bcf8-8de86d0d001a
+# ╟─93b9b3a4-9493-4085-a73e-9b8c4be45b96
+# ╟─65b12662-2f8f-4bea-aadf-d7791eb24ecd
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
@@ -2227,6 +2413,7 @@ version = "1.4.1+1"
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
+# ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 # ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
 # ╟─00000000-0000-0000-0000-000000000001
