@@ -725,6 +725,13 @@ $|\bar M|=q_D l C_M$
 Questa riscrittura è molto conveniente, avendo i due corpi di dimensioni diverse lo stesso $C_F,C_M$, è quindi sufficiente conoscere $q_D,S$ dell'areomobile vero per poter calcolare le forze che subirà in volo a partire dalle forze rilevate su un suo modello in galleria del vento
 """
 
+# ╔═╡ 6a64478c-4a13-454e-a2fc-19e289638b44
+md"""
+## Definizioni per le forzanti aerodinamiche
+
+### Componenti della forza aerodinamica
+"""
+
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
 # Codice del notebook
@@ -984,9 +991,16 @@ end
 # ╔═╡ b5fe8375-2d01-44e6-9b1d-718009dba565
 let
 	# Top view
-	pt = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	pt = plot(aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
 	airplane = transform_all(airplane_shape(),[0,0],[4,4],pi/2)
 	pt = plot!(airplane,c=:black,label="")
+	
 	# xB
 	pt = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
 	# yB
@@ -996,9 +1010,16 @@ let
 	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
 
 	# Side view
-	ps = plot(aspect_ratio=:equal, xlims=(-1, 1), ylims=(-1, 1),showaxis=false,legendfont=font(12),legend=:topleft)
+	ps = plot(aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
 	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],0)
 	ps = plot!(airplane,c=:black,label="")
+	
 	# xB
 	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
 	# zB
@@ -1007,6 +1028,48 @@ let
 	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
 
 	plot(pt, ps, layout = (1, 2))
+end
+
+# ╔═╡ 8c7a0753-17f0-41e8-8349-28c2d309cade
+let
+	# Top view
+	pt = plot(aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
+	airplane = transform_all(airplane_shape(),[0,0],[4,4],pi/2)
+	pt = plot!(airplane,c=:black,label="")
+	
+	# xB
+	pt = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# yB
+	pt = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
+	# zB
+	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
+	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
+
+	# Side view
+	ps = plot(aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
+	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],0)
+	ps = plot!(airplane,c=:black,label="")
+	
+	# xB
+	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# zB
+	ps = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_B",linewidth=2)
+	# yB
+	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
+
+	plot(ps, pt, layout = (1, 2))
 end
 
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
@@ -1511,14 +1574,14 @@ let
 	plot!(xpsi,ypsi,arrow=true,label=L"\psi",lw=1, c=:fuchsia,l=:dot)
 	
 	# v
-	plot!([0, sin(beta+psi+0.2)], [0, cos(beta+psi+0.2)], arrow=true, c=:brown, lab=L"\bar v_H",lw=1,l=:dot)
+	plot!([0, sin(beta+psi)], [0, cos(beta+psi)], arrow=true, c=:brown, lab=L"\bar v_H",lw=1,l=:dot)
 
 	# chi
-	xchi,ychi=par2dcircle(0.8,40,0,beta+psi+0.2)
+	xchi,ychi=par2dcircle(0.8,40,0,beta+psi)
 	plot!(xchi, ychi, arrow=true, c=:cyan, lab=L"\chi",lw=1,l=:dot)
 
 	# beta
-	xpsi,ypsi=par2dcircle(0.6,40,psi,beta+0.2+psi)
+	xpsi,ypsi=par2dcircle(0.6,40,psi,beta+psi)
 	plot!(xpsi,ypsi,arrow=true,label=L"\beta",lw=3, c=:purple2)
 	
 end
@@ -2732,7 +2795,8 @@ version = "1.4.1+1"
 # ╟─c55079d2-0bf7-4094-bcf8-8de86d0d001a
 # ╟─93b9b3a4-9493-4085-a73e-9b8c4be45b96
 # ╟─65b12662-2f8f-4bea-aadf-d7791eb24ecd
-# ╟─86118dd3-99f7-4470-b9c1-ab5c8be001c3
+# ╠═86118dd3-99f7-4470-b9c1-ab5c8be001c3
+# ╠═8c7a0753-17f0-41e8-8349-28c2d309cade
 # ╟─4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 # ╟─dc250eda-e9d9-437d-b549-2992973d9cf1
 # ╟─5777b4ce-2eac-44ec-ab14-cf06d6577065
@@ -2740,7 +2804,8 @@ version = "1.4.1+1"
 # ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
 # ╟─18a37d1e-2ce2-4710-b429-788c559c31c3
-# ╠═229ffa9f-145b-4fe1-b063-0ffb598bb918
+# ╟─229ffa9f-145b-4fe1-b063-0ffb598bb918
+# ╠═6a64478c-4a13-454e-a2fc-19e289638b44
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
