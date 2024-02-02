@@ -735,7 +735,29 @@ Questa riscrittura è molto conveniente, avendo i due corpi di dimensioni divers
 md"""
 ## Definizioni per le forzanti aerodinamiche
 
-### Componenti della forza aerodinamica
+- Scomposizione della forza aerodinamica $\bar F$
+$$\begin{cases}
+D = -\hat x_A \cdot \bar F \rightarrow resistenza \rightarrow q_DSC_D=D
+\\ Q = -\hat y_A \cdot \bar F \rightarrow devianza \rightarrow q_DSC_Q=Q
+\\ L = -\hat z_A \cdot \bar F \rightarrow portanza \rightarrow q_DSC_L=L
+\end{cases}$$
+
+$\bar F= -(D\hat x_A+Q\hat y_A+L\hat z_A)=-q_DS(C_D\hat x_A+C_Q\hat y_A+C_L\hat z_A)$
+
+- Scomposizione dei momenti aerodinamici $\bar M_P$
+
+
+$$\begin{cases}
+ \mathcal{L}_P= \hat x_B \cdot \bar M_P \rightarrow momento \ di \ rollio \rightarrow q_DSbC_{\mathcal{L}_P}=\mathcal{L}_P
+
+\\ \mathcal{M}_P= \hat y_B \cdot \bar M_P \rightarrow momento \ di \ beccheggio \rightarrow q_DS\bar cC_{\mathcal{M}_P}=\mathcal{M}_P
+
+\\ \mathcal{N}_P= \hat z_B \cdot \bar M_P \rightarrow momento \ di \ imbardata \rightarrow q_DSbC_{\mathcal{N}_P}=\mathcal{N}_P
+\\(b = apertura \ alare)(\bar c = corda \ aerodinamica \ media)
+\end{cases}$$
+
+
+
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -1401,10 +1423,10 @@ let
 	# angles
 	# beta
 	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
-	plot!(b_x, b_y, b_z, lw=1, c=:purple2,lab=L"\beta")
+	plot!(b_x, b_y, b_z, lw=1, c=:purple2,lab=L"\beta=27^°")
 	# alpha
 	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
-	plot!(a_x, a_y, a_z, lw=1, c=:orange3,lab=L"\alpha")
+	plot!(a_x, a_y, a_z, lw=1, c=:orange3,lab=L"\alpha=14^°")
 	
 	# velocity vector
 	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=1)
@@ -2824,7 +2846,7 @@ version = "1.4.1+1"
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
 # ╟─18a37d1e-2ce2-4710-b429-788c559c31c3
 # ╟─229ffa9f-145b-4fe1-b063-0ffb598bb918
-# ╠═6a64478c-4a13-454e-a2fc-19e289638b44
+# ╟─6a64478c-4a13-454e-a2fc-19e289638b44
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
