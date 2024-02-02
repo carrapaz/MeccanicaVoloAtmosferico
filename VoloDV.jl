@@ -459,7 +459,7 @@ Quindi $\beta$ è l'angolo tra $\bar v_{AS}$ e il $PSM$ mentre $\alpha$ è l'ang
 """
 
 # ╔═╡ afe62312-eff7-4c8d-8f9b-03b4a94eac40
-md"angolo di deriva $\beta$: $(@bind beta1 Slider(-360:1:360, default=15, show_value=true)) °"
+md"angolo di deriva $\beta$: $(@bind beta1 Slider(-45:1:45, default=15, show_value=true)) °"
 
 # ╔═╡ c55079d2-0bf7-4094-bcf8-8de86d0d001a
 md"angolo di deriva $\beta$: $(@bind beta2 Slider(-45:1:45, default=35, show_value=true)) °"
@@ -505,7 +505,7 @@ queste approssimazioni sono valide per $\alpha, \beta$ piccoli
 # ╔═╡ 86118dd3-99f7-4470-b9c1-ab5c8be001c3
 md"""
 ## Aerodynamic frame $F_A$
-Il sistema $F_A$ è usato per calcolare le forzanti aereodinamiche, l'orgine si trova in $CG$, viene definito a partire da $F_B$ tramite 2 rotazioni consecutive. La prima rotazione è di $-\alpha$ attorno a $\hat y_B$ che ci porta allo Stability Frame $F_S$ 
+Il sistema $F_A$ è usato per calcolare le forzanti aereodinamiche, l'orgine si trova in $CG$, viene definito a partire da $F_B$ tramite 2 rotazioni consecutive. La prima rotazione è di $-\alpha$ attorno a $\hat y_B$ che ci porta allo Stability Frame $F_S$ la seconda è di $\beta$ attorno a $\hat z_S$ che ci porta a $F_A$
 
 la terna è così definita:
 $$F_A=
@@ -517,6 +517,12 @@ origine = CG \ velivolo
 \end{cases}$$
 
 """
+
+# ╔═╡ 454992df-7cf2-439f-97a3-f47df6d4ce14
+md"angolo $\alpha_{F_S}$: $(@bind asfi Slider(-45:1:45, default=0, show_value=true)) °"
+
+# ╔═╡ 47e28d45-2a52-4a78-9970-efd6436a377e
+md"angolo $\beta_{F_S}$: $(@bind bsfi Slider(-45:1:45, default=0, show_value=true)) °"
 
 # ╔═╡ 4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 md"""
@@ -1030,48 +1036,6 @@ let
 	plot(pt, ps, layout = (1, 2))
 end
 
-# ╔═╡ 8c7a0753-17f0-41e8-8349-28c2d309cade
-let
-	# Top view
-	pt = plot(aspect_ratio=:equal,
-		xlims=(-1, 1),
-		ylims=(-1, 1),
-		showaxis=false,
-		legendfont=font(12),
-		legend=:topleft
-	)
-	airplane = transform_all(airplane_shape(),[0,0],[4,4],pi/2)
-	pt = plot!(airplane,c=:black,label="")
-	
-	# xB
-	pt = plot!([0, 0], [0, 1], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
-	# yB
-	pt = plot!([0, 1], [0, 0], arrow=true, color=:green, label=L"\hat y_B",linewidth=2)
-	# zB
-	pt = plot!([-0.05,0.05],[-0.05,0.05], c=:blue,label=L"\hat z_B",linewidth=3)
-	pt = plot!([0.05,-0.05],[-0.05,0.05], c=:blue,label="",linewidth=3)
-
-	# Side view
-	ps = plot(aspect_ratio=:equal,
-		xlims=(-1, 1),
-		ylims=(-1, 1),
-		showaxis=false,
-		legendfont=font(12),
-		legend=:topleft
-	)
-	airplane = transform_all(airplane_shape_side(),[0,0],[4,4],0)
-	ps = plot!(airplane,c=:black,label="")
-	
-	# xB
-	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
-	# zB
-	ps = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_B",linewidth=2)
-	# yB
-	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
-
-	plot(ps, pt, layout = (1, 2))
-end
-
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
 """
 Crea grafico comparazioni differenze quote \\
@@ -1391,6 +1355,59 @@ let
 	
 	# velocity vector
 	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=2)
+end
+
+# ╔═╡ 8c7a0753-17f0-41e8-8349-28c2d309cade
+let
+	a = deg2rad(14)
+	b = deg2rad(27)
+	asf = deg2rad(asfi)
+	bsf = deg2rad(bsfi)
+	vh1  = 1
+	# frame of reference
+	plot(
+		title=L"Prova \ ad \ allineare \ F_A",
+		showaxis=false,
+		legendfont=font(12),
+		xlim=[-1,1],
+		ylim=[-1,1],
+		zlim=[-1,1],
+		legend=:topleft)
+	# body axis
+	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_B",lw=1,l=:dot)
+	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_B",lw=1,l=:dot)
+	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_B",lw=1,l=:dot)
+
+	# body axis
+	plot!([0,cos(bsf)],[0,-cos(asf)*sin(bsf)],[0,-sin(asf)*sin(bsf)],c=:green, lab=L"\hat y_S",lw=3)
+	plot!([0,sin(bsf)],[0,cos(asf)*cos(bsf)],[0,sin(asf)*cos(bsf)],c=:red, lab=L"\hat x_S",lw=3)
+	plot!([0,0],[0,sin(asf)],[0,-cos(asf)],c=:blue, lab=L"\hat z_S",lw=3)
+	
+	# define velocity as function of beta and alpha
+	v = vh1*[cos(a)*cos(b),sin(b),cos(b)*sin(a)]
+	
+	# plane projections
+	# z_B
+	plot!([v[2],v[2]],[v[1],v[1]],[0,v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# x_By_B
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+	# x_B,z_B
+	plot!([0,v[2]],[v[1],v[1]],[v[3],v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# piano x_B,z_B
+	plot!([0,0],[0,cos(a)],[0,sin(a)],c=:grey, lab="",lw=1,l=:dash)
+	# v su piano x_B,z_B
+	plot!([0,0],[0,v[1]],[0,v[3]],c=:brown, lab=L"\bar v_{PSM}",lw=1)
+
+	# angles
+	# beta
+	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
+	plot!(b_x, b_y, b_z, lw=1, c=:purple2,lab=L"\beta")
+	# alpha
+	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
+	plot!(a_x, a_y, a_z, lw=1, c=:orange3,lab=L"\alpha")
+	
+	# velocity vector
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=1)
 end
 
 # ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
@@ -2795,8 +2812,10 @@ version = "1.4.1+1"
 # ╟─c55079d2-0bf7-4094-bcf8-8de86d0d001a
 # ╟─93b9b3a4-9493-4085-a73e-9b8c4be45b96
 # ╟─65b12662-2f8f-4bea-aadf-d7791eb24ecd
-# ╠═86118dd3-99f7-4470-b9c1-ab5c8be001c3
-# ╠═8c7a0753-17f0-41e8-8349-28c2d309cade
+# ╟─86118dd3-99f7-4470-b9c1-ab5c8be001c3
+# ╟─8c7a0753-17f0-41e8-8349-28c2d309cade
+# ╟─454992df-7cf2-439f-97a3-f47df6d4ce14
+# ╟─47e28d45-2a52-4a78-9970-efd6436a377e
 # ╟─4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 # ╟─dc250eda-e9d9-437d-b549-2992973d9cf1
 # ╟─5777b4ce-2eac-44ec-ab14-cf06d6577065
