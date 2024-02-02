@@ -686,8 +686,43 @@ $$\begin{cases}
 [T]\rightarrow -2=-e_a-e_\mu-e_V\\
 \end{cases}$$
 
+abbiamo 3 equazioni e 5 incognite, il sistema è sottodeterminato possiamo scriverlo tramite combinazioni lineari di 2 variabili, secondarie, scegliamo come variabili secondarie  $e_\mu,e_a$ e riscriviam il sistema
 
+$$\begin{cases}
+ e_\rho = 1 - e_\mu\\
+ e_S = \dfrac{1}{2}(-2+3 e_\rho - e_a + e_{\mu}-e_V)\\
+ e_V=2-e_a-e_\mu\\
+\end{cases}$$
+$\downarrow$
+$$\begin{cases}
+ e_\rho = 1 - e_\mu\\
+ e_S = 1-\dfrac{1}{2}e_\mu\\
+ e_V=2-e_a-e_\mu\\
+\end{cases}$$
 
+Riscriviamo $|\bar F|$ in funzione delle relazioni trovate
+
+$|\bar F|=K*\rho^{1 - e_\mu}*a^{e_a}*\mu^{e_\mu}*V^{2-e_a-e_\mu}*S^{1-\dfrac{e_\mu}{2}}$
+
+$\downarrow$
+
+$|\bar F|=K \rho V^{2} S (\dfrac{a}{V})^{e_a}  (\dfrac{\mu}{\rho V \sqrt{S}})^{e_\mu}$
+
+Tra questi riconosciamo che $(\dfrac{\mu}{\rho V \sqrt{S}})$ è il numero di Reynolds invertito quindi $(\dfrac{\mu}{\rho V \sqrt{S}})=Re^{-1}$ mentre $\dfrac{a}{V}$ è il numero di Mach invertito quindi $Ma^{-1}=\dfrac{a}{V}$
+
+Riscriviamo di nuovo $|\bar F|$ raccogliendo tutti i termini adimensionali in un unico coefficiente $C_F=C_F(\alpha,\beta,forma,Ma^{-e_a},Re^{-e_\mu})$
+
+$|\bar F|=\dfrac{1}{2} \rho V^2  S C_F$
+
+Questa è la formulazione tipica delle forze aerodinamiche quali lift e drag, che raccogliento i primi termini nella pressione dinamica $q_D$ diventa:
+
+$|\bar F|=q_D S C_F$
+
+La procedura è equivalente per i momenti aggiungendo $l$ lunghezza di riferimento si ottiene:
+
+$|\bar M|=q_D l C_M$
+
+Questa riscrittura è molto conveniente, avendo i due corpi di dimensioni diverse lo stesso $C_F,C_M$, è quindi sufficiente conoscere $q_D,S$ dell'areomobile vero per poter calcolare le forze che subirà in volo a partire dalle forze rilevate su un suo modello in galleria del vento
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
