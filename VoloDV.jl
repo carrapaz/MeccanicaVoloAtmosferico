@@ -735,7 +735,9 @@ Questa riscrittura è molto conveniente, avendo i due corpi di dimensioni divers
 md"""
 ## Definizioni per le forzanti aerodinamiche
 
-- Scomposizione della forza aerodinamica $\bar F$
+Scomponiamo $\bar F$ e $\bar M_P$ rispetto ai sistemi di riferimento $F_A$ e $F_B$
+
+- Scomposizione della forza aerodinamica $\bar F$ in $F_A$
 $$\begin{cases}
 D = -\hat x_A \cdot \bar F \rightarrow resistenza \rightarrow q_DSC_D=D
 \\ Q = -\hat y_A \cdot \bar F \rightarrow devianza \rightarrow q_DSC_Q=Q
@@ -744,7 +746,7 @@ D = -\hat x_A \cdot \bar F \rightarrow resistenza \rightarrow q_DSC_D=D
 
 $\bar F= -(D\hat x_A+Q\hat y_A+L\hat z_A)=-q_DS(C_D\hat x_A+C_Q\hat y_A+C_L\hat z_A)$
 
-- Scomposizione dei momenti aerodinamici $\bar M_P$
+- Scomposizione dei momenti aerodinamici $\bar M_P$ in $F_B$
 
 
 $$\begin{cases}
@@ -756,7 +758,15 @@ $$\begin{cases}
 \\(b = apertura \ alare)(\bar c = corda \ aerodinamica \ media)
 \end{cases}$$
 
+$\bar M_P=\mathcal{L}_P\hat x_B+\mathcal{M}_P\hat y_B+\mathcal{N}_P \hat z_B$
 
+- Scomposizione su assi corpo $\bar F$ in $F_B$
+$$\begin{cases}
+X = \hat x_B \cdot \bar F \rightarrow longitudinale \rightarrow X \approx -D + L\alpha
+\\ Y = \hat y_B \cdot \bar F \rightarrow trasversale \rightarrow Y \approx -Q
+\\ Z = \hat z_B \cdot \bar F \rightarrow verticale \rightarrow Z \approx -L
+\\ approssimazioni \ valide \ per \ \alpha,\beta<<1 
+\end{cases}$$
 
 """
 
