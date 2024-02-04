@@ -44,113 +44,9 @@ md"""
 Questo notebook interattivo è progettato per essere una risorsa nello studio della meccanica del volo atmosferico. È destinato a coloro che desiderano approfondire la comprensione del funzionamento del volo atmosferico e analizzare come specifici elementi di design dell'aeromobile influenzino le sue prestazioni in volo.
 """
 
-# ╔═╡ 3ea80b56-a7c7-4dd1-aae3-e240e0042145
-md"""
-# Richiami di cinematica
-"""
-
-# ╔═╡ 8e429280-d45f-4aaa-8db6-bb865822def4
-md"""
-con $\bar r$ si indica il vettore posizione in un generico sistema di riferimento questo è in funzione del tempo come variabile indipendente
-"""
-
-# ╔═╡ ce9842db-1d24-43dc-8d23-6964719c80a2
-md"""
-quindi la velocità e l'accellerazione possono essere scritte come:
-
-$$
-\begin{cases}
-\bar r(t) = posizione\\
-\bar r^\prime(t) = velocità\\
-\bar r^{\prime\prime}(t) = accellerazione\\
-\end{cases}$$
-"""
-
-# ╔═╡ e4f7b60f-7c55-462c-9ced-da14638b66ae
-md"""
-anzichè usare il tempo come variabile possiamo usare l' ascissa curvilinea, $S$, ossia lo spostamento del punto $P$ lungo la sua traiettoria
-"""
-
-# ╔═╡ c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
-md"tempo: $(@bind time1 Slider(0:0.01:10, default=5,show_value=true))  s"
-
-# ╔═╡ 659b9467-0144-4aa5-ba2e-ff76182ee87b
-md"""
-per un aeromobile questa è in 3d dimensioni per esempio:
-"""
-
-# ╔═╡ b79ae4e0-96fb-478e-8fc8-3316c6e394ce
-md"tempo: $(@bind time2 Slider(0:0.01:10, default=5,show_value=true))  s"
-
-# ╔═╡ c339e1dd-5889-46c7-874b-e6cc048a39bc
-md"""
-## Terna intrinseca di Frenet
-"""
-
-# ╔═╡ 69e84cbe-b7e4-48c5-a819-3f471f4d091c
-md"""
-la terna di Frenet è composta di tre versori:
-
-**versore tangente:** 
-
-$\hat e_t = \bar r'(S)$
-
-la distanza perscorsa sarà:
-
-$\Delta S = \int_{t0}^{t1} \bar r'(t)dt$
-
-quindi lo spostamento infinitesimo
-
-$dS= \dfrac{|d \bar r|}{|d t|}*dt$
-$dS= |d \bar r|$
-$\dfrac{dS}{|d \bar r|}=1$
-$\dfrac{d\bar r}{d S}=\bar r'(S)$
-
-**versore normale:** 
-
-$\hat e_n = R*\bar r''(S)$
-
-Dove $R$ è il raggio di curvatura
-
-$R=\dfrac{1}{|\bar r''(S)|}$
-
-**versore binormale:**
-
-$\hat e_b = \hat e_t \wedge \hat e_n$
-
-"""
-
-# ╔═╡ bc13b7b3-7fc4-4007-9025-2597005fa63a
-md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
-
-# ╔═╡ 5890b370-d1b9-4372-b429-e2d902a98085
-md"""
-### Velocità e accellerazione
-\
-**Velocità:** $\dot{\bar r} =\dot S*\hat e_t$
-
-$\dot{\bar r} = \dfrac{d \bar r}{dt} = \dfrac{d \bar r(S)}{dS} * \dfrac{dS}{dt} = \bar r'(S)* \dot S(t)=\dot S * \bar r' = \dot S*\hat e_t$
-
-la veocità è sempre tangente alla traiettoria 
-\
-\
-\
-**Accellerazione:** $\ddot{\bar r} =\ddot S*\hat e_t+\dfrac{\dot S^2}{R}*\hat e_n$
-
-dove $\ddot S*\hat e_t$ è la componente tangenziale e $\dfrac{\dot S^2}{R}*\hat e_n$ la componente normale dell'accellerazione.
-$\omega = \dfrac{\dot S}{R}$ è la velocità angolare
-"""
-
-# ╔═╡ cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
-md"""
-
-# Sistemi di riferimento
-
-"""
-
 # ╔═╡ 258dcb67-de1f-48b6-978f-86ba4603b244
 md"""
-## Ipotesi con cui lavoriamo
+# Ipotesi con cui lavoriamo
 
 **Modelli del Velivolo:**
 
@@ -227,6 +123,110 @@ la quota $h$ è misurata tramite differenziale di pressione rispetto a questi ri
 | $QNE$      | pressione standard $P_0$       | separazione tra varie rotte in crociera | 
 | $QFE$      | lettura pressione aeroporto     | atterraggio (in parziale disuso)| 
 
+
+"""
+
+# ╔═╡ 3ea80b56-a7c7-4dd1-aae3-e240e0042145
+md"""
+# Richiami di cinematica
+"""
+
+# ╔═╡ 8e429280-d45f-4aaa-8db6-bb865822def4
+md"""
+con $\bar r$ si indica il vettore posizione in un generico sistema di riferimento questo è in funzione del tempo come variabile indipendente
+"""
+
+# ╔═╡ ce9842db-1d24-43dc-8d23-6964719c80a2
+md"""
+quindi la velocità e l'accellerazione possono essere scritte come:
+
+$$
+\begin{cases}
+\bar r(t) = posizione\\
+\bar r^\prime(t) = velocità\\
+\bar r^{\prime\prime}(t) = accellerazione\\
+\end{cases}$$
+"""
+
+# ╔═╡ e4f7b60f-7c55-462c-9ced-da14638b66ae
+md"""
+anzichè usare il tempo come variabile possiamo usare l' ascissa curvilinea, $S$, ossia lo spostamento del punto $P$ lungo la sua traiettoria
+"""
+
+# ╔═╡ c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
+md"tempo: $(@bind time1 Slider(0:0.01:10, default=5,show_value=true))  s"
+
+# ╔═╡ 659b9467-0144-4aa5-ba2e-ff76182ee87b
+md"""
+per un aeromobile questa è in 3d dimensioni per esempio:
+"""
+
+# ╔═╡ b79ae4e0-96fb-478e-8fc8-3316c6e394ce
+md"tempo: $(@bind time2 Slider(0:0.01:10, default=5,show_value=true))  s"
+
+# ╔═╡ c339e1dd-5889-46c7-874b-e6cc048a39bc
+md"""
+## Terna intrinseca di Frenet
+"""
+
+# ╔═╡ 69e84cbe-b7e4-48c5-a819-3f471f4d091c
+md"""
+la terna di Frenet è composta di tre versori:
+
+**versore tangente:** 
+
+$\hat e_t = \bar r'(S)$
+
+la distanza perscorsa sarà:
+
+$\Delta S = \int_{t0}^{t1} \dot {\bar r}(t)dt$
+
+quindi lo spostamento infinitesimo
+
+$dS= \dfrac{|d \bar r|}{|d t|}*dt$
+$dS= |d \bar r|$
+$\dfrac{dS}{|d \bar r|}=1$
+$\dfrac{d\bar r}{d S}=\bar r'(S)$
+
+**versore normale:** 
+
+$\hat e_n = R*\bar r''(S)$
+
+Dove $R$ è il raggio di curvatura
+
+$R=\dfrac{1}{|\bar r''(S)|}$
+
+**versore binormale:**
+
+$\hat e_b = \hat e_t \wedge \hat e_n$
+
+"""
+
+# ╔═╡ bc13b7b3-7fc4-4007-9025-2597005fa63a
+md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
+
+# ╔═╡ 5890b370-d1b9-4372-b429-e2d902a98085
+md"""
+### Velocità e accellerazione
+\
+**Velocità:** $\dot{\bar r} =\dot S*\hat e_t$
+
+$\dot{\bar r} = \dfrac{d \bar r}{dt} = \dfrac{d \bar r(S)}{dS} * \dfrac{dS}{dt} = \bar r'(S)* \dot S(t)=\dot S * \bar r' = \dot S*\hat e_t$
+
+la veocità è sempre tangente alla traiettoria 
+\
+\
+\
+**Accellerazione:** $\ddot{\bar r} =\ddot S*\hat e_t+\dfrac{\dot S^2}{R}*\hat e_n$
+
+dove $\ddot S*\hat e_t$ è la componente tangenziale e $\dfrac{\dot S^2}{R}*\hat e_n$ la componente normale dell'accellerazione.
+$\omega = \dfrac{\dot S}{R}$ è la velocità angolare
+"""
+
+# ╔═╡ cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
+md"""
+
+# Sistemi di riferimento
 
 """
 
@@ -1150,6 +1150,8 @@ function traiettoria_parametrica_2d(S1)
 	y(t) = sin(t)
 	dx(t) = 1
 	dy(t) = cos(t)
+	d2x(t) = 0
+	d2y(t) = -sin(t)
 	
 	# Generate coordinates for the curve
 	x_coords = x.(t)
@@ -1159,11 +1161,12 @@ function traiettoria_parametrica_2d(S1)
 	t0 = S1
 	x0, y0 = x(t0), y(t0)
 	dx0, dy0 = dx(t0), dy(t0)
+	d2x0, d2y0 = d2x(t0), d2y(t0)
 	
 	# Compute tangent and normal vectors
 	magnitude_tangent = sqrt(dx0^2 + dy0^2)
 	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
-	nx, ny = -ty, tx
+	nx, ny = -ty * sign(d2y0), tx * sign(d2y0)
 	return x_coords,y_coords,x0,y0,tx,ty,nx,ny
 end
 
@@ -2986,6 +2989,7 @@ version = "1.4.1+1"
 # ╔═╡ Cell order:
 # ╟─38b8bf30-b673-11ee-0868-8df22983dbe9
 # ╟─51934362-4b1f-4aea-bcf3-a3a892de83a1
+# ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─3ea80b56-a7c7-4dd1-aae3-e240e0042145
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
@@ -3001,7 +3005,6 @@ version = "1.4.1+1"
 # ╟─bc13b7b3-7fc4-4007-9025-2597005fa63a
 # ╟─5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
-# ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─45661987-c61e-4864-97a6-ac0ac6010d39
 # ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
@@ -3060,14 +3063,14 @@ version = "1.4.1+1"
 # ╟─229ffa9f-145b-4fe1-b063-0ffb598bb918
 # ╟─6a64478c-4a13-454e-a2fc-19e289638b44
 # ╟─66ce96db-5d29-4761-b069-b885f224754b
-# ╟─947359ba-02f8-4f1b-899a-37e47cb6132b
+# ╠═947359ba-02f8-4f1b-899a-37e47cb6132b
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
-# ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
+# ╠═14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
 # ╟─f00df351-e2da-4886-947c-95a0f684c13e
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
