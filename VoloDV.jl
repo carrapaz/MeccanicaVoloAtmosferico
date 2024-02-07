@@ -496,7 +496,7 @@ md"angolo di deriva $\beta$: $(@bind beta1 Slider(-45:1:45, default=15, show_val
 md"angolo di deriva $\beta$: $(@bind beta2 Slider(-45:1:45, default=35, show_value=true)) °"
 
 # ╔═╡ 93b9b3a4-9493-4085-a73e-9b8c4be45b96
-md"angolo di deriva $\alpha$: $(@bind alpha2 Slider(-45:1:45, default=20, show_value=true)) °"
+md"angolo di incidenza $\alpha$: $(@bind alpha2 Slider(-45:1:45, default=20, show_value=true)) °"
 
 # ╔═╡ 65b12662-2f8f-4bea-aadf-d7791eb24ecd
 md"""
@@ -811,7 +811,56 @@ let
 	foil = NACA4(0.04,0.4,0.12,0.02)
 	fl=plot(foil,c=:blue)
 
+	frot = MotionTransform([0,0],-pi/4)
+	transform_body!(foil,frot)
+	fl=plot(foil,c=:blue)
+end
+
+# ╔═╡ 3ad6fce1-fb0e-446a-b724-81af756eecb3
+let
+
+	# Dati aereo
+	W = 440440
+	S = 91
+	Td = 30631
 	
+	# Coefficienti Polare
+	cd0 = 0.019
+	k = 0.0425
+	
+	# Dati volo
+	rho = 0.423
+	V_s = 115
+	V_m = 133
+	V_t = 154
+	L = W
+
+	# Funzioni
+	V = V_s:1:300
+	
+	CL(V) = 2 .* L ./ (rho .* S .* V .^2)
+	
+	CD(CL) = cd0 .+ k .* CL .^ 2
+	
+	D(V) = 0.5 .* rho .* S .* V .^ 2 .* CD.(CL.(V))
+
+	# Grafico
+	plot(V, D.(V),
+		label="Drag vs. Velocity",
+		xlabel="Velocity (m/s)",
+		ylabel="Drag (N)",
+		legend=:bottomright
+	)
+	
+	plot!(V, fill(Td,length(V)), lab="Td")
+	plot!([V_s,V_s],[0,D.(V_s)], lab="Vs")
+	plot!([V_m,V_m],[0,D.(V_m)], lab="Vm")
+	plot!([V_t,V_t],[0,D.(V_t)], lab="Vt")
+
+	D_t = D(V_t)
+	plot!([V_s-10,V_t],[D.(V_t),D.(V_t)], lab=D_t)
+	
+	#print(D_t)
 end
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -1397,7 +1446,7 @@ let
 	vh1  = 1
 	# frame of reference
 	plot(
-		title="Angoli di traiettoria",
+		title="Angoli aerodinamici",
 		showaxis=false,
 		legendfont=font(12),
 		xlim=[-1,1],
@@ -2994,7 +3043,7 @@ version = "1.4.1+1"
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
 # ╟─e4f7b60f-7c55-462c-9ced-da14638b66ae
-# ╟─f66827da-440b-4b91-a085-063a9bcfad57
+# ╠═f66827da-440b-4b91-a085-063a9bcfad57
 # ╟─c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 # ╟─659b9467-0144-4aa5-ba2e-ff76182ee87b
 # ╟─c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
@@ -3064,13 +3113,14 @@ version = "1.4.1+1"
 # ╟─6a64478c-4a13-454e-a2fc-19e289638b44
 # ╟─66ce96db-5d29-4761-b069-b885f224754b
 # ╠═947359ba-02f8-4f1b-899a-37e47cb6132b
+# ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
-# ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
+# ╠═43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
-# ╠═14c78908-06ae-4636-a7eb-ac387c759e8a
+# ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
 # ╟─f00df351-e2da-4886-947c-95a0f684c13e
 # ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
