@@ -816,6 +816,11 @@ M = M_P \hat y_B\\
 \end{cases}$
 """
 
+# ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
+md"""
+# Diagrammi Penaund
+"""
+
 # ╔═╡ 3ad6fce1-fb0e-446a-b724-81af756eecb3
 let
 
@@ -830,13 +835,13 @@ let
 	
 	# Dati volo
 	rho = 0.423
-	V_s = 115
-	V_m = 133
-	V_t = 154
+	V_s = 115.2
+	V_m = 133.7
+	V_t = 154.5
 	L = W
 
 	# Funzioni
-	V = V_s:1:300
+	V = V_s:1:400
 	
 	CL(V) = 2 .* L ./ (rho .* S .* V .^2)
 	
@@ -852,13 +857,62 @@ let
 		legend=:bottomright
 	)
 	
-	plot!(V, fill(Td,length(V)), lab="Td")
-	plot!([V_s,V_s],[0,D.(V_s)], lab="Vs")
-	plot!([V_m,V_m],[0,D.(V_m)], lab="Vm")
-	plot!([V_t,V_t],[0,D.(V_t)], lab="Vt")
+	plot!(V, fill(Td,length(V)), lab="T_d = $Td")
+	plot!([V_s,V_s],[0,D.(V_s)], lab="Vs= $V_s")
+	plot!([V_m,V_m],[0,D.(V_m)], lab="Vm= $V_m")
+	plot!([V_t,V_t],[0,D.(V_t)], lab="Vt= $V_t")
 
 	D_t = D(V_t)
 	plot!([V_s-10,V_t],[D.(V_t),D.(V_t)], lab=D_t)
+	
+	#print(D_t)
+end
+
+# ╔═╡ 4187da49-e658-4ec6-9e6b-dbeefc086173
+let
+
+	# Dati aereo
+	W = 440440
+	S = 91
+	Td = 30631
+	
+	# Coefficienti Polare
+	cd0 = 0.019
+	k = 0.0425
+	
+	# Dati volo
+	rho = 0.423
+	V_s = 115.2
+	V_m = 133.7
+	V_t = 154.5
+	L = W
+
+	# Funzioni
+	V = V_s:1:400
+	
+	CL(V) = 2 .* L ./ (rho .* S .* V .^2)
+	
+	CD(CL) = cd0 .+ k .* CL .^ 2
+	
+	D(V) = 0.5 .* rho .* S .* V .^ 2 .* CD.(CL.(V))
+
+	P(V) = D.(CD.(CL.(V))) .* V
+	
+	# Grafico
+	plot(V, P.(V),
+		label="Potenza  Velocità",
+		xlabel="Velocità (m/s)",
+		ylabel="Potenza (W)",
+		legend=:bottomright
+	)
+	
+	#plot!(V, fill(Td ,length(V)), lab="T_d = $Td")
+	plot!([V_s,V_s],[0,P.(V_s)], lab="Vs= $V_s")
+	plot!([V_m,V_m],[0,P.(V_m)], lab="Vm= $V_m")
+	plot!([V_t,V_t],[0,P.(V_t)], lab="Vt= $V_t")
+
+	P_t = D(V_t) .* V
+	plot!([V_s-10,V_t],[P.(V_t),P.(V_t)], lab=P_t)
 	
 	#print(D_t)
 end
@@ -3036,7 +3090,9 @@ version = "1.4.1+1"
 # ╟─947359ba-02f8-4f1b-899a-37e47cb6132b
 # ╟─a1211f22-1f94-47fe-ae55-b5d06bb3000e
 # ╟─cb81651b-b845-4352-ac5b-6de837c81daa
+# ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
+# ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
