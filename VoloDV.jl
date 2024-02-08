@@ -866,6 +866,10 @@ let
 	plot!([V_s-10,V_t],[D.(V_t),D.(V_t)], lab=D_t)
 	
 	#print(D_t)
+	#q = 0.5 * rho * V_t^2  * S 
+	#CD_t = D_t/q
+
+	#phi = acosd((k^0.5*W)/(q*sqrt(D_t/q - cd0)))
 end
 
 # ╔═╡ 4187da49-e658-4ec6-9e6b-dbeefc086173
@@ -916,6 +920,16 @@ let
 	
 	#print(D_t)
 end
+
+# ╔═╡ b2f6bec4-449a-4299-8cda-4f7645627728
+md"""
+# Esercizi
+"""
+
+# ╔═╡ 6bb79929-043e-426c-885f-b62647bf5279
+md"""
+## ES 1
+"""
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
 md"""
@@ -1862,6 +1876,116 @@ let
 	# alpha
 	xa,ya=par2dcircle(0.8,40,-pi/2,alpha-pi/2)
 	plot!(xa, ya, arrow=true, c=:orange3, lab=L"\alpha",lw=1,l=:dot)
+end
+
+# ╔═╡ 4ece9d86-9a85-4e64-8654-3cd4c5f724d8
+let
+	# Dati
+	
+	# legame costitutivo
+	CL(a,d) = CL_a .* a + CL_d .* d + CL0
+	CM(a,d) = CM_a .* a + CM_d .* d + CM0
+	
+	# Coefficienti Portanza
+	CL_a = 4.5
+	CL_d = 0.2
+	CL0 = 0.1
+	
+	# Coefficienti Momento
+	CM_a = 0.5
+	CM_d = 1.4
+	CM0 = -0.03
+
+	# Posizioni
+	CMAC = 3
+	XAC = -0.69
+	XCG = -0.1
+
+	# Adimensionalizzazioni
+	AC = XAC/CMAC
+	CG = XCG/CMAC
+
+	# Calcoli
+	N = CM_a/CL_a + AC
+	XN = N * CMAC
+	
+	ms = CG - N
+	e = ms
+	
+	C = CM_d/CL_d + AC
+	XC = C * CMAC
+	
+	d = N-C
+	borri = e/d
+
+	CL_as = CL_a*(1/(1+borri))
+	
+	# Grafico
+	pf = plot(
+			aspect_ratio=:equal,
+			#xlims=(-C, N),
+			#ylims=(-1.1, 1.1),
+			showaxis=false,
+			legendfont=font(8),
+			legend=false
+		)
+
+	# Profilo
+	naca="2412"
+	w=NACA_shape(naca)
+	w=transform_all(w,[0,0],[1,1],0)
+	w=transform_all(w,[0,0],[1,1],0)
+	pf = plot!(w, c=:black, label = "")
+
+	t=NACA_shape(naca)
+	t=transform_all(t,[-C,0],[1,1],0)
+	t=transform_all(t,[-1/4,0],[1,1],0)
+	pf = plot!(t, c=:black, label = "")
+	
+	# Risultati
+	global ES1 = [XAC,XCG,XN,XC,ms,d,borri,CL_as,sign(XC)]
+
+	# asse x
+	pf = plot!([0, -0.4], [0, 0], arrow=true, c=:red, lab=L"\hat x",lw=2)
+
+	# M+
+	xa,ya=par2dcircle(0.2,40,-pi/2,0)
+	pf = plot!(xa, ya, arrow=true, c=:green, lab=L"M+",lw=2)
+
+	# Punti
+	# AC
+	pf = scatter!([-AC],[0],lab=L"X_{AC} = %$(round(XAC,digits=3))")
+	# CG
+	pf = scatter!([-CG],[0],lab=L"X_{CG} = %$(round(XCG,digits=3))")
+	# N
+	pf = scatter!([-N],[0],lab=L"X_{N} = %$(round(N*CMAC,digits=3))")
+	# C
+	pf = scatter!([-C],[0],lab=L"X_{C} = %$(round(C*CMAC,digits=3))")
+	# e
+	pf = plot!([-CG,-N],[-0.2,-0.2],lab=L"ms = %$(round(ms,digits=3))",lw=3)
+	# d
+	pf = plot!([-N,-C],[-0.4,-0.4],lab=L"d = %$(round(d*CMAC,digits=3))",lw=3)
+	# borri
+	#pf = scatter!([100],[100],lab=L"\epsilon = %$(round(borri,digits=3))")
+	
+	
+end
+
+# ╔═╡ ffe8fdb1-bda7-4a74-abdb-3ec8190b4de8
+begin
+	print("X_AC = $(ES1[1]) \n")
+	print("X_CG = $(ES1[2]) \n")
+	print("X_N = $(ES1[3]) \n")
+	print("X_C = $(ES1[4]) \n")
+	print("ms = $(ES1[5]) \n")
+	print("d = $(ES1[6]) \n")
+	print("borri = $(ES1[7]) \n")
+	print("CL_as = $(ES1[8]) \n")
+	if ES1[9]<0
+		print("Configurazione = standard")
+	else
+		print("Configurazione = canard")
+	end
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -3093,6 +3217,10 @@ version = "1.4.1+1"
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
+# ╟─b2f6bec4-449a-4299-8cda-4f7645627728
+# ╟─6bb79929-043e-426c-885f-b62647bf5279
+# ╟─4ece9d86-9a85-4e64-8654-3cd4c5f724d8
+# ╟─ffe8fdb1-bda7-4a74-abdb-3ec8190b4de8
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
