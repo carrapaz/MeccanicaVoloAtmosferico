@@ -40,7 +40,7 @@ md"""
 # ╔═╡ 51934362-4b1f-4aea-bcf3-a3a892de83a1
 md"""
 # Intro
-Questo notebook interattivo è progettato per essere una risorsa nello studio della meccanica del volo atmosferico. È destinato a coloro che desiderano approfondire la comprensione del funzionamento del volo atmosferico e analizzare come specifici elementi di design dell'aeromobile influenzino le sue prestazioni in volo.
+Questo notebook interattivo è progettato per essere una risorsa nello studio della meccanica del volo atmosferico. È destinato a coloro che desiderano approfondire la comprensione del funzionamento del volo atmosferico, ed analizzare come specifici elementi di design dell'aeromobile influenzino le sue prestazioni in volo.
 """
 
 # ╔═╡ 258dcb67-de1f-48b6-978f-86ba4603b244
@@ -1988,6 +1988,13 @@ begin
 	end
 end
 
+# ╔═╡ 3753a3f1-f0ed-4502-80b2-e616f2f1e91d
+let
+	giuli="1257"
+	FOIL=NACA_shape(giuli)
+	plot(FOIL,c=:purple,aspect_ratio=:equal)		
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -3142,7 +3149,7 @@ version = "1.4.1+1"
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
 # ╟─e4f7b60f-7c55-462c-9ced-da14638b66ae
-# ╠═f66827da-440b-4b91-a085-063a9bcfad57
+# ╟─f66827da-440b-4b91-a085-063a9bcfad57
 # ╟─c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 # ╟─659b9467-0144-4aa5-ba2e-ff76182ee87b
 # ╟─c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
@@ -3234,5 +3241,6 @@ version = "1.4.1+1"
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 # ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
 # ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
+# ╟─3753a3f1-f0ed-4502-80b2-e616f2f1e91d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
