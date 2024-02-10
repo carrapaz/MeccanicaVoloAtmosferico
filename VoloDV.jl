@@ -400,7 +400,7 @@ end
 md"""
 possiamo riscrivere la velocità $\bar v$ sulla nuova base $F_H$ partendo dai vettori velocità:
 
-$\bar v_v= |\bar v|*sin(\gamma)*\hat z_H$  
+$\bar v_v= -|\bar v|*sin(\gamma)*\hat z_H$  
 
 $v_H=|\bar v|*cos(\gamma)$
 
@@ -410,9 +410,9 @@ $\bar v_{EH}=v_H*cos(\chi)*\hat y_H=|\bar v|*cos(\gamma)*sin(\chi)*\hat y_H$
 
 $\bar v_{F_H}=\bar v_{NH}+\bar v_{EH}+\bar v_v$
 $\downarrow$
-$\bar v_{F_H}=|\bar v|*(cos(\gamma)*sin(\chi)*\hat x_H+cos(\gamma)*cos(\chi)*\hat y_H+sin(\gamma)*\hat z_H)$
+$\bar v_{F_H}=|\bar v|*(cos(\gamma)*sin(\chi)*\hat x_H+cos(\gamma)*cos(\chi)*\hat y_H-sin(\gamma)*\hat z_H)$
 $\downarrow$
-$\bar v_{F_H}=|\bar v|*\begin{bmatrix}  cos(\gamma)*cos(\chi)\\\ cos(\gamma)*sin(\chi) \\\ sin(\gamma) \end{bmatrix}$
+$\bar v_{F_H}=|\bar v|*\begin{bmatrix}  cos(\gamma)*cos(\chi)\\\ cos(\gamma)*sin(\chi) \\\ -sin(\gamma) \end{bmatrix}$
 """
 
 # ╔═╡ 0635e8b7-1ebc-4a28-94fc-da0796146b4e
@@ -928,7 +928,180 @@ md"""
 
 # ╔═╡ 6bb79929-043e-426c-885f-b62647bf5279
 md"""
-## ES 1
+## Esercitazione 1
+Esercitazione su equilibrio e stabilità
+"""
+
+# ╔═╡ ed1c4634-14db-457b-86b9-c1cb5829b927
+md"""
+### ES 1
+Determinare $\alpha$ e $W$ tali da avere equilibrio per $V_{EAS}=125m/s$ e $\delta_E = 1.7°$
+\
+(dati, passaggi e risultati nella cella sotto)
+"""
+
+# ╔═╡ 6d3df4f8-6f48-4aba-ac2f-6b4d50470522
+let
+	# legame costitutivo
+	CL(a,d) = CL_a .* a + CL_d .* d + CL0
+	CM(a,d) = CM_a .* a + CM_d .* d + CM0
+	
+	# Dati
+	S = 87
+	delta = deg2rad(1.7)
+	
+	# Coefficienti Portanza
+	CL_a = 5.65
+	CL_d = 0.38
+	CL0 = -0.12
+	
+	# Coefficienti Momento
+	CM_a = -0.82
+	CM_d = -1.61
+	CM0 = 0.128
+
+	# Calcoli
+	alpha = - (CM_d*delta+CM0)/CM_a
+	W = 0.5*1.225*125^2*87*CL(alpha,delta)
+	
+	# Risultati
+	ES1_1 = [rad2deg(alpha),W]
+
+	begin
+		print("alpha = $(ES1_1[1]) \n")
+		print("W = $(ES1_1[2]) \n")
+	end
+	
+end
+
+# ╔═╡ 922102af-abb4-4905-91ef-e4a16c2ea6f7
+md"""
+# Temi di esame
+"""
+
+# ╔═╡ 2465f157-287f-4d24-84ad-bfc48b6e814f
+md"""
+## TDE 24/01/2023
+"""
+
+# ╔═╡ af97f9d3-b2d3-4576-8729-6d72a6a5db1f
+md"""
+### ES 1
+"""
+
+# ╔═╡ 73f59f92-f3d7-4372-a863-33978479a984
+md"""
+## TDE 29/6/2011
+"""
+
+# ╔═╡ b05df4d0-dbdd-4f65-90d3-c8fae9430900
+md"""
+### ES 1
+"""
+
+# ╔═╡ 10783065-3c6e-47a1-bccb-5675b3573563
+let
+	# dati isa
+	rho0 = 1.225
+	R = 287.05
+	theta0 = 288.15
+	g = 9.81
+	lam_isa = -0.0065
+	h = 5000
+	
+	# Formule isa
+	T(rho2,T0) = (rho2/rho0)*T0
+	rhoh = (1+h*lam_isa/theta0)^(-(1+g/(R*lam_isa)))*rho0 
+	ht(rhot) = theta0/lam_isa*((rhot/rhoh)^((R*lam_isa)/(g+R*lam_isa))-1)
+
+		
+	# Dati aereo
+	S = 93
+	W = S*4170
+	b = 28.6
+	e = 0.86
+	lam = b^2/S
+	CLmax = 1.62
+	
+	# Coefficienti Polare
+	cd0 = 0.019
+	k = 1/(pi*e*lam)
+	
+	# Dati volo
+	L = W
+	rho = rhoh
+	V_s = sqrt(2*L/(rhoh*S*CLmax))
+	V_m = 93
+
+	# Calcoli volo
+	# Spinte
+	q = 0.5*S*rho*V_m^2
+	qs = 0.5*S*rho*V_s^2
+	
+	Td = q*cd0 + k * L^2/q
+	Trs = qs*cd0 + k * L^2/qs
+
+	deltapot= Td-Trs
+
+	# Salita rapida
+	#V_v = sqrt(Td/(3*rho*S*cd0)*(1+sqrt(1+3*((2*cd0)/Td)^2)))
+	V_v = sqrt((rho*S*Td + sqrt((rho*S*Td)^2+4*k*W^2*(3*rho^2*S^2)*cd0))/(3*(rho*S)^2*cd0))
+
+	# Funzioni
+	V = V_s:1:400
+	
+	CL(V) = 2 .* L ./ (rho .* S .* V .^2)
+	
+	CD(CL) = cd0 .+ k .* CL .^ 2
+	
+	D(V) = 0.5 .* rho .* S .* V .^ 2 .* CD.(CL.(V))
+
+	# seconda parte
+	
+	CLvv= CL(V_v)
+	
+	qv = 0.5*S*rho*V_v^2
+	Tv = qv*cd0 + k * L^2/qv
+	
+	vv=(Td*V_v-Tv*V_v)/W
+
+	gammav = asind(vv/V_v)
+
+	h = 
+
+	global ES1_290611=[k,rhoh,V_s,Td,deltapot,V_v,CLvv,vv, gammav]
+	
+	# Grafico
+	plot(V, D.(V),
+		label="Drag vs. Velocity",
+		xlabel="Velocity (m/s)",
+		ylabel="Drag (N)",
+		legend=:bottomright
+	)
+	
+	plot!(V, fill(Td,length(V)), lab="T_d = $Td")
+	plot!(V, fill(Tv,length(V)), lab="T_v = $Tv")
+	plot!([V_s,V_s],[0,D.(V_s)], lab="Vs= $V_s")
+	plot!([V_m,V_m],[0,D.(V_m)], lab="Vm= $V_m")
+
+end
+
+# ╔═╡ b525969a-c0c5-4471-b0e7-9d3f3b829819
+begin
+	print("k = $(ES1_290611[1]) \n")
+	print("rhoh = $(ES1_290611[2]) \n")
+	print("v stallo = $(ES1_290611[3]) \n")
+	print("trazione disponibile = $(ES1_290611[4]) \n")
+	print("delta trazione richiesta stallo = $(ES1_290611[5]) \n")
+	print("Vv salita rapida = $(ES1_290611[6]) \n")
+	print("CL salita rapida = $(ES1_290611[7]) \n")
+	print("velocità verticale = $(ES1_290611[8]) \n")
+	print("gamma v = $(ES1_290611[9]) \n")
+end
+
+# ╔═╡ d6d85da6-f23a-47f5-aa46-f579858b0132
+md"""
+### ES 2
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -1988,11 +2161,125 @@ begin
 	end
 end
 
-# ╔═╡ 3753a3f1-f0ed-4502-80b2-e616f2f1e91d
+# ╔═╡ 33a2b9c7-2f8a-4a88-9932-bb762eb3926d
 let
-	giuli="1257"
-	FOIL=NACA_shape(giuli)
-	plot(FOIL,c=:purple,aspect_ratio=:equal)		
+	# Dati
+	S = 98
+	St = 16.7
+	sigma = St/S
+	awb = 4.85
+	at = 4.11
+	AW = -0.041
+	epsilon_a = 0.33
+	eta = 0.98
+
+	# Posizioni
+	CG = -0.281
+	CMAC = 3
+	XAC = -0.69
+	XCG = -0.1
+	N = CG-0.12
+	
+	# legame costitutivo
+	CL(a,d) = CL_a .* a + CL_d .* d + CL0
+	CM(a,d) = CM_a .* a + CM_d .* d + CM0
+	
+	# Coefficienti Portanza
+	CL_a = awb+eta*sigma*(1-epsilon_a)*at
+	CL_d = 0.2
+	CL0 = 0.1
+	
+	# Coefficienti Momento (baricentro) 
+	CM_a = (AW-CG)*awb
+	CM_d = 1.4
+	CM0 = -0.03
+
+	
+
+	# Adimensionalizzazioni
+	AC = XAC/CMAC
+
+	# Calcoli
+	N = CM_a/CL_a + AC
+	XN = N * CMAC
+	
+	ms = CG - N
+	e = ms
+	
+	C = CM_d/CL_d + AC
+	XC = C * CMAC
+	
+	d = N-C
+	borri = e/d
+
+	CL_as = CL_a*(1/(1+borri))
+	
+	# Grafico
+	pf = plot(
+			aspect_ratio=:equal,
+			#xlims=(-C, N),
+			#ylims=(-1.1, 1.1),
+			showaxis=false,
+			legendfont=font(8),
+			legend=false
+		)
+
+	# Profilo
+	naca="2412"
+	w=NACA_shape(naca)
+	w=transform_all(w,[0,0],[1,1],0)
+	w=transform_all(w,[0,0],[1,1],0)
+	pf = plot!(w, c=:black, label = "")
+
+	t=NACA_shape(naca)
+	t=transform_all(t,[-C,0],[1,1],0)
+	t=transform_all(t,[-1/4,0],[1,1],0)
+	pf = plot!(t, c=:black, label = "")
+	
+	# Risultati
+	global ES2_290611 = [N,CL_as,XN,XC,ms,d,borri,CL_as,sign(XC)]
+
+	# asse x
+	pf = plot!([0, -0.4], [0, 0], arrow=true, c=:red, lab=L"\hat x",lw=2)
+
+	# M+
+	xa,ya=par2dcircle(0.2,40,-pi/2,0)
+	pf = plot!(xa, ya, arrow=true, c=:green, lab=L"M+",lw=2)
+
+	# Punti
+	# AC
+	pf = scatter!([-AC],[0],lab=L"X_{AC} = %$(round(XAC,digits=3))")
+	# CG
+	pf = scatter!([-CG],[0],lab=L"X_{CG} = %$(round(XCG,digits=3))")
+	# N
+	pf = scatter!([-N],[0],lab=L"X_{N} = %$(round(N*CMAC,digits=3))")
+	# C
+	pf = scatter!([-C],[0],lab=L"X_{C} = %$(round(C*CMAC,digits=3))")
+	# e
+	pf = plot!([-CG,-N],[-0.2,-0.2],lab=L"ms = %$(round(ms,digits=3))",lw=3)
+	# d
+	pf = plot!([-N,-C],[-0.4,-0.4],lab=L"d = %$(round(d*CMAC,digits=3))",lw=3)
+	# borri
+	#pf = scatter!([100],[100],lab=L"\epsilon = %$(round(borri,digits=3))")
+	
+	
+end
+
+# ╔═╡ 506b09e9-2e81-4493-86b2-16568fe3c52d
+begin
+	print("X_AC = $(ES2_290611[1]) \n")
+	print("CL_as = $(ES2_290611[2]) \n")
+	print("X_N = $(ES2_290611[3]) \n")
+	print("X_C = $(ES2_290611[4]) \n")
+	print("ms = $(ES2_290611[5]) \n")
+	print("d = $(ES2_290611[6]) \n")
+	print("borri = $(ES2_290611[7]) \n")
+	print("CL_as = $(ES2_290611[8]) \n")
+	if ES2_290611[9]<0
+		print("Configurazione = standard")
+	else
+		print("Configurazione = canard")
+	end
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -3226,8 +3513,20 @@ version = "1.4.1+1"
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
 # ╟─b2f6bec4-449a-4299-8cda-4f7645627728
 # ╟─6bb79929-043e-426c-885f-b62647bf5279
+# ╟─ed1c4634-14db-457b-86b9-c1cb5829b927
+# ╟─6d3df4f8-6f48-4aba-ac2f-6b4d50470522
+# ╟─922102af-abb4-4905-91ef-e4a16c2ea6f7
+# ╟─2465f157-287f-4d24-84ad-bfc48b6e814f
+# ╟─af97f9d3-b2d3-4576-8729-6d72a6a5db1f
 # ╟─4ece9d86-9a85-4e64-8654-3cd4c5f724d8
 # ╟─ffe8fdb1-bda7-4a74-abdb-3ec8190b4de8
+# ╟─73f59f92-f3d7-4372-a863-33978479a984
+# ╟─b05df4d0-dbdd-4f65-90d3-c8fae9430900
+# ╟─10783065-3c6e-47a1-bccb-5675b3573563
+# ╟─b525969a-c0c5-4471-b0e7-9d3f3b829819
+# ╟─d6d85da6-f23a-47f5-aa46-f579858b0132
+# ╟─33a2b9c7-2f8a-4a88-9932-bb762eb3926d
+# ╟─506b09e9-2e81-4493-86b2-16568fe3c52d
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
@@ -3241,6 +3540,5 @@ version = "1.4.1+1"
 # ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
 # ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
 # ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
-# ╟─3753a3f1-f0ed-4502-80b2-e616f2f1e91d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
