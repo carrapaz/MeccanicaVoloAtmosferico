@@ -1263,7 +1263,9 @@ ricavo per $\epsilon_2$:
 
 $\epsilon_2= \dfrac{CL_{/ \alpha}}{1.04*CL_{/ \alpha}^*}-1$
 
-$ms2= (\dfrac{CL_{/ \alpha}}{1.04*CL_{/ \alpha}^*}-1)*d = 3\%$
+$ms2= (\dfrac{CL_{/ \alpha}}{1.04*CL_{/ \alpha}^*}-1)*d = -3\%$
+
+ora si può ricavare $\xi_{CG2} = ms2+\xi_N=-0.432$
 
 """
 
@@ -2353,16 +2355,23 @@ let
 	ACt = N-((ACw - N) * aw)/(eta * sigma*(1-epsilon_alpha)*at)
 
 	borri = (CG-N)/(N-ACt)
+	
+	C = ACt
+
+	d = (N-C)
 
 	CL_a = aw + eta * sigma * (1-epsilon_alpha)*at
 
 	CL_as = 1/(1+borri)*CL_a
 
-	ms2 = (CL_a/(CL_as * 1.04)-1)*(N-ACt)
+	ms2 = (CL_a/(CL_as * 1.04)-1)*d
 
 	CG2 = ms2 + N
 
-	C = ACt
+	borrit = (CG2-N)/(N-ACt)
+
+	CL_ast = 1/(1+borrit)*CL_a
+	test = round(CL_as*1.04-CL_ast)
 	
 	# Risultati
 	ES1_2 = [N,ACt,borri,CL_as,ms2,CG2]
@@ -2383,7 +2392,7 @@ let
 			#ylims=(-1.1, 1.1),
 			showaxis=false,
 			legendfont=font(8),
-			legend=false
+			legend=true
 		)
 
 	# Profilo
@@ -2406,20 +2415,21 @@ let
 	pf = plot!(xa, ya, arrow=true, c=:green, lab=L"M+",lw=2)
 
 	# Punti
-	# AC
-	pf = scatter!([-AC],[0],lab=L"X_{AC} = %$(round(XAC,digits=3))")
-	# CG
-	pf = scatter!([-CG],[0],lab=L"X_{CG} = %$(round(XCG,digits=3))")
 	# N
-	pf = scatter!([-N],[0],lab=L"X_{N} = %$(round(N*CMAC,digits=3))")
+	pf = scatter!([-N],[0],lab=L"N = %$(round(N,digits=3))")
 	# C
-	pf = scatter!([-C],[0],lab=L"X_{C} = %$(round(C*CMAC,digits=3))")
+	#pf = scatter!([-C],[0],lab=L"C = %$(round(C,digits=3))")
+	# CG
+	pf = scatter!([-CG],[0],lab=L"CG = %$(round(CG,digits=3))")
+	# CG2
+	pf = scatter!([-CG2],[0],lab=L"CG2 = %$(round(CG2,digits=3))")
 	# e
 	pf = plot!([-CG,-N],[-0.2,-0.2],lab=L"ms = %$(round(ms,digits=3))",lw=3)
+	# e2
+	pf = plot!([-CG2,-N],[-0.4,-0.4],lab=L"ms = %$(round(ms2,digits=3))",lw=3)
 	# d
-	pf = plot!([-N,-C],[-0.4,-0.4],lab=L"d = %$(round(d*CMAC,digits=3))",lw=3)
-	# borri
-	#pf = scatter!([100],[100],lab=L"\epsilon = %$(round(borri,digits=3))")
+	#pf = plot!([-N,-C],[-0.4,-0.4],lab=L"d = %$(round(d,digits=3))",lw=3)
+	
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -3666,7 +3676,7 @@ version = "1.4.1+1"
 # ╟─10783065-3c6e-47a1-bccb-5675b3573563
 # ╟─b525969a-c0c5-4471-b0e7-9d3f3b829819
 # ╟─7c8954f2-fa31-4d1a-90ca-575dccf2db07
-# ╠═ebe6d9e9-3736-46b5-8864-ced2fe754cb5
+# ╟─ebe6d9e9-3736-46b5-8864-ced2fe754cb5
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
