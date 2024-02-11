@@ -814,6 +814,15 @@ $\begin{cases}
 \bar F = -(L \hat x_A + D \hat z_A)\\
 M = M_P \hat y_B\\
 \end{cases}$
+
+profili:
+
+| Profilo    | $CL_0$ | $\alpha_0$ |
+| ----------- | ----------- | ----- |
+| $simmetrico$      | 0       | 0 | 
+| $convesso$      | +       | - | 
+| $concavo$      | -     | + | 
+
 """
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
