@@ -936,8 +936,32 @@ Esercitazione su equilibrio e stabilità
 md"""
 ### ES 1
 Determinare $\alpha$ e $W$ tali da avere equilibrio per $V_{EAS}=125m/s$ e $\delta_E = 1.7°$
+
+	# legame costitutivo
+	CL(a,d) = CL_a .* a + CL_d .* d + CL0
+	CM(a,d) = CM_a .* a + CM_d .* d + CM0
+	
+	# Dati
+	S = 87
+	delta = deg2rad(1.7)
+	
+	# Coefficienti Portanza
+	CL_a = 5.65
+	CL_d = 0.38
+	CL0 = -0.12
+	
+	# Coefficienti Momento
+	CM_a = -0.82
+	CM_d = -1.61
+	CM0 = 0.128
 \
-(dati, passaggi e risultati nella cella sotto)
+
+ricavare $\alpha$ imponendo $CM_{CG} = 0$
+
+$\alpha = - \dfrac{CM_{/\delta} \delta_E + CM_0}{CM_{/ \alpha}}$
+
+poi ricavo $W = L = \dfrac{1}{2} \rho_0 V_{EAS}^2 S CL$
+
 """
 
 # ╔═╡ 6d3df4f8-6f48-4aba-ac2f-6b4d50470522
@@ -970,6 +994,83 @@ let
 	begin
 		print("alpha = $(ES1_1[1]) \n")
 		print("W = $(ES1_1[2]) \n")
+	end
+	
+end
+
+# ╔═╡ 1aee1451-5479-4110-b181-3a5ec856841f
+md"""
+### ES 2
+Determinare $\xi_{CG}$ tale da avere margine statico = 16%
+
+	# Dati
+	Sw = 87
+	St = 19.25
+	ms = 0.16
+	
+	# CL^w/alpha (ala) e CL^t/alpha (coda)
+	aw = 4.7
+	at = 3.32
+	
+	# Posizioni adimensionalizzate
+	ACw = -0.038
+	ACt = -4.8
+	
+	# Coefficienti ala -> coda 
+	epsilon_alpha = 0.35
+	eta = 0.95
+	sigma = St/Sw
+
+$margine \ statico = \xi_{CG}-\xi_{N} = 0.16$
+
+$\xi_{CG}=0.16 +\xi_{N}$
+
+$CM_{P / \alpha}=(\xi_{AC}^w-\xi_{P})a^w+\eta \sigma (1- \epsilon_{/ \alpha})(\xi_{AC}^t-\xi_{P})a^t$
+
+tuttavia se $P = N \rightarrow CM_{P / \alpha}=0$
+
+$0=(\xi_{AC}^w-\xi_{N})a^w+\eta \sigma (1- \epsilon_{/ \alpha})(\xi_{AC}^t-\xi_{N})a^t$
+
+$\downarrow$
+
+$\xi_N=\dfrac{\xi_{AC}^w *a^w + \eta \sigma (1- \epsilon_{/ \alpha})\xi_{AC}^t*a^t}{ a^w + \eta \sigma (1- \epsilon_{/ \alpha})a^t}$
+
+$\xi_{CG}=0.16+\xi_{N}$
+"""
+
+# ╔═╡ 9d7935b8-c73b-474d-af5a-891266ead65c
+let
+	
+	# Dati
+	Sw = 87
+	St = 19.25
+	ms = 0.16
+	
+	# CL^w/alpha (ala) e CL^t/alpha (coda)
+	aw = 4.7
+	at = 3.32
+	
+	# Posizioni adimensionalizzate
+	ACw = -0.038
+	ACt = -4.8
+	
+	# Coefficienti ala -> coda 
+	epsilon_alpha = 0.35
+	eta = 0.95
+	sigma = St/Sw
+	
+	# Calcoli
+	N = (ACw * aw + eta * sigma * ACt * (1-epsilon_alpha) * at)/(aw + eta * sigma*(1-epsilon_alpha)*at)
+
+	CG = 0.16 + N
+	
+	
+	# Risultati
+	ES1_2 = [N,CG]
+
+	begin
+		print("xi N = $(ES1_2[1]) \n")
+		print("xi CG = $(ES1_2[2]) \n")
 	end
 	
 end
@@ -1099,9 +1200,71 @@ begin
 	print("gamma v = $(ES1_290611[9]) \n")
 end
 
-# ╔═╡ d6d85da6-f23a-47f5-aa46-f579858b0132
+# ╔═╡ 7c8954f2-fa31-4d1a-90ca-575dccf2db07
 md"""
 ### ES 2
+Si consideri un velivolo di architettura tradizionale caratterizzato dai seguenti dati:
+
+	# Dati
+	Sw = 98
+	St = 16.7
+	ms = 0.12
+	
+	# CL^w/alpha (ala) e CL^t/alpha (coda)
+	aw = 4.85
+	at = 4.11
+	
+	# Posizioni adimensionalizzate
+	ACw = -0.041
+	CG = -0.281
+	
+	# Coefficienti ala -> coda 
+	epsilon_alpha = 0.33
+	eta = 0.98
+	sigma = St/Sw
+
+Si assume che l'asse longitudinale sia orientato verso la prua, che la lunghezza di riferimento sia la
+corda media aerodinamica dell'ala (MAC) e che il centro aerodinamico del piano orizzontale
+coicida col punto di controllo.
+Si determini la posizione del piano orizzontale (ossia quella del suo centro aerodinamico) che
+permette di ottenere una condizione stabile con un margine statico del 12% e la pendenza della
+curva di portanza trimmata. Quali dovrebbero essere la posizione del baricentro ed il margine
+statico perché tale pendenza aumenti del 4%?
+
+$margine \ statico = \xi_{CG}-\xi_{N} = 0.12$
+
+$\xi_{N}=\xi_{CG}-0.12 = -0.401$
+
+$CM_{P / \alpha}=(\xi_{AC}^w-\xi_{P})a^w+\eta \sigma (1- \epsilon_{/ \alpha})(\xi_{AC}^t-\xi_{P})a^t$
+
+tuttavia se $P = N \rightarrow CM_{P / \alpha}=0$
+
+$0=(\xi_{AC}^w-\xi_{N})a^w+\eta \sigma (1- \epsilon_{/ \alpha})(\xi_{AC}^t-\xi_{N})a^t$
+
+$\downarrow$
+
+$\xi_{AC}^t=\xi_{N}-\dfrac{(\xi_{AC}^w-\xi_{N})a^w}{ \eta \sigma (1- \epsilon_{/ \alpha})a^t}=-4.198$
+
+per la pendenza della polare trimmata:
+
+$\epsilon = \dfrac{e}{d} = \dfrac{\xi_{CG} - \xi_{N}}{\xi_{N}-\xi_{C}}=0.0316$
+
+$CL_{/\alpha} = a^w + \eta  \sigma  (1-\epsilon_\alpha)*a^t = 5.147$
+
+$CL_{/ \alpha}^*= CL_{/ \alpha}* (\dfrac{1}{1+\epsilon})$
+
+Per il nuovo $ms$ e $CG$ bisogna ricordarsi che lo spostamento in avanti del baricentro causa una diminuzione della pendenza della retta $CL_{/ \alpha}$
+
+quindi:
+
+$1.04 * CL_{/ \alpha}^*= CL_{/ \alpha}* (\dfrac{1}{1+\epsilon_2})$
+
+ricavo per $\epsilon_2$:
+
+$\epsilon_2= \dfrac{CL_{/ \alpha}}{1.04*CL_{/ \alpha}^*}-1$
+
+$ms2= (\dfrac{CL_{/ \alpha}}{1.04*CL_{/ \alpha}^*}-1)*d = 3\%$
+
 """
 
 # ╔═╡ 988be133-a521-4afc-9919-ab65fef8e512
@@ -2071,27 +2234,47 @@ let
 
 	# Posizioni
 	CMAC = 3
-	XAC = -0.69
+	XACw = -0.69
 	XCG = -0.1
 
 	# Adimensionalizzazioni
-	AC = XAC/CMAC
+	ACw = XACw/CMAC
 	CG = XCG/CMAC
 
 	# Calcoli
-	N = CM_a/CL_a + AC
+	N = CM_a/CL_a + ACw
 	XN = N * CMAC
 	
 	ms = CG - N
 	e = ms
 	
-	C = CM_d/CL_d + AC
+	C = CM_d/CL_d + ACw
 	XC = C * CMAC
 	
 	d = N-C
 	borri = e/d
 
 	CL_as = CL_a*(1/(1+borri))
+
+	# Risultati
+	ES1 = [XACw,XCG,XN,XC,ms,d,borri,CL_as,sign(XC)]
+
+	# Output
+	begin
+		print("X_AC = $(ES1[1]) \n")
+		print("X_CG = $(ES1[2]) \n")
+		print("X_N = $(ES1[3]) \n")
+		print("X_C = $(ES1[4]) \n")
+		print("ms = $(ES1[5]) \n")
+		print("d = $(ES1[6]) \n")
+		print("borri = $(ES1[7]) \n")
+		print("CL_as = $(ES1[8]) \n")
+		if ES1[9]<0
+			print("Configurazione = standard")
+		else
+			print("Configurazione = canard")
+		end
+	end
 	
 	# Grafico
 	pf = plot(
@@ -2115,8 +2298,7 @@ let
 	t=transform_all(t,[-1/4,0],[1,1],0)
 	pf = plot!(t, c=:black, label = "")
 	
-	# Risultati
-	global ES1 = [XAC,XCG,XN,XC,ms,d,borri,CL_as,sign(XC)]
+	
 
 	# asse x
 	pf = plot!([0, -0.4], [0, 0], arrow=true, c=:red, lab=L"\hat x",lw=2)
@@ -2127,7 +2309,7 @@ let
 
 	# Punti
 	# AC
-	pf = scatter!([-AC],[0],lab=L"X_{AC} = %$(round(XAC,digits=3))")
+	pf = scatter!([-ACw],[0],lab=L"X_{ACw} = %$(round(XACw,digits=3))")
 	# CG
 	pf = scatter!([-CG],[0],lab=L"X_{CG} = %$(round(XCG,digits=3))")
 	# N
@@ -2140,80 +2322,60 @@ let
 	pf = plot!([-N,-C],[-0.4,-0.4],lab=L"d = %$(round(d*CMAC,digits=3))",lw=3)
 	# borri
 	#pf = scatter!([100],[100],lab=L"\epsilon = %$(round(borri,digits=3))")
+
 	
-	
+
 end
 
-# ╔═╡ ffe8fdb1-bda7-4a74-abdb-3ec8190b4de8
-begin
-	print("X_AC = $(ES1[1]) \n")
-	print("X_CG = $(ES1[2]) \n")
-	print("X_N = $(ES1[3]) \n")
-	print("X_C = $(ES1[4]) \n")
-	print("ms = $(ES1[5]) \n")
-	print("d = $(ES1[6]) \n")
-	print("borri = $(ES1[7]) \n")
-	print("CL_as = $(ES1[8]) \n")
-	if ES1[9]<0
-		print("Configurazione = standard")
-	else
-		print("Configurazione = canard")
-	end
-end
-
-# ╔═╡ 33a2b9c7-2f8a-4a88-9932-bb762eb3926d
+# ╔═╡ ebe6d9e9-3736-46b5-8864-ced2fe754cb5
 let
+	
 	# Dati
-	S = 98
+	Sw = 98
 	St = 16.7
-	sigma = St/S
-	awb = 4.85
+	ms = 0.12
+	
+	# CL^w/alpha (ala) e CL^t/alpha (coda)
+	aw = 4.85
 	at = 4.11
-	AW = -0.041
-	epsilon_a = 0.33
-	eta = 0.98
-
-	# Posizioni
+	
+	# Posizioni adimensionalizzate
+	ACw = -0.041
 	CG = -0.281
-	CMAC = 3
-	XAC = -0.69
-	XCG = -0.1
-	N = CG-0.12
 	
-	# legame costitutivo
-	CL(a,d) = CL_a .* a + CL_d .* d + CL0
-	CM(a,d) = CM_a .* a + CM_d .* d + CM0
+	# Coefficienti ala -> coda 
+	epsilon_alpha = 0.33
+	eta = 0.98
+	sigma = St/Sw
 	
-	# Coefficienti Portanza
-	CL_a = awb+eta*sigma*(1-epsilon_a)*at
-	CL_d = 0.2
-	CL0 = 0.1
-	
-	# Coefficienti Momento (baricentro) 
-	CM_a = (AW-CG)*awb
-	CM_d = 1.4
-	CM0 = -0.03
-
-	
-
-	# Adimensionalizzazioni
-	AC = XAC/CMAC
-
 	# Calcoli
-	N = CM_a/CL_a + AC
-	XN = N * CMAC
-	
-	ms = CG - N
-	e = ms
-	
-	C = CM_d/CL_d + AC
-	XC = C * CMAC
-	
-	d = N-C
-	borri = e/d
+	N = CG - ms
+	ACt = N-((ACw - N) * aw)/(eta * sigma*(1-epsilon_alpha)*at)
 
-	CL_as = CL_a*(1/(1+borri))
+	borri = (CG-N)/(N-ACt)
+
+	CL_a = aw + eta * sigma * (1-epsilon_alpha)*at
+
+	CL_as = 1/(1+borri)*CL_a
+
+	ms2 = (CL_a/(CL_as * 1.04)-1)*(N-ACt)
+
+	CG2 = ms2 + N
+
+	C = ACt
 	
+	# Risultati
+	ES1_2 = [N,ACt,borri,CL_as,ms2,CG2]
+
+	begin
+		print("xi N = $(ES1_2[1]) \n")
+		print("xi ACt = $(ES1_2[2]) \n")
+		print("borri = $(ES1_2[3]) \n")
+		print("CL_a trimm = $(ES1_2[4]) \n")
+		print("ms2 = $(ES1_2[5]) \n")
+		print("CG2 = $(ES1_2[6]) \n")
+	end
+
 	# Grafico
 	pf = plot(
 			aspect_ratio=:equal,
@@ -2236,9 +2398,6 @@ let
 	t=transform_all(t,[-1/4,0],[1,1],0)
 	pf = plot!(t, c=:black, label = "")
 	
-	# Risultati
-	global ES2_290611 = [N,CL_as,XN,XC,ms,d,borri,CL_as,sign(XC)]
-
 	# asse x
 	pf = plot!([0, -0.4], [0, 0], arrow=true, c=:red, lab=L"\hat x",lw=2)
 
@@ -2261,25 +2420,6 @@ let
 	pf = plot!([-N,-C],[-0.4,-0.4],lab=L"d = %$(round(d*CMAC,digits=3))",lw=3)
 	# borri
 	#pf = scatter!([100],[100],lab=L"\epsilon = %$(round(borri,digits=3))")
-	
-	
-end
-
-# ╔═╡ 506b09e9-2e81-4493-86b2-16568fe3c52d
-begin
-	print("X_AC = $(ES2_290611[1]) \n")
-	print("CL_as = $(ES2_290611[2]) \n")
-	print("X_N = $(ES2_290611[3]) \n")
-	print("X_C = $(ES2_290611[4]) \n")
-	print("ms = $(ES2_290611[5]) \n")
-	print("d = $(ES2_290611[6]) \n")
-	print("borri = $(ES2_290611[7]) \n")
-	print("CL_as = $(ES2_290611[8]) \n")
-	if ES2_290611[9]<0
-		print("Configurazione = standard")
-	else
-		print("Configurazione = canard")
-	end
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -3515,18 +3655,18 @@ version = "1.4.1+1"
 # ╟─6bb79929-043e-426c-885f-b62647bf5279
 # ╟─ed1c4634-14db-457b-86b9-c1cb5829b927
 # ╟─6d3df4f8-6f48-4aba-ac2f-6b4d50470522
+# ╟─1aee1451-5479-4110-b181-3a5ec856841f
+# ╟─9d7935b8-c73b-474d-af5a-891266ead65c
 # ╟─922102af-abb4-4905-91ef-e4a16c2ea6f7
 # ╟─2465f157-287f-4d24-84ad-bfc48b6e814f
 # ╟─af97f9d3-b2d3-4576-8729-6d72a6a5db1f
 # ╟─4ece9d86-9a85-4e64-8654-3cd4c5f724d8
-# ╟─ffe8fdb1-bda7-4a74-abdb-3ec8190b4de8
 # ╟─73f59f92-f3d7-4372-a863-33978479a984
 # ╟─b05df4d0-dbdd-4f65-90d3-c8fae9430900
 # ╟─10783065-3c6e-47a1-bccb-5675b3573563
 # ╟─b525969a-c0c5-4471-b0e7-9d3f3b829819
-# ╟─d6d85da6-f23a-47f5-aa46-f579858b0132
-# ╟─33a2b9c7-2f8a-4a88-9932-bb762eb3926d
-# ╟─506b09e9-2e81-4493-86b2-16568fe3c52d
+# ╟─7c8954f2-fa31-4d1a-90ca-575dccf2db07
+# ╠═ebe6d9e9-3736-46b5-8864-ced2fe754cb5
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
