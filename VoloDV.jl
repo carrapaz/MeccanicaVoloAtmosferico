@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.38
+# v0.19.37
 
 using Markdown
 using InteractiveUtils
@@ -47,7 +47,7 @@ Questo notebook interattivo è progettato per essere una risorsa nello studio de
 md"""
 # Ipotesi con cui lavoriamo
 
-**Modelli del Velivolo:**
+**Modelli del Velivolo** $br Nella rappresentazione matematica del problema è possibile scegliere diversi tipi di modellazione in base alla quantità di informazioni che si vuole ricavare.
 
 1) Punto materiale "orientato" $3 G.D.L$ + sistema di riferimento
 
@@ -55,7 +55,7 @@ md"""
 
 - le distribuzioni di forze e masse perdono di significato
 
-2) Velivolo come corpo rigido $6 G.D.L$ (3 lin. + 3 rot.)
+2) Velivolo come corpo rigido nello spazio $6 G.D.L$ (3 lin. + 3 rot.)
 
 - equilibrio
 
@@ -74,9 +74,10 @@ md"""
 - Aeroelasticità
 
 
-**Modello della Terra:**
+**Modello della Terra** $br La Terra viene considerata:
 - Piatta
 - Non rotante
+Queste assunzioni comportano:
 - Campo gravitazionale costante e uniforme. 
 - Traiettorie a quota costante sono rettilinee
 - Terra è sistema di riferimento inerziale
@@ -142,8 +143,8 @@ quindi la velocità e l'accellerazione possono essere scritte come:
 $$
 \begin{cases}
 \bar r(t) = posizione\\
-\bar r^\prime(t) = velocità\\
-\bar r^{\prime\prime}(t) = accellerazione\\
+\dot{\bar r}(t) = velocità\\
+\ddot{\bar r}(t) = accellerazione\\
 \end{cases}$$
 """
 
@@ -157,7 +158,7 @@ md"tempo: $(@bind time1 Slider(0:0.01:10, default=5,show_value=true))  s"
 
 # ╔═╡ 659b9467-0144-4aa5-ba2e-ff76182ee87b
 md"""
-per un aeromobile questa è in 3d dimensioni per esempio:
+per esempio, nel caso di un aeromobile in 3 dimensioni si avrà:
 """
 
 # ╔═╡ b79ae4e0-96fb-478e-8fc8-3316c6e394ce
@@ -170,7 +171,7 @@ md"""
 
 # ╔═╡ 69e84cbe-b7e4-48c5-a819-3f471f4d091c
 md"""
-la terna di Frenet è composta di tre versori:
+la terna di Frenet è composta da tre versori:
 
 **versore tangente:** 
 
@@ -178,13 +179,16 @@ $\hat e_t = \bar r'(S)$
 
 la distanza perscorsa sarà:
 
-$\Delta S = \int_{t0}^{t1} \dot {\bar r}(t)dt$
+$\Delta S = \int_{S0}^{S1} dS = \int_{t0}^{t1} \dot {\bar r}(t)dt$
 
 quindi lo spostamento infinitesimo
 
 $dS= \dfrac{|d \bar r|}{|d t|}*dt$
 $dS= |d \bar r|$
 $\dfrac{dS}{|d \bar r|}=1$
+
+quindi
+
 $\dfrac{d\bar r}{d S}=\bar r'(S)$
 
 **versore normale:** 
@@ -241,9 +245,6 @@ Distanza verticale tra velivolo e la superficie terrestre, può essere indicata 
 
 # ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 md"S: $(@bind S2 Slider(0:0.01:7, default=5,show_value=true))"
-
-# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-Quota_di_volo(S2)
 
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
@@ -1635,6 +1636,9 @@ function Quota_di_volo(S2)
 	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
 	return plt
 end
+
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+Quota_di_volo(S2)
 
 # ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
 """
@@ -3590,31 +3594,31 @@ version = "1.4.1+1"
 # ╔═╡ Cell order:
 # ╟─38b8bf30-b673-11ee-0868-8df22983dbe9
 # ╟─51934362-4b1f-4aea-bcf3-a3a892de83a1
-# ╟─258dcb67-de1f-48b6-978f-86ba4603b244
+# ╠═258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─3ea80b56-a7c7-4dd1-aae3-e240e0042145
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
-# ╟─e4f7b60f-7c55-462c-9ced-da14638b66ae
-# ╟─f66827da-440b-4b91-a085-063a9bcfad57
+# ╠═e4f7b60f-7c55-462c-9ced-da14638b66ae
+# ╠═f66827da-440b-4b91-a085-063a9bcfad57
 # ╟─c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 # ╟─659b9467-0144-4aa5-ba2e-ff76182ee87b
-# ╟─c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
-# ╟─b79ae4e0-96fb-478e-8fc8-3316c6e394ce
+# ╠═c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
+# ╠═b79ae4e0-96fb-478e-8fc8-3316c6e394ce
 # ╟─c339e1dd-5889-46c7-874b-e6cc048a39bc
 # ╟─69e84cbe-b7e4-48c5-a819-3f471f4d091c
-# ╟─52942653-05c3-4eaa-bf3e-f594a089bd1c
+# ╠═52942653-05c3-4eaa-bf3e-f594a089bd1c
 # ╟─bc13b7b3-7fc4-4007-9025-2597005fa63a
-# ╟─5890b370-d1b9-4372-b429-e2d902a98085
+# ╠═5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─45661987-c61e-4864-97a6-ac0ac6010d39
 # ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
-# ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
+# ╠═041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 # ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
-# ╟─9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
+# ╠═9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
 # ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
 # ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
