@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.37
+# v0.19.38
 
 using Markdown
 using InteractiveUtils
@@ -241,6 +241,9 @@ Distanza verticale tra velivolo e la superficie terrestre, può essere indicata 
 
 # ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 md"S: $(@bind S2 Slider(0:0.01:7, default=5,show_value=true))"
+
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+Quota_di_volo(S2)
 
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
@@ -1632,9 +1635,6 @@ function Quota_di_volo(S2)
 	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
 	return plt
 end
-
-# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-Quota_di_volo(S2)
 
 # ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
 """
