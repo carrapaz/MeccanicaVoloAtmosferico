@@ -278,9 +278,9 @@ md"""
 
 # ╔═╡ 9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
 md"""
-Spesso durante il volo la velocità rispetto al suolo **ground speed:** $\bar v_{GS}$ non coincide con la velocità con cui l'aereo viaggia nell'aria. questo perchè può esserci vento e l'aria stessa avere una velocità **wind speed:** $\bar v_W$. ciò comporta che l'aereo ha anche una velocità rispetto al vento $\bar v_{W^*}=- \bar v_{W}$ e la velocita di volo sarà la somma di queste due componenti **air speed:** $\bar v_{AS}=\bar v_{W^*}+\bar v_{GS}$
+Spesso durante il volo la velocità rispetto al suolo **ground speed:** $\bar v_{GS}$ non coincide con la velocità con cui l'aereo viaggia nell'aria. Questo avviene perchè può esserci del vento e quindi l'aria stessa può avere una velocità **wind speed:** $\bar v_W$ rispetto al terreno. Ciò comporta la possibilità di definire anche una velocita di volo rispetto al vento **air speed:** $\bar v_{AS}$
 
-quindi per trovare la $\bar v_{GS}$ che in $F_E$ corrisponde a $\dot{\bar r}_E$ ossia la derivata nel tempo del vettore posizione nel sistema $F_E$ basta fare $\bar v_{GS}=\bar v_{AS}-\bar v_{W^*}$
+per trovare la $\bar v_{GS}$ che in $F_E$ corrisponde a $\dot{\bar r}_E$ ossia la derivata nel tempo del vettore posizione nel sistema $F_E$ basta quindi fare $\bar v_{GS}=\bar v_{AS}+\bar v_{W}$
 
 la velocità in contesto areonautico è spesso misurata in nodi $Kn$ che sono definiti come miglia nautiche all'ora $\dfrac{mn}{h}$ con $1mn=1852m$
 """
@@ -298,7 +298,7 @@ md"""
 
 # ╔═╡ f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
 md"""
-Anche chiamato NED (North,East,Down) o "terrestre mobile". Questo sistema di riferimento ha come origine un punto materiale sul velivolo per esempio il suo baricentro (center of gravity) $CG$. con $H$ indiciamo il piano dell'orizzonte.
+Anche chiamato NED (North,East,Down) o "terrestre mobile". Questo sistema di riferimento ha come origine un punto materiale sul velivolo, per esempio il suo baricentro (center of gravity) $CG$. Con $H$ indichiamo il piano dell'orizzonte.
 
 la terna è così definita:
 $$F_H=
@@ -309,8 +309,11 @@ $$F_H=
 origine = CG \ velivolo
 \end{cases}$$
 
-da notare che la terna è indipendente rispetto l'asetto di volo in quanto definita rispetto alla terra
+da notare che la terna è indipendente rispetto all'asetto di volo in quanto definita rispetto alla terra
 """
+
+# ╔═╡ 890cbbea-f86c-46da-b375-fd2a54dcd653
+md"rotazione aereo: $(@bind rotazione_2 Slider(0:0.01:2*pi, default=2*pi/3))"
 
 # ╔═╡ ed65d686-ebaf-4cf4-a779-0283fd36583c
 md"""
@@ -1538,7 +1541,7 @@ let
 	# Plotting
 	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12))
 	airplane = transform_all(airplane_shape(),[0,0],[1,1],rotazione1)
-	plot!(airplane,c=:black,label="")
+	plot!(airplane, c=:black ,label="")
 
 	# Define a translation vector (dx, dy)
 	dx, dy = 0, 0
@@ -1548,7 +1551,7 @@ let
 	plot!(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5))
 	plot!([dx, dx+Vgs*cos(rotazione1)], [dy, dy+Vgs*sin(rotazione1)], arrow=true, color=:blue, label=L"v_{GS}",linewidth=2)
 	# Wind speed
-	plot!([dx, 0.1], [dy, 0.1], arrow=true, color=:purple, label=L"v_{W^*}",linewidth=2)
+	plot!([0.1,dx+0.01], [0.1,dy+0.01], arrow=true, color=:skyblue, label=L"v_{W}",linewidth=2)
 	# Air speed
 	plot!([dx, 0.1+Vgs*cos(rotazione1)], [dy, 0.1+Vgs*sin(rotazione1)], arrow=true, color=:red, label=L"v_{AS}",linewidth=2)
 	# Connectors
@@ -1557,11 +1560,11 @@ let
 	
 end
 
-# ╔═╡ 337267df-a02d-4163-8bac-98ddd734ea18
+# ╔═╡ 541583f4-4a29-4542-9d00-6360ffe5a7cb
 let
 	# Plotting
 	plt = plot(aspect_ratio=:equal, xlims=(-0.5, 0.5), ylims=(-0.5, 0.5),showaxis=false,legendfont=font(12),legend=:topleft)
-	airplane = transform_all(airplane_shape(),[0,0],[1,1],2/3*pi)
+	airplane = transform_all(airplane_shape(),[0,0],[1,1],rotazione_2)
 	plot!(airplane,c=:black,label="")
 	# N
 	plot!([0, 0], [0, 0.4], arrow=true, color=:red, label=L"\hat x_H",linewidth=2)
@@ -3594,37 +3597,38 @@ version = "1.4.1+1"
 # ╔═╡ Cell order:
 # ╟─38b8bf30-b673-11ee-0868-8df22983dbe9
 # ╟─51934362-4b1f-4aea-bcf3-a3a892de83a1
-# ╠═258dcb67-de1f-48b6-978f-86ba4603b244
+# ╟─258dcb67-de1f-48b6-978f-86ba4603b244
 # ╟─3ea80b56-a7c7-4dd1-aae3-e240e0042145
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
-# ╠═e4f7b60f-7c55-462c-9ced-da14638b66ae
+# ╟─e4f7b60f-7c55-462c-9ced-da14638b66ae
 # ╠═f66827da-440b-4b91-a085-063a9bcfad57
 # ╟─c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 # ╟─659b9467-0144-4aa5-ba2e-ff76182ee87b
-# ╠═c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
-# ╠═b79ae4e0-96fb-478e-8fc8-3316c6e394ce
+# ╟─c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
+# ╟─b79ae4e0-96fb-478e-8fc8-3316c6e394ce
 # ╟─c339e1dd-5889-46c7-874b-e6cc048a39bc
 # ╟─69e84cbe-b7e4-48c5-a819-3f471f4d091c
-# ╠═52942653-05c3-4eaa-bf3e-f594a089bd1c
+# ╟─52942653-05c3-4eaa-bf3e-f594a089bd1c
 # ╟─bc13b7b3-7fc4-4007-9025-2597005fa63a
-# ╠═5890b370-d1b9-4372-b429-e2d902a98085
+# ╟─5890b370-d1b9-4372-b429-e2d902a98085
 # ╟─cfb0dd04-abd4-497d-8ed6-1c5e6c3a0ee4
 # ╟─45661987-c61e-4864-97a6-ac0ac6010d39
 # ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
-# ╠═041459bb-0fad-4ed5-87f9-0c873ae7cfaa
+# ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 # ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
 # ╠═9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
-# ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
-# ╟─90e78e30-90f6-48cd-b699-3493cd662713
+# ╠═d44fb526-84b6-4c13-aace-7ffa36a861b1
+# ╠═90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
-# ╟─337267df-a02d-4163-8bac-98ddd734ea18
+# ╟─541583f4-4a29-4542-9d00-6360ffe5a7cb
+# ╟─890cbbea-f86c-46da-b375-fd2a54dcd653
 # ╟─ed65d686-ebaf-4cf4-a779-0283fd36583c
 # ╟─d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
 # ╟─9350c9d1-f4cd-4633-8513-50ac1a9311ef
@@ -3693,7 +3697,7 @@ version = "1.4.1+1"
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
 # ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
-# ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
+# ╠═a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
