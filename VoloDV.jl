@@ -32,6 +32,7 @@ md"""
 # Meccanica del volo atmosferico
 
 ## Davide Viganò
+## Cristina Truant
 
 ### 28/1/24
 
@@ -3621,9 +3622,9 @@ version = "1.4.1+1"
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
-# ╠═9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
-# ╠═d44fb526-84b6-4c13-aace-7ffa36a861b1
-# ╠═90e78e30-90f6-48cd-b699-3493cd662713
+# ╟─9ab15e4e-75d8-4fdf-ad53-8dfde7615a95
+# ╟─d44fb526-84b6-4c13-aace-7ffa36a861b1
+# ╟─90e78e30-90f6-48cd-b699-3493cd662713
 # ╟─4ed72bd1-6fea-4a90-ae20-b23300f63085
 # ╟─d3e9ee9d-fcdc-4eab-908a-19301fe18a0a
 # ╟─f053e0cb-ea7d-43a7-97cf-a90d7d6fa3d4
