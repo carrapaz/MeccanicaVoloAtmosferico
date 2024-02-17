@@ -320,9 +320,9 @@ md"""
 ### Angoli di traiettoria
 Definiscono il moto del velivolo rispetto alla Terra 
 - **Angolo di rampa:** 
-$\gamma=-sin^{-1}(\hat e_t*\hat z_H)$
+$\gamma=-sin^{-1}(\dfrac{\bar v*\hat z_H}{|\bar v|}) =-sin^{-1}(\hat e_t*\hat z_H)$
 - **Angolo di rotta:**
-$\chi=tan^{-1}(\dfrac{\bar v*\hat y_H}{\bar v* \hat x_H})$
+$\chi=tan^{-1}(\dfrac{\bar v*\hat y_H}{\bar v* \hat x_H})= tan^{-1}(\dfrac{\hat e_t*\hat y_H}{\hat e_t*\hat x_H})$
 """
 
 # ╔═╡ 9350c9d1-f4cd-4633-8513-50ac1a9311ef
@@ -1609,10 +1609,10 @@ let
 	
 	# xB
 	ps = plot!([0, 1], [0, 0], arrow=true, color=:red, label=L"\hat x_B",linewidth=2)
+	# yB
+	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat y_B", markersize=10)
 	# zB
 	ps = plot!([0, 0], [0, -1], arrow=true, color=:blue, label=L"\hat z_B",linewidth=2)
-	# yB
-	ps= scatter!([0,0],[0,0], c=:green,label=L"\hat z_H",markersize=10)
 
 	plot(pt, ps, layout = (1, 2))
 end
