@@ -586,6 +586,7 @@ $\dot\chi=0\rightarrow
 
 - Simmetrico: 
 $\beta=0\rightarrow\bar v_{AS}\in PSM$
+con $PSM$ che è il piano di simmetria
 
 - Livellato: 
 $\phi=0$
@@ -601,7 +602,7 @@ $$\begin{cases}
 $$\begin{cases}
 |\dot{\bar v}|=0 \\
 R=\infty \\
-\omega=\dot\chi
+\gamma=0
 \end{cases}$$
 """
 
@@ -634,7 +635,7 @@ md"""
 # Elementi di Aereodinamica
 ## Equazioni cardinali
 Notazione:
-- Quantità di moto e momento qdm: $\bar Q$ , $\bar H$
+- Quantità di moto e momento di qdm: $\bar Q$ , $\bar H$
 - Forze e momenti aereodinamici: $\bar F$ , $\bar M$
 - Forze e momenti dovuti alla propulsione: $\bar T$ , $\bar \Gamma$
 - Forze e momenti dovuti al peso: $\bar W$ , $\bar\Sigma$
@@ -644,7 +645,7 @@ $$\begin{cases}
 \dfrac{d\bar H_P}{dt}=\bar M_P+\bar\Gamma_P+\bar\Sigma_P
 \end{cases}$$
 
-Il bilancio tramite le equazioni cardinali può essere svolto su un generico punto $P$, tuttavia se si utilizza $CG\rightarrow \bar\Sigma=0$
+Il bilancio tramite le equazioni cardinali può essere svolto su un generico punto $P$, tuttavia se si utilizza il centro di gravità $CG\rightarrow \bar\Sigma_G=0$
 
 $$\begin{cases}
 \dot{\bar Q}=\bar F+\bar T+\bar W \\
@@ -3618,7 +3619,7 @@ version = "1.4.1+1"
 # ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
+# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
@@ -3665,7 +3666,7 @@ version = "1.4.1+1"
 # ╟─47e28d45-2a52-4a78-9970-efd6436a377e
 # ╟─4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 # ╟─dc250eda-e9d9-437d-b549-2992973d9cf1
-# ╟─5777b4ce-2eac-44ec-ab14-cf06d6577065
+# ╠═5777b4ce-2eac-44ec-ab14-cf06d6577065
 # ╟─ba58fd28-983b-4688-bd7c-14512fe63402
 # ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091

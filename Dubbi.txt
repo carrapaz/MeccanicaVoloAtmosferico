@@ -1,2 +1,7 @@
+***DUBBI***
 *SISTEMI DI RIFERIMENTO*
 -Verso dell'asse z nel sistema di riferimento Fe
+
+***TO DO LIST***
+-Invertire l'alfa;
+-Aggiungere definizione degli angolin (csi, gamma, etc.)
