@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.39
+# v0.19.37
 
 using Markdown
 using InteractiveUtils
@@ -20,8 +20,7 @@ begin
 		Plots,
 	 	PlutoUI,
 	 	Rotations,
-	 	LaTeXStrings,
-		Interpolations
+	 	LaTeXStrings
 	
 	gr()
 	print("Dependencies")
@@ -158,6 +157,14 @@ anzichè usare il tempo come variabile possiamo usare l' ascissa curvilinea, $S$
 # ╔═╡ c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 md"tempo: $(@bind time1 Slider(0:0.01:10, default=5,show_value=true))  s"
 
+# ╔═╡ f66827da-440b-4b91-a085-063a9bcfad57
+let
+	x_coords,y_coords=traiettoria_parametrica_2d(time1)
+	
+	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14),legend=:topright)
+	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
+end
+
 # ╔═╡ 659b9467-0144-4aa5-ba2e-ff76182ee87b
 md"""
 per esempio, nel caso di un aeromobile in 3 dimensioni si avrà:
@@ -165,6 +172,15 @@ per esempio, nel caso di un aeromobile in 3 dimensioni si avrà:
 
 # ╔═╡ b79ae4e0-96fb-478e-8fc8-3316c6e394ce
 md"tempo: $(@bind time2 Slider(0:0.01:10, default=5,show_value=true))  s"
+
+# ╔═╡ c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
+let
+	x_coords,y_coords,z_coords=traiettoria_parametrica_3d(time2)
+	
+	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14),legend=:topright)
+	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
+	
+end
 
 # ╔═╡ c339e1dd-5889-46c7-874b-e6cc048a39bc
 md"""
@@ -209,6 +225,19 @@ $\hat e_b = \hat e_t \wedge \hat e_n$
 
 # ╔═╡ bc13b7b3-7fc4-4007-9025-2597005fa63a
 md"S: $(@bind S1 Slider(0:0.01:10, default=5,show_value=true))"
+
+# ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
+let
+	
+	x_coords,y_coords,x0,y0,tx,ty,nx,ny=traiettoria_parametrica_2d(S1)
+	
+	# Plot the trajectory and vectors
+	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14),legend=:topright)
+	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
+	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label=L"\hat e_t")
+	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label=L"\hat e_n")
+
+end
 
 # ╔═╡ 5890b370-d1b9-4372-b429-e2d902a98085
 md"""
@@ -338,6 +367,47 @@ md"angolo di rotta $\chi$: $(@bind chi1 Slider(-360:1:360, default=55,show_value
 
 # ╔═╡ f1b15f3f-60a4-4605-953b-f4393a2de8a2
 md" modulo della velocità $v$: $(@bind vh1 Slider(0:0.01:1, default=1,show_value=true))"
+
+# ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
+let
+	# frame of reference
+	plot(
+		title="Angoli di traiettoria",
+		showaxis=false,
+		legendfont=font(12),
+		xlim=[-1,1],
+		ylim=[-1,1],
+		zlim=[-1,1],
+		legend=:topleft)
+	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_H",lw=2)
+	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_H",lw=2)
+	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_H",lw=2)
+	
+	# define velocity as function of gamma and chi
+	v = vh1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
+	
+
+	# plane projections
+	# z_h
+	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, lab="",lw=1,l=:dash)
+	# y_h
+	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+	# x_h
+	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+	# piano x_h,y_h
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+
+	# angles
+	# chi
+	chi_x,chi_y,chi_z = harc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(chi1),40,0)
+	plot!(chi_x, chi_y, chi_z, lw=3, c=:cyan,lab=L"\chi")
+	# gamma
+	gamma_x,gamma_y,gamma_z = varc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(gamma1),40,pi/2-deg2rad(chi1))
+	plot!(gamma_x, gamma_y, gamma_z, lw=3, c=:orange,lab=L"\gamma")
+	
+	# velocity vector
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v",lw=2)
+end
 
 # ╔═╡ 49f7985f-e7f4-4cae-bbe3-c1821489c76c
 md"""
@@ -509,6 +579,52 @@ md"angolo di deriva $\beta$: $(@bind beta2 Slider(-45:1:45, default=35, show_val
 # ╔═╡ 93b9b3a4-9493-4085-a73e-9b8c4be45b96
 md"angolo di incidenza $\alpha$: $(@bind alpha2 Slider(-45:1:45, default=20, show_value=true)) °"
 
+# ╔═╡ 69424d76-9aa9-4be2-8e90-514824645980
+let
+	a = deg2rad(alpha2)
+	b = deg2rad(beta2)
+	vh1  = 1
+	# frame of reference
+	plot(
+		title="Angoli aerodinamici",
+		showaxis=false,
+		legendfont=font(12),
+		xlim=[-1,1],
+		ylim=[-1,1],
+		zlim=[-1,1],
+		legend=:topleft)
+	# body axis
+	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_B",lw=2)
+	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_B",lw=2)
+	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_B",lw=2)
+	
+	# define velocity as function of beta and alpha
+	v = vh1*[cos(a)*cos(b),sin(b),cos(b)*sin(a)]
+	
+	# plane projections
+	# z_B
+	plot!([v[2],v[2]],[v[1],v[1]],[0,v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# x_By_B
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+	# x_B,z_B
+	plot!([0,v[2]],[v[1],v[1]],[v[3],v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# piano x_B,z_B
+	plot!([0,0],[0,cos(a)],[0,sin(a)],c=:grey, lab="",lw=1,l=:dash)
+	# v su piano x_B,z_B
+	plot!([0,0],[0,v[1]],[0,v[3]],c=:brown, lab=L"\bar v_{PSM}",lw=2)
+
+	# angles
+	# beta
+	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
+	plot!(b_x, b_y, b_z, lw=3, c=:purple2,lab=L"\beta")
+	# alpha
+	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
+	plot!(a_x, a_y, a_z, lw=3, c=:orange3,lab=L"\alpha")
+	
+	# velocity vector
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=2)
+end
+
 # ╔═╡ 65b12662-2f8f-4bea-aadf-d7791eb24ecd
 md"""
 ### Velocità all'aria
@@ -565,6 +681,59 @@ md"angolo $\alpha_{F_S}$: $(@bind asfi Slider(-45:1:45, default=0, show_value=tr
 
 # ╔═╡ 47e28d45-2a52-4a78-9970-efd6436a377e
 md"angolo $\beta_{F_S}$: $(@bind bsfi Slider(-45:1:45, default=0, show_value=true)) °"
+
+# ╔═╡ 8c7a0753-17f0-41e8-8349-28c2d309cade
+let
+	a = deg2rad(14)
+	b = deg2rad(27)
+	asf = deg2rad(asfi)
+	bsf = deg2rad(bsfi)
+	vh1  = 1
+	# frame of reference
+	plot(
+		title=L"Prova \ ad \ allineare \ F_A",
+		showaxis=false,
+		legendfont=font(12),
+		xlim=[-1,1],
+		ylim=[-1,1],
+		zlim=[-1,1],
+		legend=:topleft)
+	# body axis
+	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_B",lw=1,l=:dot)
+	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_B",lw=1,l=:dot)
+	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_B",lw=1,l=:dot)
+
+	# body axis
+	plot!([0,cos(bsf)],[0,-cos(asf)*sin(bsf)],[0,-sin(asf)*sin(bsf)],c=:green, lab=L"\hat y_S",lw=3)
+	plot!([0,sin(bsf)],[0,cos(asf)*cos(bsf)],[0,sin(asf)*cos(bsf)],c=:red, lab=L"\hat x_S",lw=3)
+	plot!([0,0],[0,sin(asf)],[0,-cos(asf)],c=:blue, lab=L"\hat z_S",lw=3)
+	
+	# define velocity as function of beta and alpha
+	v = vh1*[cos(a)*cos(b),sin(b),cos(b)*sin(a)]
+	
+	# plane projections
+	# z_B
+	plot!([v[2],v[2]],[v[1],v[1]],[0,v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# x_By_B
+	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
+	# x_B,z_B
+	plot!([0,v[2]],[v[1],v[1]],[v[3],v[3]],c=:grey, lab="",lw=1,l=:dash)
+	# piano x_B,z_B
+	plot!([0,0],[0,cos(a)],[0,sin(a)],c=:grey, lab="",lw=1,l=:dash)
+	# v su piano x_B,z_B
+	plot!([0,0],[0,v[1]],[0,v[3]],c=:brown, lab=L"\bar v_{PSM}",lw=1)
+
+	# angles
+	# beta
+	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
+	plot!(b_x, b_y, b_z, lw=1, c=:purple2,lab=L"\beta=27^°")
+	# alpha
+	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
+	plot!(a_x, a_y, a_z, lw=1, c=:orange3,lab=L"\alpha=14^°")
+	
+	# velocity vector
+	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=1)
+end
 
 # ╔═╡ 4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 md"""
@@ -670,7 +839,7 @@ Con $\bar\tau$ indichiamo il tensore degli sforzi, con $P_0$ il punto di riduzio
 $\bar F=\oint{\bar\tau \ dS}$
 
 - Momento rispetto al punto $P_0$:
-$\bar M_P=\oint {\bar\tau \wedge(P-Q)*dS}$  
+$\bar M=\oint {\bar\tau \wedge(P-Q)*dS}$  
 
 Dalle equazioni di Navier Stokes
 
@@ -684,7 +853,7 @@ Possiamo ora passare al' **espressione funzionale della forza aerodinamica** $\b
 
 $\bar F = \bar F(P,\bar V,\mu,\bar n,S)$
 
-dove $P,\bar V$ sono i valori della pressione e velocità locale e $S$ la superficie, tuttavia sotto le nostre ipotesi di lavoro possiamo riscriverla in funzione dei valori del flusso indisturbato riducendo il numero di variabili:
+dove $P,\bar V$ sono i valori della pressione e velocità locale e S la superficie, tuttavia sotto le nostre ipotesi di lavoro possiamo riscriverla in funzione dei valori del flusso indisturbato riducendo il numero di variabili:
 
 Usando la legge dei gas perfetti $P=\rho*R*T$ 
 
@@ -735,7 +904,7 @@ $$\begin{cases}
 [T]\rightarrow -2=-e_a-e_\mu-e_V\\
 \end{cases}$$
 
-abbiamo 3 equazioni e 5 incognite, il sistema è sottodeterminato possiamo scriverlo tramite combinazioni lineari di 2 variabili, secondarie, scegliamo come variabili secondarie  $e_\mu,e_a$ e riscriviamo il sistema
+abbiamo 3 equazioni e 5 incognite, il sistema è sottodeterminato possiamo scriverlo tramite combinazioni lineari di 2 variabili, secondarie, scegliamo come variabili secondarie  $e_\mu,e_a$ e riscriviam il sistema
 
 $$\begin{cases}
  e_\rho = 1 - e_\mu\\
@@ -824,7 +993,7 @@ md"angolo di incidenza $\alpha$: $(@bind alpha3 Slider(-45:1:45, default=20, sho
 # ╔═╡ cb81651b-b845-4352-ac5b-6de837c81daa
 md"""
 $\begin{cases}
-\bar F = -(D \hat x_A + L \hat z_A)\\
+\bar F = -(L \hat x_A + D \hat z_A)\\
 M = M_P \hat y_B\\
 \end{cases}$
 
@@ -837,53 +1006,6 @@ profili:
 | $concavo$      | -     | + | 
 
 """
-
-# ╔═╡ feebbb65-9813-41a3-835e-447cdb309507
-md""" 
-### Portanza
-"""
-
-# ╔═╡ a7a72e04-fe81-4827-8ce3-c92389e332cf
-begin
-	#Disegno il grafico
-	plot(xlims=(-2, 12), ylims=(-2, 12), legendfont=font(8), legend=:topleft,xlabel=L"\alpha", ylabel=L"C_L",  title=L"Portanza")
-	plot!([0,0], [-2, 12], color=:black, label=L"\alpha_0", arrow=true)
-	xx=-2:1:12
-	yy=0
-	plot!(xx, fill(yy, length(xx)), color=:black, arrow=true, label=L"C_L0")
-	
-	# xlabel=L"\alpha", ylabel=L"C_L",
-	#Andamento lineare
-	alpha_lin= range(-2, 6.5, length=360)
-	lineare(alpha_lin)=1.5+0.85.*alpha_lin
-	plot!(alpha_lin, lineare.(alpha_lin), color=:red, label="Andamento lineare")
-	#Andamento stallo
-	x = 6.5:0.5:11
-	y = @. -1.5*sin(x/2)+6.87
-	
-	#Interpolazione e funzione
-	itp_cubic = cubic_spline_interpolation(x, y)
-	f_cubic(x) = itp_cubic(x)
-	#Plot
-	x_new = 6.5:0.1:11
-
-	plot!(f_cubic, x_new, color=:blue, label="Andamento non lineare")
-	# Punti notevoli
-	x_portanza_nulla=[-1.7647]
-	y_portanza_nulla=[0]
-	scatter!(x_portanza_nulla, y_portanza_nulla, markersize=5,label="Portanza nulla")
-
-	x_incidenza_nulla=[0]
-	y_incidenza_nulla=[1.5]
-	scatter!(x_incidenza_nulla, y_incidenza_nulla, markersize=5, label="Incidenza nulla")
-
-	x_stallo=[9.42]
-	y_stallo=[8.37]
-	scatter!(x_stallo, y_stallo, markersize=5, label="Punto di stallo")
-
-	
-	plot!([9.42,9.42], [-2, 8.37], linestyle=:dash, label="Angolo di stallo")
-end
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
 md"""
@@ -1670,399 +1792,6 @@ let
 	plot(pt, ps, layout = (1, 2))
 end
 
-# ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
-"""
-Crea grafico comparazioni differenze quote \\
-S: parametro funzioni
-"""
-function Quota_di_volo(S2)
-	# Plotting
-	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(12),legend=:bottomright)
-	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
-	plot!(airplane,c=:black,label="")
-
-	# Plotting with transformed parts
-	#plot_airplane_parts(transformed_airplane_parts)
-	x = range(0, 10, length=100)
-	terrain(x) =  sin(x)/(x+1)
-	sea(x) = 0*x
-	plot!(sea,color=:blue, label="mare")
- 	plot!(terrain,color=:green, label="terreno")
-	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
-	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
-	return plt
-end
-
-# ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
-"""
-Crea una predefinita traiettoria parametrica in 2d e i vettori tangenti e normali alla fine di essa
-S: parametro funzione
-"""
-function traiettoria_parametrica_2d(S1)
-	# Define the range and parametric functions
-	t = range(0, S1, length=100)
-	x(t) = t
-	y(t) = sin(t)
-	dx(t) = 1
-	dy(t) = cos(t)
-	d2x(t) = 0
-	d2y(t) = -sin(t)
-	
-	# Generate coordinates for the curve
-	x_coords = x.(t)
-	y_coords = y.(t)
-	
-	# Choose the point t0 at the end of the range
-	t0 = S1
-	x0, y0 = x(t0), y(t0)
-	dx0, dy0 = dx(t0), dy(t0)
-	d2x0, d2y0 = d2x(t0), d2y(t0)
-	
-	# Compute tangent and normal vectors
-	magnitude_tangent = sqrt(dx0^2 + dy0^2)
-	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
-	nx, ny = -ty * sign(d2y0), tx * sign(d2y0)
-	return x_coords,y_coords,x0,y0,tx,ty,nx,ny
-end
-
-# ╔═╡ f66827da-440b-4b91-a085-063a9bcfad57
-let
-	x_coords,y_coords=traiettoria_parametrica_2d(time1)
-	
-	plot(x_coords, y_coords, label=L"S", xlabel="x(t)", ylabel="y(t)", title="Traiettoria Parametrica",xlim=[0,10],ylim=[-1,1],legendfont=font(14),legend=:topright)
-	plot!( [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
-end
-
-# ╔═╡ 52942653-05c3-4eaa-bf3e-f594a089bd1c
-let
-	
-	x_coords,y_coords,x0,y0,tx,ty,nx,ny=traiettoria_parametrica_2d(S1)
-	
-	# Plot the trajectory and vectors
-	p = plot(x_coords, y_coords, label=L"S", xlabel="x(S)", ylabel="y(S)", xlims=[0,10], ylims=[-2,2], title="Traiettoria Parametrica",aspect_ratio=:equal,legendfont=font(14),legend=:topright)
-	plot!(p, [0, x_coords[end]], [0, y_coords[end]], arrow=true, color=:red, label=L"\bar r")
-	plot!(p, [x0, x0+tx], [y0, y0+ty], arrow=true, color=:blue, label=L"\hat e_t")
-	plot!(p, [x0, x0+nx], [y0, y0+ny], arrow=true, color=:green, label=L"\hat e_n")
-
-end
-
-# ╔═╡ 14e7a4a4-b209-401c-845a-bc199851195a
-"""
-Crea una predefinita traiettoria parametrica in 3d  \\
-S: parametro funzione
-"""
-function traiettoria_parametrica_3d(S1)
-	# Define the range and parametric functions
-	t = range(0, S1, length=100);
-
-	x(t) = cos(t);
-    y(t) = sin(t);
-	z(t) = t;
-	
-	x_coords = x.(t);
-	y_coords = y.(t);
-	z_coords = z.(t);
-	
-	return x_coords,y_coords,z_coords
-end
-
-
-# ╔═╡ c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
-let
-	x_coords,y_coords,z_coords=traiettoria_parametrica_3d(time2)
-	
-	p = plot(x_coords, y_coords, z_coords, label=L"S",legendfont=font(14),legend=:topright)
-	plot!( [0, x_coords[end]], [0, y_coords[end]],[0, z_coords[end]], arrow=true, color=:red, label=L"\bar r",xlims=[-1,1],ylims=[-1,1],zlims=[0,10])
-	
-end
-
-# ╔═╡ f00df351-e2da-4886-947c-95a0f684c13e
-"""
-Crea una predefinita traiettoria parametrica in 3d  \\
-R: raggio manovra
-"""
-function manovre_curvilinee(R)
-	# Define the range and parametric functions
-	t = range(-pi, pi, length=360)
-	x(t) = (1/R)*cos(t)
-	y(t) = (1/R)*sin(t)
-	
-	# Generate coordinates for the curve
-	x_coords = x.(t)
-	y_coords = y.(t)
-	
-	return x_coords,y_coords
-end
-
-
-# ╔═╡ 5777b4ce-2eac-44ec-ab14-cf06d6577065
-let
-	# Top view
-	pt = plot(
-		aspect_ratio=:equal,
-		xlims=(-1, 1),
-		ylims=(-1, 1),
-		showaxis=false,
-		legendfont=font(12),
-		legend=:topleft
-	)
-	
-	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/2)
-	pt = plot!(airplane,c=:black,label="")
-
-	if dchi1==0
-		ydc= (-10:0.1:10)
-		xdc= zeros(201)
-	else
-		xdc,ydc=manovre_curvilinee(dchi1)
-		xdc=xdc .- 1/dchi1
-	end
-	
-	pt = plot!(-xdc*4,ydc*4,lab="")
-	
-	# Side view
-	ps = plot(
-		aspect_ratio=:equal,
-		xlims=(-1, 1),
-		ylims=(-1, 1),
-		showaxis=false,
-		legendfont=font(12),
-		legend=:topleft
-	)
-	
-	airplane = transform_all(airplane_shape_side(),[0,0],[1,1],0)
-	ps = plot!(airplane,c=:black,label="")
-
-	
-	
-	if dgamma1==0
-		xdg= (-10:0.1:10)
-		ydg= zeros(201)
-	else
-		xdg,ydg=manovre_curvilinee(dgamma1)
-		ydg=ydg .- 1/dgamma1
-	end
-	
-	
-	ps= plot!(xdg*4,-ydg*4,lab="")
-
-	plot(pt, ps, layout = (1, 2))
-end
-
-# ╔═╡ 6123f526-a9f1-41d7-8499-09e56465f9e0
-"""
-Crea cordinate per un arco orizzontale in 3d \\
-radius: raggio arco \\
-ini: punto inizio in radianti \\
-fin: punto fine in radianti \\
-n_points: numero di punti sull'arco \\
-latitude: altezza dell'arco rispetto piano orizzontale origine
-"""
-function harc3d(radius,ini,fin,n_points,latitude)
-		# Parallel (constant latitude)
-		range = LinRange(ini, fin, n_points)
-		x = radius * cos.(range) * cos(latitude)
-		y = radius * sin.(range) * cos(latitude)
-		z = radius * ones(n_points) * sin(latitude)
-		return x,y,z
-	end
-
-# ╔═╡ 6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
-"""
-Crea cordinate per un arco verticale in 3d \\
-radius: raggio arco \\
-ini: punto inizio in radianti \\
-fin: punto fine in radianti \\
-n_points: numero di punti sull'arco \\
-longitude: rotazione dell'arco rispetto asse verticale
-"""
-function varc3d(radius,ini,fin,n_points,longitude)
-		# Meridian (constant longitude)
-		range = LinRange(ini, fin, n_points)
-		x = radius * sin.(range) * cos(longitude)
-		y = radius * sin.(range) * sin(longitude)
-		z = radius * cos.(range)
-		return x,y,z
-	end
-
-# ╔═╡ d8c80578-7c6a-41f6-ab49-e33ee4fbdd9b
-let
-	# frame of reference
-	plot(
-		title="Angoli di traiettoria",
-		showaxis=false,
-		legendfont=font(12),
-		xlim=[-1,1],
-		ylim=[-1,1],
-		zlim=[-1,1],
-		legend=:topleft)
-	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_H",lw=2)
-	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_H",lw=2)
-	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_H",lw=2)
-	
-	# define velocity as function of gamma and chi
-	v = vh1*[cosd(gamma1)*cosd(chi1),cosd(gamma1)*sind(chi1),sind(gamma1)]
-	
-
-	# plane projections
-	# z_h
-	plot!([v[2],v[2]],[v[1],v[1]],[v[3],0],c=:orange, lab="",lw=1,l=:dash)
-	# y_h
-	plot!([v[2],v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
-	# x_h
-	plot!([0,v[2]],[v[1],v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
-	# piano x_h,y_h
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
-
-	# angles
-	# chi
-	chi_x,chi_y,chi_z = harc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(chi1),40,0)
-	plot!(chi_x, chi_y, chi_z, lw=3, c=:cyan,lab=L"\chi")
-	# gamma
-	gamma_x,gamma_y,gamma_z = varc3d(sqrt(v[2]^2+v[1]^2),pi/2,pi/2-deg2rad(gamma1),40,pi/2-deg2rad(chi1))
-	plot!(gamma_x, gamma_y, gamma_z, lw=3, c=:orange,lab=L"\gamma")
-	
-	# velocity vector
-	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v",lw=2)
-end
-
-# ╔═╡ 5aeef1e9-f16b-43f3-b7be-d083e15c70c7
-"""
-Crea cordinate per un arco in 3d \\
-radius: raggio arco \\
-ini: punto inizio in radianti \\
-fin: punto fine in radianti \\
-n_points: numero di punti sull'arco \\
-longitude: rotazione dell'arco rispetto asse verticale
-"""
-function arc3d(α,β,γ,r,ain,afin)
-	M(u) = [r*cos(u), r*sin(u), 0]    # arc in X-Y plane
-	RM(u) = RotXYZ(α,β,γ) * M(u) .+ C     # rotated + shifted arc in 3D
-	
-	C = [0, 0, 0]               # center of arc
-	u = LinRange(ain, afin, 72)
-	xs, ys, zs = [[p[i] for p in RM.(u)] for i in 1:3]
-	return xs,ys,zs
-end
-
-# ╔═╡ 69424d76-9aa9-4be2-8e90-514824645980
-let
-	a = deg2rad(alpha2)
-	b = deg2rad(beta2)
-	vh1  = 1
-	# frame of reference
-	plot(
-		title="Angoli aerodinamici",
-		showaxis=false,
-		legendfont=font(12),
-		xlim=[-1,1],
-		ylim=[-1,1],
-		zlim=[-1,1],
-		legend=:topleft)
-	# body axis
-	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_B",lw=2)
-	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_B",lw=2)
-	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_B",lw=2)
-	
-	# define velocity as function of beta and alpha
-	v = vh1*[cos(a)*cos(b),sin(b),cos(b)*sin(a)]
-	
-	# plane projections
-	# z_B
-	plot!([v[2],v[2]],[v[1],v[1]],[0,v[3]],c=:grey, lab="",lw=1,l=:dash)
-	# x_By_B
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
-	# x_B,z_B
-	plot!([0,v[2]],[v[1],v[1]],[v[3],v[3]],c=:grey, lab="",lw=1,l=:dash)
-	# piano x_B,z_B
-	plot!([0,0],[0,cos(a)],[0,sin(a)],c=:grey, lab="",lw=1,l=:dash)
-	# v su piano x_B,z_B
-	plot!([0,0],[0,v[1]],[0,v[3]],c=:brown, lab=L"\bar v_{PSM}",lw=2)
-
-	# angles
-	# beta
-	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
-	plot!(b_x, b_y, b_z, lw=3, c=:purple2,lab=L"\beta")
-	# alpha
-	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
-	plot!(a_x, a_y, a_z, lw=3, c=:orange3,lab=L"\alpha")
-	
-	# velocity vector
-	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=2)
-end
-
-# ╔═╡ 8c7a0753-17f0-41e8-8349-28c2d309cade
-let
-	a = deg2rad(14)
-	b = deg2rad(27)
-	asf = deg2rad(asfi)
-	bsf = deg2rad(bsfi)
-	vh1  = 1
-	# frame of reference
-	plot(
-		title=L"Prova \ ad \ allineare \ F_A",
-		showaxis=false,
-		legendfont=font(12),
-		xlim=[-1,1],
-		ylim=[-1,1],
-		zlim=[-1,1],
-		legend=:topleft)
-	# body axis
-	plot!([0,1],[0,0],[0,0],c=:green, lab=L"\hat y_B",lw=1,l=:dot)
-	plot!([0,0],[0,1],[0,0],c=:red, lab=L"\hat x_B",lw=1,l=:dot)
-	plot!([0,0],[0,0],[0,-1],c=:blue, lab=L"\hat z_B",lw=1,l=:dot)
-
-	# body axis
-	plot!([0,cos(bsf)],[0,-cos(asf)*sin(bsf)],[0,-sin(asf)*sin(bsf)],c=:green, lab=L"\hat y_S",lw=3)
-	plot!([0,sin(bsf)],[0,cos(asf)*cos(bsf)],[0,sin(asf)*cos(bsf)],c=:red, lab=L"\hat x_S",lw=3)
-	plot!([0,0],[0,sin(asf)],[0,-cos(asf)],c=:blue, lab=L"\hat z_S",lw=3)
-	
-	# define velocity as function of beta and alpha
-	v = vh1*[cos(a)*cos(b),sin(b),cos(b)*sin(a)]
-	
-	# plane projections
-	# z_B
-	plot!([v[2],v[2]],[v[1],v[1]],[0,v[3]],c=:grey, lab="",lw=1,l=:dash)
-	# x_By_B
-	plot!([0,v[2]],[0,v[1]],[0,0],c=:grey, lab="",lw=1,l=:dash)
-	# x_B,z_B
-	plot!([0,v[2]],[v[1],v[1]],[v[3],v[3]],c=:grey, lab="",lw=1,l=:dash)
-	# piano x_B,z_B
-	plot!([0,0],[0,cos(a)],[0,sin(a)],c=:grey, lab="",lw=1,l=:dash)
-	# v su piano x_B,z_B
-	plot!([0,0],[0,v[1]],[0,v[3]],c=:brown, lab=L"\bar v_{PSM}",lw=1)
-
-	# angles
-	# beta
-	b_x,b_y,b_z = arc3d(a,0,0,1,pi/2,pi/2-b)
-	plot!(b_x, b_y, b_z, lw=1, c=:purple2,lab=L"\beta=27^°")
-	# alpha
-	a_x,a_y,a_z = varc3d(1,pi/2,pi/2-a,40,pi/2)
-	plot!(a_x, a_y, a_z, lw=1, c=:orange3,lab=L"\alpha=14^°")
-	
-	# velocity vector
-	plot!([0,v[2]],[0,v[1]],[0,v[3]],c=:purple, lab=L"\bar v_{AS}",lw=1)
-end
-
-# ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
-"""
-Crea cordinate per un cerchio in 2d \\
-radius: raggio arco \\
-ini: punto inizio in radianti \\
-fin: punto fine in radianti \\
-n_points: numero di punti sull'arco
-"""
-function par2dcircle(r,n_points,ini,fin)
-	t = LinRange(ini,fin,n_points)
-	x(t) = r*sin(t)
-	y(t) = r*cos(t)
-
-	x_coord=x.(t)
-	y_coord=y.(t)
-
-	return x_coord,y_coord
-end
-
 # ╔═╡ 43e6a216-fbc3-4b91-ac5e-144f60152e35
 let
 	psi = deg2rad(psi1)
@@ -2235,6 +1964,60 @@ let
 	xpsi,ypsi=par2dcircle(0.6,40,psi,beta+psi)
 	plot!(xpsi,ypsi,arrow=true,label=L"\beta",lw=3, c=:purple2)
 	
+end
+
+# ╔═╡ 5777b4ce-2eac-44ec-ab14-cf06d6577065
+let
+	# Top view
+	pt = plot(
+		aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
+	
+	airplane = transform_all(airplane_shape(),[0,0],[1,1],pi/2)
+	pt = plot!(airplane,c=:black,label="")
+
+	if dchi1==0
+		ydc= (-10:0.1:10)
+		xdc= zeros(201)
+	else
+		xdc,ydc=manovre_curvilinee(dchi1)
+		xdc=xdc .- 1/dchi1
+	end
+	
+	pt = plot!(-xdc*4,ydc*4,lab="")
+	
+	# Side view
+	ps = plot(
+		aspect_ratio=:equal,
+		xlims=(-1, 1),
+		ylims=(-1, 1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topleft
+	)
+	
+	airplane = transform_all(airplane_shape_side(),[0,0],[1,1],0)
+	ps = plot!(airplane,c=:black,label="")
+
+	
+	
+	if dgamma1==0
+		xdg= (-10:0.1:10)
+		ydg= zeros(201)
+	else
+		xdg,ydg=manovre_curvilinee(dgamma1)
+		ydg=ydg .- 1/dgamma1
+	end
+	
+	
+	ps= plot!(xdg*4,-ydg*4,lab="")
+
+	plot(pt, ps, layout = (1, 2))
 end
 
 # ╔═╡ 947359ba-02f8-4f1b-899a-37e47cb6132b
@@ -2498,21 +2281,188 @@ let
 	
 end
 
+# ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
+"""
+Crea grafico comparazioni differenze quote \\
+S: parametro funzioni
+"""
+function Quota_di_volo(S2)
+	# Plotting
+	plt = plot(aspect_ratio=:equal, xlims=(0, 10), ylims=(-0.5, 2),legendfont=font(12),legend=:bottomright)
+	airplane = transform_all(airplane_shape_side(),[S2,1.5],3*[1,1],0)
+	plot!(airplane,c=:black,label="")
+
+	# Plotting with transformed parts
+	#plot_airplane_parts(transformed_airplane_parts)
+	x = range(0, 10, length=100)
+	terrain(x) =  sin(x)/(x+1)
+	sea(x) = 0*x
+	plot!(sea,color=:blue, label="mare")
+ 	plot!(terrain,color=:green, label="terreno")
+	plot!([S2+0.1, S2+0.1], [1.5, terrain(S2)], arrow=true, color=:green, label=L"AA")
+	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
+	return plt
+end
+
+# ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
+"""
+Crea una predefinita traiettoria parametrica in 2d e i vettori tangenti e normali alla fine di essa
+S: parametro funzione
+"""
+function traiettoria_parametrica_2d(S1)
+	# Define the range and parametric functions
+	t = range(0, S1, length=100)
+	x(t) = t
+	y(t) = sin(t)
+	dx(t) = 1
+	dy(t) = cos(t)
+	d2x(t) = 0
+	d2y(t) = -sin(t)
+	
+	# Generate coordinates for the curve
+	x_coords = x.(t)
+	y_coords = y.(t)
+	
+	# Choose the point t0 at the end of the range
+	t0 = S1
+	x0, y0 = x(t0), y(t0)
+	dx0, dy0 = dx(t0), dy(t0)
+	d2x0, d2y0 = d2x(t0), d2y(t0)
+	
+	# Compute tangent and normal vectors
+	magnitude_tangent = sqrt(dx0^2 + dy0^2)
+	tx, ty = dx0 / magnitude_tangent, dy0 / magnitude_tangent
+	nx, ny = -ty * sign(d2y0), tx * sign(d2y0)
+	return x_coords,y_coords,x0,y0,tx,ty,nx,ny
+end
+
+# ╔═╡ 14e7a4a4-b209-401c-845a-bc199851195a
+"""
+Crea una predefinita traiettoria parametrica in 3d  \\
+S: parametro funzione
+"""
+function traiettoria_parametrica_3d(S1)
+	# Define the range and parametric functions
+	t = range(0, S1, length=100);
+
+	x(t) = cos(t);
+    y(t) = sin(t);
+	z(t) = t;
+	
+	x_coords = x.(t);
+	y_coords = y.(t);
+	z_coords = z.(t);
+	
+	return x_coords,y_coords,z_coords
+end
+
+
+# ╔═╡ f00df351-e2da-4886-947c-95a0f684c13e
+"""
+Crea una predefinita traiettoria parametrica in 3d  \\
+R: raggio manovra
+"""
+function manovre_curvilinee(R)
+	# Define the range and parametric functions
+	t = range(-pi, pi, length=360)
+	x(t) = (1/R)*cos(t)
+	y(t) = (1/R)*sin(t)
+	
+	# Generate coordinates for the curve
+	x_coords = x.(t)
+	y_coords = y.(t)
+	
+	return x_coords,y_coords
+end
+
+
+# ╔═╡ 6123f526-a9f1-41d7-8499-09e56465f9e0
+"""
+Crea cordinate per un arco orizzontale in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+latitude: altezza dell'arco rispetto piano orizzontale origine
+"""
+function harc3d(radius,ini,fin,n_points,latitude)
+		# Parallel (constant latitude)
+		range = LinRange(ini, fin, n_points)
+		x = radius * cos.(range) * cos(latitude)
+		y = radius * sin.(range) * cos(latitude)
+		z = radius * ones(n_points) * sin(latitude)
+		return x,y,z
+	end
+
+# ╔═╡ 6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+"""
+Crea cordinate per un arco verticale in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+longitude: rotazione dell'arco rispetto asse verticale
+"""
+function varc3d(radius,ini,fin,n_points,longitude)
+		# Meridian (constant longitude)
+		range = LinRange(ini, fin, n_points)
+		x = radius * sin.(range) * cos(longitude)
+		y = radius * sin.(range) * sin(longitude)
+		z = radius * cos.(range)
+		return x,y,z
+	end
+
+# ╔═╡ 5aeef1e9-f16b-43f3-b7be-d083e15c70c7
+"""
+Crea cordinate per un arco in 3d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco \\
+longitude: rotazione dell'arco rispetto asse verticale
+"""
+function arc3d(α,β,γ,r,ain,afin)
+	M(u) = [r*cos(u), r*sin(u), 0]    # arc in X-Y plane
+	RM(u) = RotXYZ(α,β,γ) * M(u) .+ C     # rotated + shifted arc in 3D
+	
+	C = [0, 0, 0]               # center of arc
+	u = LinRange(ain, afin, 72)
+	xs, ys, zs = [[p[i] for p in RM.(u)] for i in 1:3]
+	return xs,ys,zs
+end
+
+# ╔═╡ 36737977-5a27-45f3-a0ce-84c1badd4dce
+"""
+Crea cordinate per un cerchio in 2d \\
+radius: raggio arco \\
+ini: punto inizio in radianti \\
+fin: punto fine in radianti \\
+n_points: numero di punti sull'arco
+"""
+function par2dcircle(r,n_points,ini,fin)
+	t = LinRange(ini,fin,n_points)
+	x(t) = r*sin(t)
+	y(t) = r*cos(t)
+
+	x_coord=x.(t)
+	y_coord=y.(t)
+
+	return x_coord,y_coord
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Rotations = "6038ab10-8711-5258-84ad-4b1120ba62dc"
 
 [compat]
-Interpolations = "~0.15.1"
 LaTeXStrings = "~1.3.1"
-Plots = "~1.40.1"
-PlutoUI = "~0.7.57"
-Rotations = "~1.7.0"
+Plots = "~1.40.0"
+PlutoUI = "~0.7.55"
+Rotations = "~1.6.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -2521,7 +2471,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "4165bc0574cfb528141563235d133e89be93601c"
+project_hash = "a6ba16b49b6b523ad4098639ba459cacb4006623"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -2529,28 +2479,12 @@ git-tree-sha1 = "c278dfab760520b8bb7e9511b968bf4ba38b7acc"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
 version = "1.2.3"
 
-[[deps.Adapt]]
-deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "0fb305e0253fd4e833d486914367a2ee2c2e78d0"
-uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "4.0.1"
-weakdeps = ["StaticArrays"]
-
-    [deps.Adapt.extensions]
-    AdaptStaticArraysExt = "StaticArrays"
-
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
-
-[[deps.AxisAlgorithms]]
-deps = ["LinearAlgebra", "Random", "SparseArrays", "WoodburyMatrices"]
-git-tree-sha1 = "01b8ccb13d68535d73d2b0c23e39bd23155fb712"
-uuid = "13072b0f-2c55-5437-9ae7-d433b7a33950"
-version = "1.1.0"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -2571,16 +2505,6 @@ deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jl
 git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
-
-[[deps.ChainRulesCore]]
-deps = ["Compat", "LinearAlgebra"]
-git-tree-sha1 = "892b245fdec1c511906671b6a5e1bafa38a727c1"
-uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.22.0"
-weakdeps = ["SparseArrays"]
-
-    [deps.ChainRulesCore.extensions]
-    ChainRulesCoreSparseArraysExt = "SparseArrays"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -2620,9 +2544,9 @@ version = "0.12.10"
 
 [[deps.Compat]]
 deps = ["TOML", "UUIDs"]
-git-tree-sha1 = "d2c021fbdde94f6cdaa799639adfeeaa17fd67f5"
+git-tree-sha1 = "75bd5b6fc5089df449b5d35fa501c846c9b6549b"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.13.0"
+version = "4.12.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -2635,9 +2559,9 @@ version = "1.0.5+1"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
-git-tree-sha1 = "9c4708e3ed2b799e6124b5673a712dda0b596a9b"
+git-tree-sha1 = "8cfa272e8bdedfa88b6aefbbca7c19f1befac519"
 uuid = "f0e56b4a-5159-44fe-b623-3e5288b988bb"
-version = "2.3.1"
+version = "2.3.0"
 
 [[deps.Contour]]
 git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
@@ -2651,9 +2575,9 @@ version = "1.16.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "1fb174f0d48fe7d142e1109a10636bc1d14f5ac2"
+git-tree-sha1 = "ac67408d9ddf207de5cfa9a97e114352430f01ed"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.17"
+version = "0.18.16"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -2664,10 +2588,6 @@ deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
-
-[[deps.Distributed]]
-deps = ["Random", "Serialization", "Sockets"]
-uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -2786,9 +2706,9 @@ version = "1.0.2"
 
 [[deps.HTTP]]
 deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "ExceptionUnwrapping", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
-git-tree-sha1 = "ac7b73d562b8f4287c3b67b4c66a5395a19c1ae8"
+git-tree-sha1 = "abbbb9ec3afd783a7cbd82ef01dcd088ea051398"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "1.10.2"
+version = "1.10.1"
 
 [[deps.HarfBuzz_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
@@ -2817,16 +2737,6 @@ version = "0.2.4"
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-
-[[deps.Interpolations]]
-deps = ["Adapt", "AxisAlgorithms", "ChainRulesCore", "LinearAlgebra", "OffsetArrays", "Random", "Ratios", "Requires", "SharedArrays", "SparseArrays", "StaticArrays", "WoodburyMatrices"]
-git-tree-sha1 = "88a101217d7cb38a7b481ccd50d21876e1d1b0e0"
-uuid = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
-version = "0.15.1"
-weakdeps = ["Unitful"]
-
-    [deps.Interpolations.extensions]
-    InterpolationsUnitfulExt = "Unitful"
 
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -2981,9 +2891,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "18144f3e9cbe9b15b070288eef858f71b291ce37"
+git-tree-sha1 = "7d6dd4e9212aebaeed356de34ccf262a3cd415aa"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.27"
+version = "0.3.26"
 
     [deps.LogExpFunctions.extensions]
     LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
@@ -3057,15 +2967,6 @@ version = "1.0.2"
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
-
-[[deps.OffsetArrays]]
-git-tree-sha1 = "6a731f2b5c03157418a20c12195eb4b74c8f8621"
-uuid = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
-version = "1.13.0"
-weakdeps = ["Adapt"]
-
-    [deps.OffsetArrays.extensions]
-    OffsetArraysAdaptExt = "Adapt"
 
 [[deps.Ogg_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -3147,9 +3048,9 @@ version = "1.4.0"
 
 [[deps.Plots]]
 deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "c4fa93d7d66acad8f6f4ff439576da9d2e890ee0"
+git-tree-sha1 = "38a748946dca52a622e79eea6ed35c6737499109"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.40.1"
+version = "1.40.0"
 
     [deps.Plots.extensions]
     FileIOExt = "FileIO"
@@ -3167,9 +3068,9 @@ version = "1.40.1"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "a6783c887ca59ce7e97ed630b74ca1f10aefb74d"
+git-tree-sha1 = "68723afdb616445c6caaef6255067a8339f91325"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.57"
+version = "0.7.55"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -3195,9 +3096,9 @@ version = "6.5.3+1"
 
 [[deps.Quaternions]]
 deps = ["LinearAlgebra", "Random", "RealDot"]
-git-tree-sha1 = "994cc27cdacca10e68feb291673ec3a76aa2fae9"
+git-tree-sha1 = "9a46862d248ea548e340e30e2894118749dc7f51"
 uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.7.6"
+version = "0.7.5"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -3206,16 +3107,6 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 [[deps.Random]]
 deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-
-[[deps.Ratios]]
-deps = ["Requires"]
-git-tree-sha1 = "1342a47bf3260ee108163042310d26f2be5ec90b"
-uuid = "c84ed2f1-dad5-54f0-aa8e-dbefe2724439"
-version = "0.4.5"
-weakdeps = ["FixedPointNumbers"]
-
-    [deps.Ratios.extensions]
-    RatiosFixedPointNumbersExt = "FixedPointNumbers"
 
 [[deps.RealDot]]
 deps = ["LinearAlgebra"]
@@ -3254,13 +3145,9 @@ version = "1.3.0"
 
 [[deps.Rotations]]
 deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
-git-tree-sha1 = "2a0a5d8569f481ff8840e3b7c84bbf188db6a3fe"
+git-tree-sha1 = "792d8fd4ad770b6d517a13ebb8dadfcac79405b8"
 uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
-version = "1.7.0"
-weakdeps = ["RecipesBase"]
-
-    [deps.Rotations.extensions]
-    RotationsRecipesBaseExt = "RecipesBase"
+version = "1.6.1"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -3274,10 +3161,6 @@ version = "1.2.1"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
-
-[[deps.SharedArrays]]
-deps = ["Distributed", "Mmap", "Random", "Serialization"]
-uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Showoff]]
 deps = ["Dates", "Grisu"]
@@ -3306,14 +3189,17 @@ version = "1.10.0"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore"]
-git-tree-sha1 = "bf074c045d3d5ffd956fa0a461da38a44685d6b2"
+git-tree-sha1 = "7b0e9c14c624e435076d19aea1e5cbdec2b9ca37"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.9.3"
-weakdeps = ["ChainRulesCore", "Statistics"]
+version = "1.9.2"
 
     [deps.StaticArrays.extensions]
     StaticArraysChainRulesCoreExt = "ChainRulesCore"
     StaticArraysStatisticsExt = "Statistics"
+
+    [deps.StaticArrays.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
@@ -3333,9 +3219,9 @@ version = "1.7.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "1d77abd07f617c4868c33d4f5b9e1dbb2643c9cf"
+git-tree-sha1 = "d1bf48bfcc554a3761a133fe3a9bb01488e06916"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.34.2"
+version = "0.33.21"
 
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
@@ -3363,9 +3249,9 @@ deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "54194d92959d8ebaa8e26227dbe3cdefcdcd594f"
+git-tree-sha1 = "1fbeaaca45801b4ba17c251dd8603ef24801dd84"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.3"
+version = "0.10.2"
 weakdeps = ["Random", "Test"]
 
     [deps.TranscodingStreams.extensions]
@@ -3437,12 +3323,6 @@ git-tree-sha1 = "93f43ab61b16ddfb2fd3bb13b3ce241cafb0e6c9"
 uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.31.0+0"
 
-[[deps.WoodburyMatrices]]
-deps = ["LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "c1a7aa6219628fcd757dede0ca95e245c5cd9511"
-uuid = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
-version = "1.0.0"
-
 [[deps.XML2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Zlib_jll"]
 git-tree-sha1 = "801cbe47eae69adc50f36c3caec4758d2650741b"
@@ -3457,9 +3337,9 @@ version = "1.1.34+0"
 
 [[deps.XZ_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "ac88fb95ae6447c8dda6a5503f3bafd496ae8632"
+git-tree-sha1 = "522b8414d40c4cbbab8dee346ac3a09f9768f25d"
 uuid = "ffd25f8a-64ca-5728-b0f7-c24cf3aae800"
-version = "5.4.6+0"
+version = "5.4.5+0"
 
 [[deps.Xorg_libICE_jll]]
 deps = ["Libdl", "Pkg"]
@@ -3671,9 +3551,9 @@ version = "1.18.0+0"
 
 [[deps.libpng_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Zlib_jll"]
-git-tree-sha1 = "873b4f805771d3e4bafe63af759a26ea8ca84d14"
+git-tree-sha1 = "93284c28274d9e75218a416c65ec49d0e0fcdf3d"
 uuid = "b53b4c65-9356-5827-b1ea-8c7a1a84506f"
-version = "1.6.42+0"
+version = "1.6.40+0"
 
 [[deps.libvorbis_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Ogg_jll", "Pkg"]
@@ -3724,7 +3604,7 @@ version = "1.4.1+1"
 # ╟─8e429280-d45f-4aaa-8db6-bb865822def4
 # ╟─ce9842db-1d24-43dc-8d23-6964719c80a2
 # ╟─e4f7b60f-7c55-462c-9ced-da14638b66ae
-# ╟─f66827da-440b-4b91-a085-063a9bcfad57
+# ╠═f66827da-440b-4b91-a085-063a9bcfad57
 # ╟─c1e6d919-f3c6-4ae0-ad6c-eb6e22b82d3d
 # ╟─659b9467-0144-4aa5-ba2e-ff76182ee87b
 # ╟─c1fc80bc-c3aa-4f2e-bc53-6cb770964a87
@@ -3739,7 +3619,7 @@ version = "1.4.1+1"
 # ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
+# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
@@ -3786,7 +3666,7 @@ version = "1.4.1+1"
 # ╟─47e28d45-2a52-4a78-9970-efd6436a377e
 # ╟─4b0d29d1-43e3-4db7-a797-0ca2e08a51c0
 # ╟─dc250eda-e9d9-437d-b549-2992973d9cf1
-# ╟─5777b4ce-2eac-44ec-ab14-cf06d6577065
+# ╠═5777b4ce-2eac-44ec-ab14-cf06d6577065
 # ╟─ba58fd28-983b-4688-bd7c-14512fe63402
 # ╟─ebcb05ec-541e-40c5-9438-e5db68747541
 # ╟─a765006c-29fb-47cc-801e-d9cf62952091
@@ -3797,10 +3677,8 @@ version = "1.4.1+1"
 # ╟─947359ba-02f8-4f1b-899a-37e47cb6132b
 # ╟─a1211f22-1f94-47fe-ae55-b5d06bb3000e
 # ╟─cb81651b-b845-4352-ac5b-6de837c81daa
-# ╟─feebbb65-9813-41a3-835e-447cdb309507
-# ╟─a7a72e04-fe81-4827-8ce3-c92389e332cf
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
-# ╠═3ad6fce1-fb0e-446a-b724-81af756eecb3
+# ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
 # ╟─b2f6bec4-449a-4299-8cda-4f7645627728
 # ╟─6bb79929-043e-426c-885f-b62647bf5279
@@ -3820,16 +3698,16 @@ version = "1.4.1+1"
 # ╟─ebe6d9e9-3736-46b5-8864-ced2fe754cb5
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
-# ╠═43b35f35-5d9c-4fc2-b778-e356cad72978
+# ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
 # ╠═a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
-# ╠═f00df351-e2da-4886-947c-95a0f684c13e
-# ╠═6123f526-a9f1-41d7-8499-09e56465f9e0
-# ╠═6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
-# ╠═5aeef1e9-f16b-43f3-b7be-d083e15c70c7
-# ╠═36737977-5a27-45f3-a0ce-84c1badd4dce
+# ╟─f00df351-e2da-4886-947c-95a0f684c13e
+# ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
+# ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+# ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
+# ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
