@@ -818,6 +818,11 @@ md"""
 ## Analisi del profilo
 """
 
+# ╔═╡ fdb1a314-8c93-4e13-96e1-cfe9d48978b7
+md"""
+Per profilo alare si intende una sezione longitudinale ideale e piana di un'ala. Possiamo inoltre definire con $\alpha$ l'angolo di incidenza del profilo alare. Questo rappresenta l'angolo compreso tra la direzione del flusso d'aria che colpisce il profilo e l'asse $\hat x_B$
+"""
+
 # ╔═╡ a1211f22-1f94-47fe-ae55-b5d06bb3000e
 md"angolo di incidenza $\alpha$: $(@bind alpha3 Slider(-45:1:45, default=20, show_value=true)) °"
 
@@ -846,11 +851,7 @@ md"""
 # ╔═╡ a7a72e04-fe81-4827-8ce3-c92389e332cf
 begin
 	#Disegno il grafico
-	plot(xlims=(-2, 12), ylims=(-2, 12), legendfont=font(8), legend=:topleft,xlabel=L"\alpha", ylabel=L"C_L",  title=L"Portanza")
-	plot!([0,0], [-2, 12], color=:black, label=L"\alpha_0", arrow=true)
-	xx=-2:1:12
-	yy=0
-	plot!(xx, fill(yy, length(xx)), color=:black, arrow=true, label=L"C_L0")
+	plot(xlims=(-2, 12), ylims=(-2, 12), legendfont=font(8), legend=:topleft,xlabel=L"\alpha", ylabel=L"C_L",  title=L"Portanza", framestyle=:origin)
 	
 	# xlabel=L"\alpha", ylabel=L"C_L",
 	#Andamento lineare
@@ -882,8 +883,23 @@ begin
 	scatter!(x_stallo, y_stallo, markersize=5, label="Punto di stallo")
 
 	
-	plot!([9.42,9.42], [-2, 8.37], linestyle=:dash, label="Angolo di stallo")
+	plot!([9.42,9.42], [0, 8.37], linestyle=:dash, label="Angolo di stallo")
 end
+
+# ╔═╡ 6499fc49-aa30-4149-9c65-ee22c4278971
+md"""
+La portanza è caratterizzata da un andamento lineare fino ad un certo angolo di incidenza. L'angolo alla quale si raggiunge la configurazione di incidenza massima è detto angolo di stallo. Tale condizione indica uno stato del profilo alare in cui gli effetti della separazione del flusso investono gran parte dell'estradosso del profilo stesso, portando ad un incremento della resistenza dovuta alla geometria del profilo. Un altro angolo notevole è l'angolo $\alpha_{ZL}$, ovvero di $zero$ $lift$, alla quale si ha portanza nulla. 
+
+Nella regione lineare il coefficiente di portanza ha andamento:
+
+$C_L = C_{L0} + C_{L/\alpha} * \alpha$
+
+Con $C_{L/\alpha}$ che indica la derivata del coefficiente di portanza rispetto ad $\alpha$. 
+
+Il coefficiente di portanza è esprimibile anche in funzione dell'angolo di incidenza assoluta, o $\alpha_A$, che esprime l'angolo compreso tra il flusso d'aria che colpisce il profilo e l'asse di incidenza nulla, tale per cui $\alpha_A$ = $\alpha$ - $\alpha_{ZL}$. L'equazione diventa quindi:
+
+$C_L = C_{L/\alpha} (\alpha - \alpha_{ZL}) = C_{L/\alpha} * \alpha_A$
+"""
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
 md"""
@@ -3794,13 +3810,15 @@ version = "1.4.1+1"
 # ╟─229ffa9f-145b-4fe1-b063-0ffb598bb918
 # ╟─6a64478c-4a13-454e-a2fc-19e289638b44
 # ╟─66ce96db-5d29-4761-b069-b885f224754b
+# ╟─fdb1a314-8c93-4e13-96e1-cfe9d48978b7
 # ╟─947359ba-02f8-4f1b-899a-37e47cb6132b
 # ╟─a1211f22-1f94-47fe-ae55-b5d06bb3000e
 # ╟─cb81651b-b845-4352-ac5b-6de837c81daa
 # ╟─feebbb65-9813-41a3-835e-447cdb309507
 # ╟─a7a72e04-fe81-4827-8ce3-c92389e332cf
+# ╟─6499fc49-aa30-4149-9c65-ee22c4278971
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
-# ╠═3ad6fce1-fb0e-446a-b724-81af756eecb3
+# ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
 # ╟─b2f6bec4-449a-4299-8cda-4f7645627728
 # ╟─6bb79929-043e-426c-885f-b62647bf5279
