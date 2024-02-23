@@ -902,6 +902,18 @@ Il coefficiente di portanza è esprimibile anche in funzione dell'angolo di inci
 $C_L = C_{L/\alpha} (\alpha - \alpha_{ZL}) = C_{L/\alpha} * \alpha_A$
 """
 
+# ╔═╡ 1223ece4-7911-4545-b57d-ce5e80c432c4
+md"""
+### Resistenza
+La resistenza del profilo si divide in una componente dovuta alla separazione (resistenza di pressione $D_P$), fortemente dipendente dall'angolo di incidenza, e da una componente quasi svincolata da $\alpha$ (resistenza di attrito $D_f$).
+
+L'efficienza, o $lift$-$to$-$drag$ $ratio$, viene definita come 
+
+$E = C_L/C_D$
+
+Rappresentando quindi l'andamento del coefficiente di portanza al variare del coefficiente di resistenza in un diagramma polare, possiamo identificare l'efficienza misurando la pendenza della retta passante per l'origine e il punto sull grafico che coincide con l'assetto di volo. Ne deriva che l'intersezione tra la retta dell'efficienza con pendenza massima  e la polare è l'assetto di volo con efficienza massima. Nel grafico è possibile identificare altri assetti notevoli, quali il punto di assetto con resistenza minima e il punto di assetto con portanza nulla. 
+"""
+
 # ╔═╡ bc3ed5c1-248e-419d-abd6-86247955629d
 let
 	#Disegno il grafico
@@ -943,6 +955,11 @@ let
 	scatter!((CD_min, CL_CD_min), markersize=5, color=:red, label="Punto di resistenza minima")
 	plot!([CD_min, CD_min], [0, CL_CD_min], linestyle=:dash, color=:red, label="Resistenza minima")
 end
+
+# ╔═╡ 39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
+md"""
+## Momento di beccheggio
+"""
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
 md"""
@@ -3868,7 +3885,9 @@ version = "1.4.1+1"
 # ╟─feebbb65-9813-41a3-835e-447cdb309507
 # ╟─a7a72e04-fe81-4827-8ce3-c92389e332cf
 # ╟─6499fc49-aa30-4149-9c65-ee22c4278971
+# ╟─1223ece4-7911-4545-b57d-ce5e80c432c4
 # ╟─bc3ed5c1-248e-419d-abd6-86247955629d
+# ╟─39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
@@ -3890,16 +3909,16 @@ version = "1.4.1+1"
 # ╟─ebe6d9e9-3736-46b5-8864-ced2fe754cb5
 # ╟─988be133-a521-4afc-9919-ab65fef8e512
 # ╠═f6717f17-30c4-49bd-abf2-623dd7f78d9d
-# ╠═43b35f35-5d9c-4fc2-b778-e356cad72978
-# ╠═a9935d19-6ab2-4044-bc3e-07089e8801d5
+# ╟─43b35f35-5d9c-4fc2-b778-e356cad72978
+# ╟─a9935d19-6ab2-4044-bc3e-07089e8801d5
 # ╟─68b98a8b-da00-4678-9de2-26f329e7226a
 # ╟─a47a670f-db88-477c-8eb1-561e5b3fdf27
 # ╟─14c78908-06ae-4636-a7eb-ac387c759e8a
 # ╟─14e7a4a4-b209-401c-845a-bc199851195a
-# ╠═f00df351-e2da-4886-947c-95a0f684c13e
-# ╠═6123f526-a9f1-41d7-8499-09e56465f9e0
-# ╠═6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
-# ╠═5aeef1e9-f16b-43f3-b7be-d083e15c70c7
-# ╠═36737977-5a27-45f3-a0ce-84c1badd4dce
+# ╟─f00df351-e2da-4886-947c-95a0f684c13e
+# ╟─6123f526-a9f1-41d7-8499-09e56465f9e0
+# ╟─6b07a0d6-5c00-49f4-9d0c-ad2f9bb5e3ac
+# ╟─5aeef1e9-f16b-43f3-b7be-d083e15c70c7
+# ╟─36737977-5a27-45f3-a0ce-84c1badd4dce
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -4,6 +4,16 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
 # ╔═╡ e23f55bb-2181-4ed3-860b-1b6130e4d3f2
 begin
 	using 
@@ -17,47 +27,124 @@ begin
 	print("Dependencies")
 end
 
-# ╔═╡ 6a5be595-c447-4ccb-9f37-c32d340b0faf
-begin
-	#Disegno il grafico
-	plot(xlims=(-2, 8), ylims=(-2, 12), legendfont=font(8), legend=:topleft,xlabel=L"C_D", ylabel=L"C_L",  title=L"Portanza", framestyle=:origin)
+# ╔═╡ 288282a4-1d59-4a83-a7f4-8155d79c5395
+md"angolo di incidenza $\alpha$: $(@bind alpha3 Slider(-45:1:45, default=20, show_value=true)) °"
 
-	#Polare
-	CL=range(0,10,length=360)
-	CD_min=1.5
-	CL_CD_min=2
-	K=0.1
-	CD(CL)=CD_min+K*(CL-CL_CD_min)^2
-	plot!(CD.(CL), CL, color=:blue, label="Polare")
+# ╔═╡ 9ade4d3b-822b-43c8-9605-5e591bcc7173
+begin
+function NACA_shape(naca)
+		num_points=100
+	    m = parse(Int, naca[1]) ./ 100.0  # maximum camber
+	    p = parse(Int, naca[2]) ./ 10.0   # location of maximum camber
+	    t = parse(Int, naca[3:end]) ./ 100.0  # maximum thickness
 	
-	#Punti notevoli
-	#Efficcienza max
-	rapporto=CL./CD.(CL)
-	max_ratio=maximum(rapporto) #2.1196141518042495
-	findall(x->x==max_ratio, rapporto) #131
-	CL_max_E=CL[131] #4.345403899721449
-	CD_max_E=CD.(CL_max_E) #2.050091945282858
-	scatter!((CD_max_E, CL_max_E), markersize=5, color=:orange, label="Punto di efficienza massima")
-	CD_efficienza=range(0,CD_max_E,length=100)
-	retta(CD_efficienza)=max_ratio*CD_efficienza
-	plot!(CD_efficienza, retta(CD_efficienza), color=:orange, label="Efficienza massima", linestyle=:dash)
+	    c = 1.0  # chord length
+	    x = collect(range(0, stop=c, length=num_points))
 	
-	#Zero lift
-	CL_0L=0
-	CD_0L=CD.(CL_0L)
-	scatter!((CD_0L, CL_0L), markersize=5, color=:purple, label="Coefficiente di resistenza a portanaz nulla")
+	    # Thickness distribution
+	    yt = t ./ 0.2 .* c .* (0.2969 .* sqrt.(x ./ c) .- 0.1260*(x/c) .- 0.3516 .* (x ./ c) .^ 2 .+ 0.2843 .* (x./c).^3 .- 0.1015 .* (x ./ c) .^4)
 	
-	#Drag minima
-	dCD(CL)=derivative(CD)
-	for i in CL
-		if dCD(i)==0
-			CL_CD_min=i
-		end
-	end
-	CD_min=CD(CL_CD_min)
-	scatter!((CD_min, CL_CD_min), markersize=5, color=:red, label="Punto di resistenza minima")
-	plot!([CD_min, CD_min], [0, CL_CD_min], linestyle=:dash, color=:red, label="Resistenza minima")
+	    # Mean camber line
+	    yc = zeros(num_points)
+	    for i in 1:num_points
+	        if x[i] < p.*c
+	            yc[i] = m./(p.^2).*(2 .* p .* (x[i] ./ c) .- (x[i] ./ c) .^2)
+	        else
+	            yc[i] = m./((1 .-p).^2).*((1 .-2 .* p) .+ 2 .* p .* (x[i] ./ c) .- (x[i]./c).^2)
+	        end
+	    end
+	 # Calculate upper and lower surface coordinates
+	    theta = atan.(m./(p^2) * (2 .*p .- 2 .*(x/c)))
+	    xu = x .- yt .* sin.(theta)
+	    yu = yc .+ yt .* cos.(theta)
+	    xl = x .+ yt .* sin.(theta)
+	    yl = yc .- yt .* cos.(theta)
+	
+		Upper = Shape(xu,yu)
+		Lower = Shape(xl,yl)
+    return [Upper, Lower]
 end
+
+function transform_all(parts,dxdy,scale,angle)
+		transformed = rotate_all(parts,angle)
+		transformed = scale_all(transformed,scale)
+		transformed = translate_all(transformed,dxdy)
+		return transformed
+	end
+	function rotate_all(parts,angle)	
+		rotated_parts = [Plots.rotate(part,angle,(0,0)) for part in parts]
+		return rotated_parts
+	end
+	function scale_all(parts,scale)	
+		rotated_parts = [Plots.scale(part,scale[1],scale[2],(0,0)) for part in parts]
+		return rotated_parts
+	end
+	function translate_all(parts,dxdy)	
+		translated_parts = [translate(part,dxdy[1],dxdy[2]) for part in parts]
+		return translated_parts
+	end
+	function par2dcircle(r,n_points,ini,fin)
+	t = LinRange(ini,fin,n_points)
+	x(t) = r*sin(t)
+	y(t) = r*cos(t)
+
+	x_coord=x.(t)
+	y_coord=y.(t)
+
+	return x_coord,y_coord
+end
+end
+
+# ╔═╡ 6a5be595-c447-4ccb-9f37-c32d340b0faf
+let
+	plot(aspect_ratio=:equal,
+		xlims=(-1.1, 1.1),
+		ylims=(-1.1, 1.1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topright
+	)	
+	alpha = deg2rad(alpha3)
+	
+	# xB
+	plot!([0, -1.1*cos(alpha)], [0, 1.1*sin(alpha)], arrow=true, c=:red, lab=L"\hat x_B",lw=1,l=:dot)
+	# zB
+	plot!([0, -sin(alpha)], [0, -cos(alpha)], arrow=true, c=:blue, label=L"\hat z_B",lw=1, l=:dot)
+	# yB
+	plot!([-0.05,0.05],[-0.05,0.05], c=:green,lab=L"\hat y_B = \hat y_A",lw=3)
+	plot!([0.05,-0.05],[-0.05,0.05], c=:green,lab="",lw=3)
+
+	# xA
+	plot!([0, -1], [0, 0], arrow=true, c=:red, lab=L"\hat x_A",lw=2)
+	# zA
+	plot!([0, 0], [0, -1], arrow=true, c=:blue, lab=L"\hat z_A",lw=2)
+	
+	# D
+	plot!([0, 1], [0, 0], arrow=true, c=:purple, lab=L"\bar D",lw=2)
+	# L
+	plot!([0, 0], [0, 1], arrow=true, c=:cyan, lab=L"\bar L",lw=2)
+
+	
+	#Rotazione profilo
+	naca="2412"
+	foil=NACA_shape(naca)
+	foil=transform_all(foil,[-1,0],[1,1],0)
+	foil=transform_all(foil,[0,0],[1,1],-alpha)
+	
+	plot!(foil, c=:white, label = false)
+	scatter!()
+
+	#Punto Q
+	x_Q,y_Q=par2dcircle(0.7,3,-pi/2,alpha-pi/2)
+	xQ=x_Q[1]
+	yQ=y_Q[1]
+	scatter!([xQ,yQ], markersize=5, c=:purple, label=false)
+
+	# alpha
+	xa,ya=par2dcircle(0.8,40,-pi/2,alpha-pi/2)
+	plot!(xa, ya, arrow=true, c=:orange3, lab=L"\alpha",lw=1,l=:dot)
+end
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1282,7 +1369,9 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
-# ╠═e23f55bb-2181-4ed3-860b-1b6130e4d3f2
+# ╟─e23f55bb-2181-4ed3-860b-1b6130e4d3f2
 # ╠═6a5be595-c447-4ccb-9f37-c32d340b0faf
+# ╠═288282a4-1d59-4a83-a7f4-8155d79c5395
+# ╠═9ade4d3b-822b-43c8-9605-5e591bcc7173
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
