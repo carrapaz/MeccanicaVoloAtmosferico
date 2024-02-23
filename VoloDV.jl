@@ -21,7 +21,8 @@ begin
 	 	PlutoUI,
 	 	Rotations,
 	 	LaTeXStrings,
-		Interpolations
+		Interpolations,
+		Calculus
 	
 	gr()
 	print("Dependencies")
@@ -900,6 +901,48 @@ Il coefficiente di portanza è esprimibile anche in funzione dell'angolo di inci
 
 $C_L = C_{L/\alpha} (\alpha - \alpha_{ZL}) = C_{L/\alpha} * \alpha_A$
 """
+
+# ╔═╡ bc3ed5c1-248e-419d-abd6-86247955629d
+begin
+	#Disegno il grafico
+	plot(xlims=(-2, 8), ylims=(-2, 12), legendfont=font(8), legend=:topleft,xlabel=L"C_D", ylabel=L"C_L",  title=L"Portanza", framestyle=:origin)
+
+	#Polare
+	CL=range(0,10,length=360)
+	CD_min=1.5
+	CL_CD_min=2
+	K=0.1
+	CD(CL)=CD_min+K*(CL-CL_CD_min)^2
+	plot!(CD.(CL), CL, color=:blue, label="Polare")
+	
+	#Punti notevoli
+	#Efficcienza max
+	rapporto=CL./CD.(CL)
+	max_ratio=maximum(rapporto) #2.1196141518042495
+	findall(x->x==max_ratio, rapporto) #131
+	CL_max_E=CL[131] #4.345403899721449
+	CD_max_E=CD.(CL_max_E) #2.050091945282858
+	scatter!((CD_max_E, CL_max_E), markersize=5, color=:orange, label="Punto di efficienza massima")
+	CD_efficienza=range(0,CD_max_E,length=100)
+	retta(CD_efficienza)=max_ratio*CD_efficienza
+	plot!(CD_efficienza, retta(CD_efficienza), color=:orange, label="Efficienza massima", linestyle=:dash)
+	
+	#Zero lift
+	CL_0L=0
+	CD_0L=CD.(CL_0L)
+	scatter!((CD_0L, CL_0L), markersize=5, color=:purple, label="Coefficiente di resistenza a portanaz nulla")
+	
+	#Drag minima
+	dCD(CL)=derivative(CD)
+	for i in CL
+		if dCD(i)==0
+			CL_CD_min=i
+		end
+	end
+	CD_min=CD(CL_CD_min)
+	scatter!((CD_min, CL_CD_min), markersize=5, color=:red, label="Punto di resistenza minima")
+	plot!([CD_min, CD_min], [0, CL_CD_min], linestyle=:dash, color=:red, label="Resistenza minima")
+end
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
 md"""
@@ -2517,6 +2560,7 @@ end
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+Calculus = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
 Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
@@ -2524,6 +2568,7 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Rotations = "6038ab10-8711-5258-84ad-4b1120ba62dc"
 
 [compat]
+Calculus = "~0.5.1"
 Interpolations = "~0.15.1"
 LaTeXStrings = "~1.3.1"
 Plots = "~1.40.1"
@@ -2537,7 +2582,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.0"
 manifest_format = "2.0"
-project_hash = "4165bc0574cfb528141563235d133e89be93601c"
+project_hash = "b08e71c9aceb7b1fa90b5cac8eb2226081fe921e"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -2587,6 +2632,12 @@ deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jl
 git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
+
+[[deps.Calculus]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
+uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
+version = "0.5.1"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra"]
@@ -3817,6 +3868,7 @@ version = "1.4.1+1"
 # ╟─feebbb65-9813-41a3-835e-447cdb309507
 # ╟─a7a72e04-fe81-4827-8ce3-c92389e332cf
 # ╟─6499fc49-aa30-4149-9c65-ee22c4278971
+# ╟─bc3ed5c1-248e-419d-abd6-86247955629d
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
