@@ -903,7 +903,7 @@ $C_L = C_{L/\alpha} (\alpha - \alpha_{ZL}) = C_{L/\alpha} * \alpha_A$
 """
 
 # ╔═╡ bc3ed5c1-248e-419d-abd6-86247955629d
-begin
+let
 	#Disegno il grafico
 	plot(xlims=(-2, 8), ylims=(-2, 12), legendfont=font(8), legend=:topleft,xlabel=L"C_D", ylabel=L"C_L",  title=L"Portanza", framestyle=:origin)
 
