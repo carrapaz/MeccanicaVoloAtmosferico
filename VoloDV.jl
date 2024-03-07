@@ -905,7 +905,7 @@ $C_L = C_{L/\alpha} (\alpha - \alpha_{ZL}) = C_{L/\alpha} * \alpha_A$
 # ╔═╡ 1223ece4-7911-4545-b57d-ce5e80c432c4
 md"""
 ### Resistenza
-La resistenza del profilo si divide in una componente dovuta alla separazione (resistenza di pressione $D_P$), fortemente dipendente dall'angolo di incidenza, e da una componente quasi svincolata da $\alpha$ (resistenza di attrito $D_f$).
+La resistenza del profilo si divide in una componente dovuta alla separazione (resistenza di pressione $D_P$), fortemente dipendente dall'angolo di incidenza, e da una componente quasi svincolata da $\alpha$ (resistenza di attrito $D_f$). Vengono supposti costanti il numero di Mach e di Reynolds.
 
 L'efficienza, o $lift$-$to$-$drag$ $ratio$, viene definita come 
 
@@ -959,6 +959,22 @@ end
 # ╔═╡ 39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
 md"""
 ## Momento di beccheggio
+"""
+
+# ╔═╡ f90cf039-dc07-4e5d-a554-0314e3e988a0
+md"""
+Possiamo definire un coefficiente di momento di beccheggio applicato al punto generico P sul profilo, $C_{M_{P}}$ in funzione dell'angolo di incidenza $\alpha$, sempre considerando Mach e Reynolds costanti.
+
+Dal momento che il valore del coefficiente di momento di beccheggio varia in funzione della posizione del punto P considerato, possiamo definire dei poli particolari nella quale ridurre i momenti (i.e. centro di pressione e centro aerodinamico del profilo) per poi applicare la regola del trasporto dei momenti.
+
+Possiamo quindi definire un punto $Q$ come il polo in cui riduciamo i momenti e di conseguenza il punto P diventa il punto in cui desideriamo misurare le forze e i momenti, le quali sono:
+
+$\bar F = - (D \bar x_A + L \bar z_A)$
+$\bar M_Q = M_Q \bar y_B = M_Q \bar y_A$
+
+Ricordando che dal momento che stiamo analizzando il profilo 2D, consideriamo $\beta = 0$. Dunque
+
+$\bar M_P = ( \bar {Q - P}) \wedge \bar F + \bar M_Q$
 """
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
@@ -2597,7 +2613,7 @@ Rotations = "~1.7.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0"
+julia_version = "1.10.1"
 manifest_format = "2.0"
 project_hash = "b08e71c9aceb7b1fa90b5cac8eb2226081fe921e"
 
@@ -2715,7 +2731,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.1.0+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -3160,7 +3176,7 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.23+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -3888,6 +3904,7 @@ version = "1.4.1+1"
 # ╟─1223ece4-7911-4545-b57d-ce5e80c432c4
 # ╟─bc3ed5c1-248e-419d-abd6-86247955629d
 # ╟─39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
+# ╟─f90cf039-dc07-4e5d-a554-0314e3e988a0
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
