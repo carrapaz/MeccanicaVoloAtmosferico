@@ -967,14 +967,46 @@ Possiamo definire un coefficiente di momento di beccheggio applicato al punto ge
 
 Dal momento che il valore del coefficiente di momento di beccheggio varia in funzione della posizione del punto P considerato, possiamo definire dei poli particolari nella quale ridurre i momenti (i.e. centro di pressione e centro aerodinamico del profilo) per poi applicare la regola del trasporto dei momenti.
 
-Possiamo quindi definire un punto $Q$ come il polo in cui riduciamo i momenti e di conseguenza il punto P diventa il punto in cui desideriamo misurare le forze e i momenti, le quali sono:
+Possiamo quindi definire il polo in cui riduciamo i momenti come punto $Q$ e di conseguenza il punto P come il polo in cui desideriamo misurare le forze e i momenti, le quali sono:
 
 $\bar F = - (D \bar x_A + L \bar z_A)$
 $\bar M_Q = M_Q \bar y_B = M_Q \bar y_A$
 
-Ricordando che dal momento che stiamo analizzando il profilo 2D, consideriamo $\beta = 0$. Dunque
+Ricordando che stiamo analizzando il profilo $2D$, consideriamo $\beta = 0$. Dunque
 
 $\bar M_P = ( \bar {Q - P}) \wedge \bar F + \bar M_Q$
+
+Possiamo analizzare i fattori del prodotto vettoriale:
+
+$(\bar{Q-P}) = (x_Q - x_P) \bar x_B + (z_Q - z_P) \bar z_B = X \bar x_B + Z \bar z_B$
+
+e
+
+$\bar F = - (D \bar x_A + L \bar z_A)$
+
+Potendo convertire i versori dalla terna $F_H$ a quella $F_B$
+
+$\bar x_A = cos(\alpha)\bar x_B + sin(\alpha)\bar z_B$
+
+$\bar z_A = -sin(\alpha)\bar x_B + cos(\alpha)\bar z_B$
+
+Quindi sostituendo e ricordando i legami della terna $F_B$:
+
+$\begin{cases}
+\bar M_P = - (X\bar x_B + Z\bar z_B) \wedge [D(cos(\alpha)\bar x_B+ sin(\alpha)\bar z_B)+L(-sin(\alpha)\bar x_B +cos(\alpha)\bar z_B)] + \bar M_Q\\
+\bar x_B \wedge \bar z_B = \bar y_B\\
+\bar z_B \wedge \bar x_B = -\bar y_B
+\end{cases}$
+
+Quindi, svolgendo i calcoli e sostutuendo il termine di resistenza con il rapporto tra portanza ed efficienza possiamo trovare il modulo di $\bar M_P$:
+
+$\bar {|M_P|} = -Z\dfrac{L}{E}cos(\alpha)\bar y_B + X\dfrac{L}{E}sin(\alpha) \bar y_B + XLcos(\alpha) \bar y_B + ZLsin(\alpha) \bar y_B + M_Q \bar y_B$
+
+$=Lcos(\alpha)(-\dfrac{Z}{E}+\dfrac{X}{E}tang(\alpha)+X+Ztang(\alpha))+M_Q\bar y_B$
+
+$\bar {|M_P|} = Lcos(\alpha)[X(1+\dfrac{tang(\alpha)}{E})+Z(-\dfrac{1}{E}+tang(\alpha))]+M_Q$
+
+È ora possibile introdurre delle semplificazioni derivanti da un angolo di incidenza $\alpha<<<1$.
 """
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
@@ -3904,7 +3936,7 @@ version = "1.4.1+1"
 # ╟─1223ece4-7911-4545-b57d-ce5e80c432c4
 # ╟─bc3ed5c1-248e-419d-abd6-86247955629d
 # ╟─39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
-# ╟─f90cf039-dc07-4e5d-a554-0314e3e988a0
+# ╠═f90cf039-dc07-4e5d-a554-0314e3e988a0
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
