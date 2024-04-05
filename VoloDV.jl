@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.39
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -248,9 +248,6 @@ Distanza verticale tra velivolo e la superficie terrestre, può essere indicata 
 
 # ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 md"S: $(@bind S2 Slider(0:0.01:7, default=5,show_value=true))"
-
-# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-Quota_di_volo(S2)
 
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
@@ -1817,6 +1814,9 @@ function Quota_di_volo(S2)
 	return plt
 end
 
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+Quota_di_volo(S2)
+
 # ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
 """
 Crea una predefinita traiettoria parametrica in 2d e i vettori tangenti e normali alla fine di essa
@@ -2645,7 +2645,7 @@ Rotations = "~1.7.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.1"
+julia_version = "1.10.2"
 manifest_format = "2.0"
 project_hash = "b08e71c9aceb7b1fa90b5cac8eb2226081fe921e"
 
@@ -3871,7 +3871,7 @@ version = "1.4.1+1"
 # ╟─a679ab80-4fbb-4e10-845a-bb9ca338bc69
 # ╟─82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 # ╟─041459bb-0fad-4ed5-87f9-0c873ae7cfaa
-# ╟─4c58ff04-6f48-4247-8bbb-7a9593432368
+# ╠═4c58ff04-6f48-4247-8bbb-7a9593432368
 # ╟─bb575fbf-c996-4557-8b08-cc28db9c0db4
 # ╟─7df38388-286b-4767-8bc6-e56cfdb1f656
 # ╟─8934ba0d-dbf5-4ef7-9733-530dcd42ef05
@@ -3936,7 +3936,7 @@ version = "1.4.1+1"
 # ╟─1223ece4-7911-4545-b57d-ce5e80c432c4
 # ╟─bc3ed5c1-248e-419d-abd6-86247955629d
 # ╟─39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
-# ╠═f90cf039-dc07-4e5d-a554-0314e3e988a0
+# ╟─f90cf039-dc07-4e5d-a554-0314e3e988a0
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173

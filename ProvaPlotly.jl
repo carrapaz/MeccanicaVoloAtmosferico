@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.39
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -132,13 +132,11 @@ let
 	foil=transform_all(foil,[0,0],[1,1],-alpha)
 	
 	plot!(foil, c=:white, label = false)
-	scatter!()
 
 	#Punto Q
-	x_Q,y_Q=par2dcircle(0.7,3,-pi/2,alpha-pi/2)
-	xQ=x_Q[1]
-	yQ=y_Q[1]
-	scatter!([xQ,yQ], markersize=5, c=:purple, label=false)
+	xQ=0.7.*cos(alpha)
+	yQ=0.7.*sin(alpha)
+	scatter!([-xQ],[yQ], markersize=5, c=:purple, label=false)
 
 	# alpha
 	xa,ya=par2dcircle(0.8,40,-pi/2,alpha-pi/2)
@@ -169,7 +167,7 @@ Rotations = "~1.6.1"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0"
+julia_version = "1.10.2"
 manifest_format = "2.0"
 project_hash = "b60be7c31b4a9f9a51bffef26c0bd71a335748e7"
 
@@ -287,7 +285,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.1.0+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -732,7 +730,7 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.23+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1370,8 +1368,8 @@ version = "1.4.1+1"
 
 # ╔═╡ Cell order:
 # ╟─e23f55bb-2181-4ed3-860b-1b6130e4d3f2
-# ╠═6a5be595-c447-4ccb-9f37-c32d340b0faf
-# ╠═288282a4-1d59-4a83-a7f4-8155d79c5395
-# ╠═9ade4d3b-822b-43c8-9605-5e591bcc7173
+# ╟─6a5be595-c447-4ccb-9f37-c32d340b0faf
+# ╟─288282a4-1d59-4a83-a7f4-8155d79c5395
+# ╟─9ade4d3b-822b-43c8-9605-5e591bcc7173
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
