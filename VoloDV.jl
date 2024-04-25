@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.40
+# v0.19.39
 
 using Markdown
 using InteractiveUtils
@@ -248,6 +248,9 @@ Distanza verticale tra velivolo e la superficie terrestre, può essere indicata 
 
 # ╔═╡ 82e5b6b0-def9-46ce-9e1e-8bf25a54b24e
 md"S: $(@bind S2 Slider(0:0.01:7, default=5,show_value=true))"
+
+# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
+Quota_di_volo(S2)
 
 # ╔═╡ 041459bb-0fad-4ed5-87f9-0c873ae7cfaa
 md"""
@@ -1004,6 +1007,38 @@ $=Lcos(\alpha)(-\dfrac{Z}{E}+\dfrac{X}{E}tang(\alpha)+X+Ztang(\alpha))+M_Q\bar y
 $\bar {|M_P|} = Lcos(\alpha)[X(1+\dfrac{tang(\alpha)}{E})+Z(-\dfrac{1}{E}+tang(\alpha))]+M_Q$
 
 È ora possibile introdurre delle semplificazioni derivanti da un angolo di incidenza $\alpha<<<1$.
+
+Guardando i termini dell'espressione con le semplificazioni:
+
+$1 + \dfrac{tan(\alpha)}{E} \approx 1$
+$Z(-\dfrac{1}{E}+tan(\alpha))<<X$
+
+Quindi possiamo riscrivere l'espressione del modulo del momento come:
+
+$M_P= LX+M_Q$
+
+oppure
+
+$M_P= M_Q-L(x_P-x_Q) =>\dfrac{1}{2} \rho v^2 c^2 C_{MP}= \dfrac{1}{2} \rho v^2 c^2 C_{MQ} - \dfrac{1}{2} \rho v^2 c C_L c (\xi_P-\xi_Q)$ 
+$C_{MP}=C_{MQ}-(\xi_P-\xi_Q)C_{L/\alpha}\alpha_A$
+
+con $\alpha_A$ angolo d'incidenza del profilo non rispetto alla direzione del vento relativo ma bensì rispetto all'angolo alla quale il profilo ha incidenza nulla.
+
+Da questa equazione possiamo fare due osservazioni:
+- La prima è che ponendo $\alpha_A$=0, il coefficiente di portanza sarà a sua volta nullo, riducendo l'equazione del coefficiente di momento a $C_{MP}=C_{MQ}$. Denominando il coefficiente così ottenuto coefficiente a zero lift, $C_{M_{ZL}}$, troviamo che questo ha valori negativi per profili convessi, nulli per profili simmetrici e positivi per profili concavi.
+
+
+- La seconda osservazione che possiamo fare riguarda la scelta del punto $Q$: se infatti scegliamo di applicarlo nel centro di pressione stiamo scegliendo il punto nel profilo nella quale il coefficiente di momento è nullo. Quindi dove $C_{M_{CP}}=0$. Di conseguenza:
+
+$C_{MP}=-(\xi_P-\xi_{CP})C_{L/\alpha}\alpha_A$
+
+Se inoltre eseguiamo questo calcolo in un profilo convesso scegliendo l'angolo di incidenza nulla $\alpha_A=0$, allora:
+
+$C_{MP}=-(\xi_P-\xi_{CP})*0$
+
+E otterremmo l'annullamento del coefficiente di momento, nonostante per i profili convessi $C_{M_{ZL}}<0$. L'unica soluzione è che il termine $-\dfrac{(x_P-x_{CP})}{c}$ tenda a $-\infty$ per ogni valore di $x_P$. Perchè ciò accada, è necessario che per $\alpha_A=0$, $x_{CP}$ tenda a $-\infty$.
+
+Da questi ragionamenti risulta evidente che la posizione del coefficiente di pressione vari al variare dell'angolo di incidenza $\alpha_A$ e che di conseguenza non sia un punto materiale, diventando sconveniente usarlo come base per elaborare una funzione del coefficiente di momento al variare dell'angolo di incidenza.
 """
 
 # ╔═╡ b83382c0-6f94-430c-bce2-8963150dce48
@@ -1813,9 +1848,6 @@ function Quota_di_volo(S2)
 	plot!([S2-0.1, S2-0.1], [1.5, sea(S2)], arrow=true, color=:blue, label=L"TA")
 	return plt
 end
-
-# ╔═╡ a679ab80-4fbb-4e10-845a-bb9ca338bc69
-Quota_di_volo(S2)
 
 # ╔═╡ 14c78908-06ae-4636-a7eb-ac387c759e8a
 """
