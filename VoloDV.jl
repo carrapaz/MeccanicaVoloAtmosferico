@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.39
+# v0.19.40
 
 using Markdown
 using InteractiveUtils
@@ -1826,6 +1826,72 @@ let
 	plot(pt, ps, layout = (1, 2))
 end
 
+# ╔═╡ bdcc9525-d57e-4655-89be-229a4e6e6829
+let
+	plot(aspect_ratio=:equal,
+		xlims=(-1.1, 1.1),
+		ylims=(-1.1, 1.1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topright
+	)
+	alpha = deg2rad(-90)
+	
+	# xB
+	plot!([0, -1], [0, 0], arrow=true, c=:red, lab=L"x_A ",lw=2)
+	# xA
+	plot!([0, -1*cosd(30)*1.1], [0, -sind(30)*1.1], arrow=true, c=:black, lab=L"x_B",lw=2)
+
+	
+
+	naca="2412"
+	foil=NACA_shape(naca)
+	foil=transform_all(foil,[-1,0],[1,1],0)
+	foil=transform_all(foil,[0,0],[1,1],deg2rad(30))
+	
+	plot!(foil, c=:white, label = false)
+
+	#Polare
+	pos=range(-cosd(30),0,length=360)
+	plot!(pos ,0.5.*sin.(-pos.*(2*pi)), color=:red, label="Posizione")
+
+	#scatter!((0, +1/6), markersize=5, color=:red, label="CP")
+end
+
+# ╔═╡ 9b4455e5-dbef-4728-a825-5e3641369361
+let
+	plot(aspect_ratio=:equal,
+		xlims=(-0.1, 1.1),
+		ylims=(-0.1, 1.1),
+		showaxis=false,
+		legendfont=font(12),
+		legend=:topright
+	)
+	alpha = deg2rad(-90)
+
+	#Polare
+	alphaA=range(0.01,0.5,length=360)
+	CL_αA = 40
+	CP(alphaA) = (alphaA).^2  + 1/( alphaA .* CL_αA)
+	plot!(alphaA ,CP.(alphaA), color=:red, label="Posizione")
+		
+	# α_A
+	plot!([0, 1], [0, 0], arrow=true, c=:black, lab=L"\alpha_A ",lw=2)
+	# %c
+	plot!([0, 0], [0, 1], arrow=true, c=:blue, lab="%C",lw=2)
+
+	
+
+	naca="2412"
+	foil=NACA_shape(naca)
+	foil=transform_all(foil,[0,0],[1,1],0)
+	foil=transform_all(foil,[0,0],[0.5,0.5],-deg2rad(-90))
+	
+	plot!(foil, c=:white, label = false)
+
+	scatter!((0, +1/6), markersize=5, color=:red, label="CP")
+end
+
 # ╔═╡ a47a670f-db88-477c-8eb1-561e5b3fdf27
 """
 Crea grafico comparazioni differenze quote \\
@@ -2677,7 +2743,7 @@ Rotations = "~1.7.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.2"
+julia_version = "1.10.0"
 manifest_format = "2.0"
 project_hash = "b08e71c9aceb7b1fa90b5cac8eb2226081fe921e"
 
@@ -2795,7 +2861,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.0.5+1"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -3240,7 +3306,7 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+4"
+version = "0.3.23+2"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -3969,6 +4035,8 @@ version = "1.4.1+1"
 # ╟─bc3ed5c1-248e-419d-abd6-86247955629d
 # ╟─39a6e128-9ec1-40b7-9bf3-aa8700b3bc18
 # ╟─f90cf039-dc07-4e5d-a554-0314e3e988a0
+# ╟─bdcc9525-d57e-4655-89be-229a4e6e6829
+# ╟─9b4455e5-dbef-4728-a825-5e3641369361
 # ╟─b83382c0-6f94-430c-bce2-8963150dce48
 # ╟─3ad6fce1-fb0e-446a-b724-81af756eecb3
 # ╟─4187da49-e658-4ec6-9e6b-dbeefc086173
